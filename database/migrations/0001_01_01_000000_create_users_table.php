@@ -48,13 +48,13 @@ return new class extends Migration
             $table->string('login_os')->nullable();
 
             // OAuth(google)
-            $table->string('google_id')->nullable();
-            $table->string('google_token')->nullable();
-            $table->string('google_refresh_token')->nullable();
+            $table->text('google_id')->nullable();
+            $table->longText('google_token')->nullable();
+            $table->longText('google_refresh_token')->nullable();
             // facebook
-            $table->string('facebook_id')->nullable();
-            $table->string('facebook_token')->nullable();
-            $table->string('facebook_refresh_token')->nullable();
+            $table->text('facebook_id')->nullable();
+            $table->longText('facebook_token')->nullable();
+            $table->longText('facebook_refresh_token')->nullable();
 
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();

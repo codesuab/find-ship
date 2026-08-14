@@ -1,5 +1,12 @@
-type PageProps = {
-    name: string;
+type Flash = {
+    error?: string;
+    success?: string;
+    custom?: string;
 };
 
-export type { PageProps }
+type PageProps = {
+    name: string;
+    flash: Flash;
+};
+
+export type { PageProps,Flash }

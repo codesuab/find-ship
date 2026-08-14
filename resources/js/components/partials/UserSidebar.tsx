@@ -1,5 +1,5 @@
 import React from 'react'
-import { usePage } from "@inertiajs/react";
+import { router, usePage } from "@inertiajs/react";
 import Logo from '@/components/Logo';
 import { HiChevronUpDown } from "react-icons/hi2";
 import {
@@ -47,9 +47,9 @@ interface UserSidebarProps {
 }
 
 export default function UserSidebar({ searchToggler, setSearchToggler }: UserSidebarProps) {
-    const { name: appName } = usePage().props;
+    const { name: appName, auth } = usePage().props;
     const { state } = useSidebar()
-
+    const user = auth?.user;
 
     return (
         <Sidebar collapsible="icon">
@@ -183,18 +183,18 @@ export default function UserSidebar({ searchToggler, setSearchToggler }: UserSid
                                         className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                                     >
                                         <Avatar className="h-8 w-8 rounded-lg">
-                                            <AvatarImage src="" alt="" />
+                                            <AvatarImage src={user?.avatar} alt={user?.name} />
                                             <AvatarFallback className="rounded-lg">
-                                                CN
+                                                {user?.name?.slice(0, 2).toUpperCase()}
                                             </AvatarFallback>
                                         </Avatar>
 
                                         <div className="grid flex-1 text-left text-sm leading-tight">
                                             <span className="truncate font-medium">
-                                                Find Ship
+                                                {user?.name}
                                             </span>
                                             <span className="truncate text-xs">
-                                                find@gmail.com
+                                                {user?.email}
                                             </span>
                                         </div>
 
@@ -213,10 +213,10 @@ export default function UserSidebar({ searchToggler, setSearchToggler }: UserSid
                                     <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                                         <div className="grid min-w-0 flex-1 text-left text-sm leading-tight">
                                             <span className="truncate font-medium">
-                                                Find Ship
+                                                {user?.name}
                                             </span>
                                             <span className="truncate text-xs text-muted-foreground">
-                                                find@gmail.com
+                                                {user?.email}
                                             </span>
                                         </div>
                                     </div>
@@ -252,7 +252,7 @@ export default function UserSidebar({ searchToggler, setSearchToggler }: UserSid
 
                                 <DropdownMenuSeparator />
 
-                                <DropdownMenuItem variant='destructive'>
+                                <DropdownMenuItem variant='destructive' onClick={() => router.get('/auth/logout')}>
                                     <LogOut />
                                     Log out
                                 </DropdownMenuItem>

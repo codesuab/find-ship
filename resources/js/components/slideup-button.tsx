@@ -13,6 +13,7 @@ interface SlideUpButtonProps {
   buttonScale?: number;
   buttonOpacity?: number;
   onClick?: () => void;
+  disabled: boolean;
 }
 
 const SlideUpButton = ({
@@ -24,6 +25,7 @@ const SlideUpButton = ({
   buttonScale = 0.98,
   buttonOpacity = 1,
   onClick,
+  disabled = false,
 }: SlideUpButtonProps) => {
   const buttonVariants = {
     initial: { scale: 1 },
@@ -47,9 +49,11 @@ const SlideUpButton = ({
         variants={buttonVariants}
         initial="initial"
         whileHover="hover"
+        disabled={disabled}
         className={cn(
           "relative bg-primary text-white overflow-hidden px-6 py-3 rounded-xl text-[16px] font-medium duration-300 leading-normal cursor-pointer",
-          className
+          className,
+          disabled && 'pointer-events-none cursor-no-drop'
         )}
       >
         {/* container for stacked text */}

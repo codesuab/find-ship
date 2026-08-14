@@ -266,20 +266,22 @@ export default function SingUp() {
                         variants={itemVariants}
                         className="mt-4 grid grid-cols-2 gap-3"
                     >
-                        <button
+                        <a
                             type="button"
+                            href="/auth/social/redirect/google"
                             className="flex w-full items-center justify-center gap-2.5 rounded-md border border-slate-200 bg-white py-3 text-[14px] font-medium text-slate-700 transition-all hover:bg-slate-50 active:scale-[0.98]"
                         >
                             <GoogleIcon className="size-4.5" />
                             Google
-                        </button>
-                        <button
+                        </a>
+                        <a
                             type="button"
+                            href="/auth/social/redirect/facebook"
                             className="flex w-full items-center justify-center gap-2.5 rounded-md border border-slate-200 bg-white py-3 text-[14px] font-medium text-slate-700 transition-all hover:bg-slate-50 active:scale-[0.98]"
                         >
                             <FacebookIcon className="size-4.5" />
                             Facebook
-                        </button>
+                        </a>
                     </motion.div>
 
                     <motion.div

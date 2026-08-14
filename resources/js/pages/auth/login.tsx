@@ -1,11 +1,13 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { motion, type Variants } from "motion/react";
 import { ChevronLeft, Eye, EyeOff } from "lucide-react";
-import { Field, FieldLabel, FieldGroup } from "@/components/ui/field";
+import { Field, FieldLabel, FieldGroup, FieldDescription } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import SlideUpButton from "@/components/slideup-button";
-import { Head, Link } from '@inertiajs/react'
+import { Head, Link, useForm, usePage } from '@inertiajs/react'
+import { toast, Toaster } from "@/components/ui/toast";
+import { PageProps } from "@/types/types";
 
 const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg viewBox="0 0 24 24" width="1em" height="1em" {...props}>
@@ -21,7 +23,7 @@ const FacebookIcon = (props: React.SVGProps<SVGSVGElement>) => (
 
 export default function Login() {
     const [showPassword, setShowPassword] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const { flash } = usePage<PageProps>().props;
 
     // animation
     const containerVariants: Variants = {
@@ -51,18 +53,49 @@ export default function Login() {
         },
     };
 
+    // form
+    const { data, setData, processing, errors, post } = useForm<{
+        email: string;
+        password: string;
+        remember: boolean;
+    }>({
+        email: '',
+        password: '',
+        remember: false,
+    });
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        setLoading(true);
 
-        // Login request
+        post(route('login.post'), {
+            preserveScroll: true
+        })
     };
+
+    // show error
+    useEffect(() => {
+        if (flash?.error) {
+            toast.add({
+                type: "error",
+                description: flash.error,
+                priority: "high",
+            });
+        }
+
+        if (flash?.success) {
+            toast.add({
+                type: "success",
+                description: flash.success,
+                priority: "high",
+            });
+        }
+    }, [flash]);
 
     return (
         <div className="flex min-h-screen w-full bg-white font-sans text-slate-900 antialiased lg:flex-row">
             <Head>
                 <title>Login your account.</title>
             </Head>
+            <Toaster />
 
             {/* illustrator */}
             <div className="relative hidden w-[45%] lg:flex lg:min-h-screen">
@@ -196,20 +229,28 @@ export default function Login() {
 
                     <form
                         onSubmit={handleSubmit}
+                        method="post"
                         className="flex flex-col gap-5"
                     >
                         <motion.div
                             variants={itemVariants}
                             className="flex flex-col gap-2"
                         >
-                            <Field>
+                            <Field data-invalid={errors.email ? true : false}>
                                 <FieldLabel>Email or username</FieldLabel>
                                 <Input
-                                    type="text"
+                                    type="email"
                                     autoComplete="username"
                                     placeholder="Enter your email"
-                                    required
+                                    value={data.email}
+                                    aria-invalid={errors.email ? true : false}
+                                    onChange={(e) => setData('email', e.target.value)}
                                 />
+                                {errors.email && (
+                                    <FieldDescription>
+                                        {errors.email}
+                                    </FieldDescription>
+                                )}
                             </Field>
                         </motion.div>
 
@@ -217,14 +258,16 @@ export default function Login() {
                             variants={itemVariants}
                             className="flex flex-col gap-2"
                         >
-                            <Field>
+                            <Field data-invalid={errors.password ? true : false}>
                                 <FieldLabel>Password</FieldLabel>
                                 <div className="relative">
                                     <Input
                                         type={showPassword ? "text" : "password"}
                                         autoComplete="current-password"
                                         placeholder="Enter your password"
-                                        required
+                                        value={data.password}
+                                        aria-invalid={errors.password ? true : false}
+                                        onChange={(e) => setData('password', e.target.value)}
                                     />
                                     <button
                                         type="button"
@@ -239,6 +282,11 @@ export default function Login() {
                                         {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
                                     </button>
                                 </div>
+                                {errors.password && (
+                                    <FieldDescription>
+                                        {errors.password}
+                                    </FieldDescription>
+                                )}
                             </Field>
                         </motion.div>
 
@@ -248,7 +296,7 @@ export default function Login() {
                         >
                             <FieldGroup className="w-1/2">
                                 <Field orientation="horizontal">
-                                    <Checkbox id="remember" />
+                                    <Checkbox id="remember" checked={data.remember} onCheckedChange={(checked) => setData('remember', checked === true)} />
                                     <FieldLabel htmlFor="remember">
                                         Keep me signed in
                                     </FieldLabel>
@@ -266,8 +314,8 @@ export default function Login() {
                             variants={itemVariants}
                             className="mt-2"
                         >
-                            <SlideUpButton className="w-full">
-                                Sign in
+                            <SlideUpButton className="w-full" disabled={processing}>
+                                {processing ? 'Processing..' : 'Sign in'}
                             </SlideUpButton>
                         </motion.div>
                     </form>
@@ -276,20 +324,22 @@ export default function Login() {
                         variants={itemVariants}
                         className="mt-4 grid grid-cols-2 gap-3"
                     >
-                        <button
+                        <a
                             type="button"
+                            href="/auth/social/redirect/google"
                             className="flex w-full items-center justify-center gap-2.5 rounded-md border border-slate-200 bg-white py-3 text-[14px] font-medium text-slate-700 transition-all hover:bg-slate-50 active:scale-[0.98]"
                         >
                             <GoogleIcon className="size-4.5" />
                             Google
-                        </button>
-                        <button
+                        </a>
+                        <a
                             type="button"
+                            href="/auth/social/redirect/facebook"
                             className="flex w-full items-center justify-center gap-2.5 rounded-md border border-slate-200 bg-white py-3 text-[14px] font-medium text-slate-700 transition-all hover:bg-slate-50 active:scale-[0.98]"
                         >
                             <FacebookIcon className="size-4.5" />
                             Facebook
-                        </button>
+                        </a>
                     </motion.div>
 
                     <motion.div
@@ -306,6 +356,10 @@ export default function Login() {
                     </motion.div>
                 </motion.div>
             </div>
-        </div>
+        </div >
     );
+}
+
+function route(arg0: string): string {
+    throw new Error("Function not implemented.");
 }
