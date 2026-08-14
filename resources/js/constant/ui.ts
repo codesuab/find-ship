@@ -63,7 +63,6 @@ const featureCardOneState = [
     },
 ]
 
-
 // navbar 
 const navigationMenuItems = [
     {
