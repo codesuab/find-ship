@@ -13,7 +13,7 @@ interface SlideUpButtonProps {
   buttonScale?: number;
   buttonOpacity?: number;
   onClick?: () => void;
-  disabled: boolean;
+  disabled?: boolean;
 }
 
 const SlideUpButton = ({

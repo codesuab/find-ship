@@ -11,7 +11,7 @@ import { Link, router, usePage } from "@inertiajs/react";
 
 
 const CollaborateButton = () => (
-    <SlideUpButton onClick={() => router.visit('/auth/login')} className="bg-foreground text-white hover:bg-primary hidden md:flex py-2.5">
+    <SlideUpButton onClick={() => router.get(route('login'))} className="bg-foreground text-white hover:bg-primary hidden md:flex py-2.5">
         Let's Get Start
     </SlideUpButton>
 );

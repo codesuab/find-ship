@@ -1,4 +1,5 @@
 import type { Auth } from '@/types/auth';
+import { route as ziggyRoute } from 'ziggy-js';
 
 declare module 'react' {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -16,4 +17,8 @@ declare module '@inertiajs/core' {
             [key: string]: unknown;
         };
     }
+}
+
+declare global {
+    const route: typeof ziggyRoute;
 }

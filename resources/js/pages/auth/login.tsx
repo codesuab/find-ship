@@ -326,7 +326,9 @@ export default function Login() {
                     >
                         <a
                             type="button"
-                            href="/auth/social/redirect/google"
+                            href={route('ui.social.redirect', {
+                                'type': 'google'
+                            })}
                             className="flex w-full items-center justify-center gap-2.5 rounded-md border border-slate-200 bg-white py-3 text-[14px] font-medium text-slate-700 transition-all hover:bg-slate-50 active:scale-[0.98]"
                         >
                             <GoogleIcon className="size-4.5" />
@@ -334,7 +336,9 @@ export default function Login() {
                         </a>
                         <a
                             type="button"
-                            href="/auth/social/redirect/facebook"
+                            href={route('ui.social.redirect', {
+                                'type': 'facebook'
+                            })}
                             className="flex w-full items-center justify-center gap-2.5 rounded-md border border-slate-200 bg-white py-3 text-[14px] font-medium text-slate-700 transition-all hover:bg-slate-50 active:scale-[0.98]"
                         >
                             <FacebookIcon className="size-4.5" />
@@ -348,7 +352,7 @@ export default function Login() {
                     >
                         Don&apos;t have an account?{" "}
                         <Link
-                            href="/auth/sing-up"
+                            href={route('ui.sing.up')}
                             className="font-semibold text-slate-800 underline decoration-slate-800 underline-offset-4 transition-colors hover:text-black"
                         >
                             Sign up
@@ -358,8 +362,4 @@ export default function Login() {
             </div>
         </div >
     );
-}
-
-function route(arg0: string): string {
-    throw new Error("Function not implemented.");
 }

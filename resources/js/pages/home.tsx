@@ -110,7 +110,7 @@ export default function home() {
                             }}
                             viewport={{ once: true }}
                             className="flex flex-col w-10/12 mx-auto md:w-fit md:flex-row items-stretch md:items-center gap-3 mt-15">
-                            <SlideUpButton onClick={() => router.visit('/auth/login')} className="w-full md:w-fit" >Start Free Trial</SlideUpButton>
+                            <SlideUpButton onClick={() => router.get(route('login'))} className="w-full md:w-fit" >Start Free Trial</SlideUpButton>
                             <SlideUpButton className="w-full md:w-fit bg-foreground hover:bg-primary text-white">See How It Works</SlideUpButton>
                         </motion.div>
 
