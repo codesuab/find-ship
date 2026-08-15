@@ -29,11 +29,6 @@ import {
 import { navGroups, secondNavGroups } from '@/constant/CustomerMenu';
 import { BadgeCheck, Bell, CreditCard, LogOut, Search, Sparkles } from 'lucide-react';
 import {
-    InputGroup,
-    InputGroupAddon,
-    InputGroupInput,
-} from "@/components/ui/input-group"
-import {
     Tooltip,
     TooltipContent,
     TooltipTrigger,
@@ -234,7 +229,7 @@ export default function UserSidebar({ searchToggler, setSearchToggler }: UserSid
                                 <DropdownMenuSeparator />
 
                                 <DropdownMenuGroup>
-                                    <DropdownMenuItem className='py-1.5'>
+                                    <DropdownMenuItem className='py-1.5' onClick={() => router.get(route('app.account.view'))}>
                                         <BadgeCheck />
                                         Account
                                     </DropdownMenuItem>
@@ -252,7 +247,7 @@ export default function UserSidebar({ searchToggler, setSearchToggler }: UserSid
 
                                 <DropdownMenuSeparator />
 
-                                <DropdownMenuItem variant='destructive' onClick={() => router.get('/auth/logout')}>
+                                <DropdownMenuItem variant='destructive' onClick={() => router.get(route('logout'))}>
                                     <LogOut />
                                     Log out
                                 </DropdownMenuItem>

@@ -29,6 +29,9 @@ use Illuminate\Support\Carbon;
     'address',
     'avatar',
     'gender',
+    'county',
+    'city',
+    'zip',
 
     'plan_id',
     'plan_started_at',

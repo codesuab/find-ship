@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\SmtpConfig;
 use Carbon\CarbonImmutable;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
@@ -46,5 +48,24 @@ class AppServiceProvider extends ServiceProvider
                 ->uncompromised()
             : null,
         );
+
+        // config smt from database
+        // $smtp = SmtpConfig::first(); // for live
+        $smtp = SmtpConfig::find(2);
+        if ($smtp) {
+            $config = [
+                'driver' => $smtp->driver,
+                'host' => $smtp->host,
+                'port' => $smtp->port,
+                'username' => $smtp->username,
+                'password' => $smtp->password,
+                'encryption' => $smtp->encryption,
+                'from' => [
+                    'address' => $smtp->from_address,
+                    'name' => $smtp->from_name,
+                ],
+            ];
+            Config::set('mail', $config);
+        }
     }
 }

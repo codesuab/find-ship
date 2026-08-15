@@ -19,12 +19,14 @@ Route::middleware('guest')->prefix('/auth')->controller(AuthController::class)->
     Route::get('/login', 'login')->name('login');
     Route::post('/login-post', 'loginLogic')->name('login.post');
     Route::get('/sing-up', 'singUp')->name('ui.sing.up');
+    Route::post('/sing-up-post', 'singUpLogic')->name('ui.sing.up.post');
 
     // social login
     Route::get('/social/redirect/{type}', 'authRedirect')->name('ui.social.redirect');
     Route::get('/social/callback/{type}', 'authCallback')->name('ui.social.callback');
 });
 Route::middleware('auth')->prefix('/auth')->controller(AuthController::class)->group(function () {
+    Route::get('/mail-verify', 'mailVerify')->name('ui.mail.verify');
     Route::get('/logout', 'logout')->name('logout');
 });
 

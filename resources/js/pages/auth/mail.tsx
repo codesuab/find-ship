@@ -1,0 +1,191 @@
+import { FormEvent, useEffect } from 'react';
+import { motion, type Variants } from 'motion/react';
+import SlideUpButton from '@/components/slideup-button';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { toast, Toaster } from '@/components/ui/toast';
+import { PageProps } from '@/types/types';
+import {
+    InputOTP,
+    InputOTPGroup,
+    InputOTPSeparator,
+    InputOTPSlot,
+} from '@/components/ui/input-otp';
+import { REGEXP_ONLY_DIGITS } from 'input-otp';
+import { Label } from '@/components/ui/label';
+
+export default function Mail() {
+    const { flash, auth } = usePage<PageProps>().props;
+    const user = auth?.user;
+
+    // animation
+    const containerVariants: Variants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.08,
+                delayChildren: 0.1,
+            },
+        },
+    };
+
+    const itemVariants: Variants = {
+        hidden: {
+            opacity: 0,
+            y: 18,
+        },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                type: 'spring',
+                stiffness: 260,
+                damping: 24,
+            },
+        },
+    };
+
+    // form
+    const { data, setData, processing, errors, post } = useForm<{
+        email: string;
+        password: string;
+        remember: boolean;
+    }>({
+        email: '',
+        password: '',
+        remember: false,
+    });
+    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        post(route('login.post'), {
+            preserveScroll: true,
+        });
+    };
+
+    // show error
+    useEffect(() => {
+        if (flash?.error) {
+            toast.add({
+                type: 'error',
+                description: flash.error,
+                priority: 'high',
+            });
+        }
+
+        if (flash?.success) {
+            toast.add({
+                type: 'success',
+                description: flash.success,
+                priority: 'high',
+            });
+        }
+    }, [flash]);
+
+    return (
+        <div className="flex min-h-screen w-full bg-white font-sans text-slate-900 antialiased lg:flex-row">
+            <Head>
+                <title>Verify email address.</title>
+            </Head>
+            <Toaster />
+
+            {/* form */}
+            <div className="flex w-full items-center justify-center p-6 sm:p-12">
+                <motion.div
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="visible"
+                    className="w-full max-w-100"
+                >
+                    <motion.div variants={itemVariants} className="mb-10">
+                        <h1 className="mb-4 text-[30px] leading-[1.05] font-semibold tracking-tight text-foreground md:text-[35px]">
+                            Verify your email
+                        </h1>
+
+                        <p className="text-[15px] text-balance text-muted-foreground">
+                            We&apos;ve sent a verification link to your email.
+                            Please check your inbox to verify your account.
+                        </p>
+                    </motion.div>
+
+                    <motion.form
+                        onSubmit={handleSubmit}
+                        method="post"
+                        className="flex flex-col gap-4"
+                        variants={itemVariants}
+                    >
+                        <div className='space-y-3'>
+                            <div className="space-y-1">
+                                <Label htmlFor={String(user?.id)}>
+                                    Enter verification code
+                                </Label>
+                                <p className="text-xs text-muted-foreground">
+                                    This code contains numbers only (0–9).
+                                </p>
+                            </div>
+
+                            <InputOTP
+                                id={String(user?.id)}
+                                maxLength={6}
+                                pattern={REGEXP_ONLY_DIGITS}
+                                className="flex w-full justify-center gap-4"
+                            >
+                                <InputOTPGroup className="flex w-full justify-center gap-2">
+                                    <InputOTPSlot
+                                        index={0}
+                                        className="data-[active=true]:ring-primary/30! data-[active=true]:border-primary/50 h-14 w-14 rounded-sm! border text-lg data-[active=true]:ring-2!"
+                                    />
+                                    <InputOTPSlot
+                                        index={1}
+                                       className="data-[active=true]:ring-primary/30! data-[active=true]:border-primary/50 h-14 w-14 rounded-sm! border text-lg data-[active=true]:ring-2!"
+                                    />
+                                    <InputOTPSlot
+                                        index={2}
+                                       className="data-[active=true]:ring-primary/30! data-[active=true]:border-primary/50 h-14 w-14 rounded-sm! border text-lg data-[active=true]:ring-2!"
+                                    />
+                                </InputOTPGroup>
+                                <InputOTPSeparator />
+                                <InputOTPGroup className="flex w-full justify-center gap-2">
+                                    <InputOTPSlot
+                                        index={3}
+                                       className="data-[active=true]:ring-primary/30! data-[active=true]:border-primary/50 h-14 w-14 rounded-sm! border text-lg data-[active=true]:ring-2!"
+                                    />
+                                    <InputOTPSlot
+                                        index={4}
+                                       className="data-[active=true]:ring-primary/30! data-[active=true]:border-primary/50 h-14 w-14 rounded-sm! border text-lg data-[active=true]:ring-2!"
+                                    />
+                                    <InputOTPSlot
+                                        index={5}
+                                       className="data-[active=true]:ring-primary/30! data-[active=true]:border-primary/50 h-14 w-14 rounded-sm! border text-lg data-[active=true]:ring-2!"
+                                    />
+                                </InputOTPGroup>
+                            </InputOTP>
+                        </div>
+
+                        <motion.div variants={itemVariants} className="mt-2">
+                            <SlideUpButton
+                                className="w-full"
+                                disabled={processing}
+                            >
+                                {processing ? 'Processing..' : 'Verify now'}
+                            </SlideUpButton>
+                        </motion.div>
+                    </motion.form>
+
+                    <motion.div
+                        variants={itemVariants}
+                        className="mt-10 text-center text-[14px] text-slate-500"
+                    >
+                        Already verified your email?{' '}
+                        <Link
+                            href={route('ui.sing.up')}
+                            className="font-semibold text-slate-800 underline decoration-slate-800 underline-offset-4 transition-colors hover:text-black"
+                        >
+                            Back to login
+                        </Link>
+                    </motion.div>
+                </motion.div>
+            </div>
+        </div>
+    );
+}

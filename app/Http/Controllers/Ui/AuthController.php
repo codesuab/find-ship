@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Ui;
 
 use App\Http\Controllers\Controller;
+use App\Mail\GlobalMail;
+use App\Models\EmailVerificationCode;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 use Laravel\Socialite\Socialite;
 
@@ -70,6 +73,72 @@ class AuthController extends Controller
     public function singUp()
     {
         return Inertia::render('auth/SingUp');
+    }
+
+    public function singUpLogic(Request $request)
+    {
+        $request->validate([
+            'name' => 'required',
+            'email' => [
+                'required',
+                'email',
+                'regex:/@(gmail|yahoo|outlook|icloud)\.(com|co\.uk|ca|au|de|fr|net)$/i',
+            ],
+            'password' => 'required|min:6',
+        ], [
+            'email.regex' => 'Only Gmail, Yahoo, Outlook, and iCloud email addresses are accepted.',
+        ]);
+
+        try {
+            $existing = User::where('email', $request->email)->first();
+            if ($existing) {
+                return back()->with('error', 'This email address is already registered.');
+            }
+
+            User::create([
+                'name' => $request->name,
+                'password' => Hash::make($request->password),
+                'email' => $request->email,
+            ]);
+
+            if (Auth::attempt($request->only('email', 'password'), true)) {
+                // create mail verification
+                $code = (string) random_int(100000, 999999);
+                EmailVerificationCode::updateOrCreate(
+                    ['email' => $request->email],
+                    [
+                        'code_hash' => Hash::make($code),
+                        'expires_at' => now()->addMinutes(10),
+                        'verified_at' => null,
+                        'attempts' => 0,
+                        'last_sent_at' => now(),
+                    ]
+                );
+                $data = [
+                    'otp' => $code,
+                ];
+                $view = 'mail.otp';
+                Mail::to($request->email)->queue(new GlobalMail('Email Verification', $data, $view));
+
+                return to_route('ui.mail.verify')->with(
+                    'success',
+                    'A verification link has been sent to your email address. Please check your inbox and verify your email to continue.'
+                );
+            }
+
+            return to_route('login')->with(
+                'success',
+                'A verification link has been sent to your email address. Please check your inbox and verify your email to continue.'
+            );
+        } catch (\Throwable $th) {
+            return back()->with('error', 'Something else wrong try again!');
+        }
+    }
+
+    // mail verify
+    public function mailVerify()
+    {
+        return Inertia::render('auth/mail');
     }
 
     // social

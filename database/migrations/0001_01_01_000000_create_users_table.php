@@ -19,9 +19,12 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('password')->nullable();
             $table->string('phone')->unique()->nullable();
-            $table->text('address')->nullable();
             $table->string('avatar')->nullable();
             $table->enum('gender', ['male', 'female'])->nullable();
+            $table->string('country')->nullable();
+            $table->string('city')->nullable();
+            $table->string('zip')->nullable();
+            $table->text('address')->nullable();
 
             // SaaS
             $table->unsignedBigInteger('plan_id')->default(0);

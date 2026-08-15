@@ -1,27 +1,18 @@
-import { FormEvent, useState } from "react";
-import { motion, type Variants } from "motion/react";
-import { ChevronLeft, Eye, EyeOff } from "lucide-react";
-import { Field, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import SlideUpButton from "@/components/slideup-button";
-import { Head, Link } from "@inertiajs/react";
-
-const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
-    <svg viewBox="0 0 24 24" width="1em" height="1em" {...props}>
-        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
-        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.16v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.16C1.43 8.55 1 10.22 1 12s.43 3.45 1.16 4.93l3.68-2.84z" fill="#FBBC05" />
-        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.16 7.07l3.68 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
-    </svg>
-);
-const FacebookIcon = (props: React.SVGProps<SVGSVGElement>) => (
-    <svg xmlns="http://www.w3.org/2000/svg" {...props} width="1em" height="1em" viewBox="0 0 16 16" fill="none"><path fill="#1877F2" d="M15 8a7 7 0 00-7-7 7 7 0 00-1.094 13.915v-4.892H5.13V8h1.777V6.458c0-1.754 1.045-2.724 2.644-2.724.766 0 1.567.137 1.567.137v1.723h-.883c-.87 0-1.14.54-1.14 1.093V8h1.941l-.31 2.023H9.094v4.892A7.001 7.001 0 0015 8z" /><path fill="#ffffff" d="M10.725 10.023L11.035 8H9.094V6.687c0-.553.27-1.093 1.14-1.093h.883V3.87s-.801-.137-1.567-.137c-1.6 0-2.644.97-2.644 2.724V8H5.13v2.023h1.777v4.892a7.037 7.037 0 002.188 0v-4.892h1.63z" /></svg>
-);
+import { FormEvent, useEffect, useState } from 'react';
+import { motion, type Variants } from 'motion/react';
+import { ChevronLeft, Eye, EyeOff } from 'lucide-react';
+import { Field, FieldDescription, FieldLabel } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+import SlideUpButton from '@/components/slideup-button';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { GoogleIcon } from '@/components/icon/Google';
+import { FacebookIcon } from '@/components/icon/Facebook';
+import { PageProps } from '@/types/types';
+import { toast, Toaster } from '@/components/ui/toast';
 
 export default function SingUp() {
+    const { flash } = usePage<PageProps>().props;
     const [showPassword, setShowPassword] = useState(false);
-    const [loading, setLoading] = useState(false);
-
     // animation
     const containerVariants: Variants = {
         hidden: { opacity: 0 },
@@ -43,25 +34,56 @@ export default function SingUp() {
             opacity: 1,
             y: 0,
             transition: {
-                type: "spring",
+                type: 'spring',
                 stiffness: 260,
                 damping: 24,
             },
         },
     };
 
+    const { data, setData, post, processing, errors } = useForm<{
+        name: string;
+        password: string;
+        email: string;
+    }>({
+        name: '',
+        email: '',
+        password: '',
+    });
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        setLoading(true);
-
-        // Login request
+        post(route('ui.sing.up.post'), {
+            preserveScroll: true,
+            onError: (e) => console.log(e),
+        });
     };
+
+
+    // show error
+    useEffect(() => {
+        if (flash?.error) {
+            toast.add({
+                type: "error",
+                description: flash.error,
+                priority: "high",
+            });
+        }
+
+        if (flash?.success) {
+            toast.add({
+                type: "success",
+                description: flash.success,
+                priority: "high",
+            });
+        }
+    }, [flash]);
 
     return (
         <div className="flex min-h-screen w-full bg-white font-sans text-slate-900 antialiased lg:flex-row">
             <Head>
                 <title>Create new account.</title>
             </Head>
+             <Toaster />
 
             {/* illustrator */}
             <div className="relative hidden w-[45%] lg:flex lg:min-h-screen">
@@ -74,7 +96,7 @@ export default function SingUp() {
 
                     <div className="absolute inset-0 bg-linear-to-b from-transparent to-black/80" />
 
-                    <div className="absolute left-10 bottom-10 w-[60%]">
+                    <div className="absolute bottom-10 left-10 w-[60%]">
                         <motion.h2
                             initial={{
                                 opacity: 0,
@@ -84,14 +106,17 @@ export default function SingUp() {
                             whileInView={{
                                 opacity: 1,
                                 y: 0,
-                                filter: 'blur(0)'
+                                filter: 'blur(0)',
                             }}
                             transition={{
                                 duration: 0.4,
                                 ease: 'easeInOut',
                             }}
                             viewport={{ once: true }}
-                            className="text-lg text-white capitalize">You can easily</motion.h2>
+                            className="text-lg text-white capitalize"
+                        >
+                            You can easily
+                        </motion.h2>
                         <motion.h1
                             initial={{
                                 opacity: 0,
@@ -101,7 +126,7 @@ export default function SingUp() {
                             whileInView={{
                                 opacity: 1,
                                 y: 0,
-                                filter: 'blur(0)'
+                                filter: 'blur(0)',
                             }}
                             transition={{
                                 duration: 0.4,
@@ -109,7 +134,10 @@ export default function SingUp() {
                                 delay: 0.2,
                             }}
                             viewport={{ once: true }}
-                            className="text-5xl font-semibold text-white mt-3">Get complete visibility into every vessel movement</motion.h1>
+                            className="mt-3 text-5xl font-semibold text-white"
+                        >
+                            Get complete visibility into every vessel movement
+                        </motion.h1>
                         <motion.p
                             initial={{
                                 opacity: 0,
@@ -119,7 +147,7 @@ export default function SingUp() {
                             whileInView={{
                                 opacity: 1,
                                 y: 0,
-                                filter: 'blur(0)'
+                                filter: 'blur(0)',
                             }}
                             transition={{
                                 duration: 0.4,
@@ -127,10 +155,15 @@ export default function SingUp() {
                                 delay: 0.3,
                             }}
                             viewport={{ once: true }}
-                            className="text-base font-light text-white  mt-3">Track arrivals, departures, schedules, and port activity from one centralized hub built for modern maritime operations.</motion.p>
+                            className="mt-3 text-base font-light text-white"
+                        >
+                            Track arrivals, departures, schedules, and port
+                            activity from one centralized hub built for modern
+                            maritime operations.
+                        </motion.p>
                     </div>
 
-                    <div className="flex items-center justify-between w-[90%] absolute top-10 left-10">
+                    <div className="absolute top-10 left-10 flex w-[90%] items-center justify-between">
                         <motion.h1
                             initial={{
                                 opacity: 0,
@@ -138,14 +171,15 @@ export default function SingUp() {
                             }}
                             whileInView={{
                                 opacity: 1,
-                                x: 0
+                                x: 0,
                             }}
                             transition={{
                                 duration: 0.5,
-                                ease: 'easeOut'
+                                ease: 'easeOut',
                             }}
                             viewport={{ once: true }}
-                            className="text-xl font-bold text-white">
+                            className="text-xl font-bold text-white"
+                        >
                             FindShip
                         </motion.h1>
 
@@ -156,16 +190,23 @@ export default function SingUp() {
                             }}
                             whileInView={{
                                 opacity: 1,
-                                x: 0
+                                x: 0,
                             }}
                             transition={{
                                 duration: 0.5,
                                 delay: 1,
-                                ease: 'easeOut'
+                                ease: 'easeOut',
                             }}
-                            viewport={{ once: true }}>
-                            <Link href='/' className="flex text-white text-base duration-300 hover:underline font-medium capitalize items-center gap-1 group">
-                                <ChevronLeft size={16} className="mt-0.5 duration-300 group-hover:mr-1" />
+                            viewport={{ once: true }}
+                        >
+                            <Link
+                                href="/"
+                                className="group flex items-center gap-1 text-base font-medium text-white capitalize duration-300 hover:underline"
+                            >
+                                <ChevronLeft
+                                    size={16}
+                                    className="mt-0.5 duration-300 group-hover:mr-1"
+                                />
                                 <span>Back to Website</span>
                             </Link>
                         </motion.div>
@@ -182,12 +223,13 @@ export default function SingUp() {
                     className="w-full max-w-100"
                 >
                     <motion.div variants={itemVariants} className="mb-10">
-                        <h1 className="mb-4 text-[35px] md:text-[48px] font-semibold leading-[1.05] tracking-tight text-foreground">
+                        <h1 className="mb-4 text-[35px] leading-[1.05] font-semibold tracking-tight text-foreground md:text-[48px]">
                             Create your free account
                         </h1>
 
-                        <p className="text-[15px] text-muted-foreground text-balance">
-                            Join modern port teams managing vessel operations smarter, faster, and with confidence.
+                        <p className="text-[15px] text-balance text-muted-foreground">
+                            Join modern port teams managing vessel operations
+                            smarter, faster, and with confidence.
                         </p>
                     </motion.div>
 
@@ -199,13 +241,22 @@ export default function SingUp() {
                             variants={itemVariants}
                             className="flex flex-col gap-2"
                         >
-                            <Field>
+                            <Field data-invalid={errors.name ? true : false}>
                                 <FieldLabel>Name</FieldLabel>
                                 <Input
                                     type="text"
                                     placeholder="Enter your name"
-                                    required
+                                    value={data.name}
+                                    onChange={(e) =>
+                                        setData('name', e.target.value)
+                                    }
+                                    aria-invalid={errors.name ? true : false}
                                 />
+                                {errors.name && (
+                                    <FieldDescription className="text-destructive">
+                                        {errors.name}
+                                    </FieldDescription>
+                                )}
                             </Field>
                         </motion.div>
 
@@ -213,13 +264,26 @@ export default function SingUp() {
                             variants={itemVariants}
                             className="flex flex-col gap-2"
                         >
-                            <Field>
+                            <Field data-invalid={errors.email ? true : false}>
                                 <FieldLabel>Email</FieldLabel>
                                 <Input
                                     type="email"
                                     placeholder="Enter your email"
-                                    required
+                                    value={data.email}
+                                    onChange={(e) =>
+                                        setData('email', e.target.value)
+                                    }
+                                    aria-invalid={errors.email ? true : false}
                                 />
+                                <FieldDescription className="text-xs">
+                                    Only Gmail, Yahoo, Outlook, and iCloud email
+                                    addresses are accepted.
+                                </FieldDescription>
+                                {errors.email && (
+                                    <FieldDescription className="text-destructive">
+                                        {errors.email}
+                                    </FieldDescription>
+                                )}
                             </Field>
                         </motion.div>
 
@@ -227,37 +291,55 @@ export default function SingUp() {
                             variants={itemVariants}
                             className="flex flex-col gap-2"
                         >
-                            <Field>
+                            <Field
+                                data-invalid={errors.password ? true : false}
+                            >
                                 <FieldLabel>Password</FieldLabel>
                                 <div className="relative">
                                     <Input
-                                        type={showPassword ? "text" : "password"}
+                                        type={
+                                            showPassword ? 'text' : 'password'
+                                        }
                                         autoComplete="current-password"
                                         placeholder="Enter your password"
-                                        required
+                                        value={data.password}
+                                        onChange={(e) =>
+                                            setData('password', e.target.value)
+                                        }
+                                        aria-invalid={
+                                            errors.password ? true : false
+                                        }
                                     />
                                     <button
                                         type="button"
-                                        onClick={() => setShowPassword((prev) => !prev)}
+                                        onClick={() =>
+                                            setShowPassword((prev) => !prev)
+                                        }
                                         aria-label={
                                             showPassword
-                                                ? "Hide password"
-                                                : "Show password"
+                                                ? 'Hide password'
+                                                : 'Show password'
                                         }
                                         className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 transition-colors hover:text-slate-600"
                                     >
-                                        {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
+                                        {showPassword ? (
+                                            <Eye size={20} />
+                                        ) : (
+                                            <EyeOff size={20} />
+                                        )}
                                     </button>
                                 </div>
+                                {errors.password && (
+                                    <FieldDescription className="text-destructive">
+                                        {errors.password}
+                                    </FieldDescription>
+                                )}
                             </Field>
                         </motion.div>
 
-                        <motion.div
-                            variants={itemVariants}
-                            className="mt-2"
-                        >
+                        <motion.div variants={itemVariants} className="mt-2">
                             <SlideUpButton className="w-full">
-                                Sign up
+                                {processing ? 'Processing..' : 'Sign up'}
                             </SlideUpButton>
                         </motion.div>
                     </form>
@@ -269,7 +351,7 @@ export default function SingUp() {
                         <a
                             type="button"
                             href={route('ui.social.redirect', {
-                                'type': 'google'
+                                type: 'google',
                             })}
                             className="flex w-full items-center justify-center gap-2.5 rounded-md border border-slate-200 bg-white py-3 text-[14px] font-medium text-slate-700 transition-all hover:bg-slate-50 active:scale-[0.98]"
                         >
@@ -279,7 +361,7 @@ export default function SingUp() {
                         <a
                             type="button"
                             href={route('ui.social.redirect', {
-                                'type': 'facebook'
+                                type: 'facebook',
                             })}
                             className="flex w-full items-center justify-center gap-2.5 rounded-md border border-slate-200 bg-white py-3 text-[14px] font-medium text-slate-700 transition-all hover:bg-slate-50 active:scale-[0.98]"
                         >
@@ -292,7 +374,7 @@ export default function SingUp() {
                         variants={itemVariants}
                         className="mt-10 text-center text-[14px] text-slate-500"
                     >
-                        Already have an account?{" "}
+                        Already have an account?{' '}
                         <Link
                             href={route('login')}
                             className="font-semibold text-slate-800 underline decoration-slate-800 underline-offset-4 transition-colors hover:text-black"
