@@ -33,14 +33,14 @@ class AuthController extends Controller
             $user = User::where('email', $request->email)->first();
 
             if (! $user || ! Hash::check($request->password, $user->password)) {
-                return back()->with('error', 'Invalid email or password');
+                return back()->with('error', 'Invalid email or password')->with('_flash_id', time());
             }
 
             if ($user->status !== 'active') {
                 return back()->with(
                     'error',
                     $user->status_message ?? 'Your account is not active.'
-                );
+                )->with('_flash_id', time());
             }
 
             // Logout all old devices/sessions
@@ -65,7 +65,7 @@ class AuthController extends Controller
 
             return to_route('app.dashboard');
         } catch (\Throwable $e) {
-            return back()->with('error', 'Something went wrong. Please try again.');
+            return back()->with('error', 'Something went wrong. Please try again.')->with('_flash_id', time());
         }
     }
 
@@ -92,7 +92,7 @@ class AuthController extends Controller
         try {
             $existing = User::where('email', $request->email)->first();
             if ($existing) {
-                return back()->with('error', 'This email address is already registered.');
+                return back()->with('error', 'This email address is already registered.')->with('_flash_id', time());
             }
 
             User::create([
@@ -123,22 +123,110 @@ class AuthController extends Controller
                 return to_route('ui.mail.verify')->with(
                     'success',
                     'A verification link has been sent to your email address. Please check your inbox and verify your email to continue.'
-                );
+                )->with('_flash_id', time());
             }
 
             return to_route('login')->with(
                 'success',
                 'A verification link has been sent to your email address. Please check your inbox and verify your email to continue.'
-            );
+            )->with('_flash_id', time());
         } catch (\Throwable $th) {
-            return back()->with('error', 'Something else wrong try again!');
+            return back()->with('error', 'Something else wrong try again!')->with('_flash_id', time());
         }
     }
 
     // mail verify
     public function mailVerify()
     {
+        if(Auth::user()->email_verified_at){
+            return to_route('app.dashboard');
+        }
+
         return Inertia::render('auth/mail');
+    }
+
+    public function verifyLogic(Request $request)
+    {
+        $request->validate([
+            'otp' => 'required|min:6|max:6',
+        ]);
+
+        try {
+            $user = Auth::user();
+
+            $verification = EmailVerificationCode::where('email', $user->email)->first();
+
+            if (! $verification) {
+                return back()->with('error', 'Verification code not found.')->with('_flash_id', time());
+            }
+
+            if ($verification->expires_at->isPast()) {
+                return back()->with('error', 'Verification code has expired.')->with('_flash_id', time());
+            }
+
+            if ($verification->attempts >= 5) {
+                return back()->with('error', 'Too many attempts. Please request a new code.')->with('_flash_id', time());
+            }
+
+            if (! Hash::check($request->otp, $verification->code_hash)) {
+                $verification->increment('attempts');
+
+                return back()
+                    ->with('error', 'Invalid verification code.')
+                    ->with('_flash_id', time());
+            }
+
+            $verification->update([
+                'verified_at' => now(),
+            ]);
+
+            $user->update([
+                'email_verified_at' => now(),
+            ]);
+
+            $verification->delete();
+
+            return to_route('app.dashboard');
+        } catch (\Exception $th) {
+            return back()->with('error', 'Something else wrong, try again!')->with('_flash_id', time());
+        }
+    }
+
+    public function resendLogic()
+    {
+        try {
+            $user = Auth::user();
+
+            if (! $user) {
+                return back()->with('error', 'Something else wrong, try again!')->with('_flash_id', time());
+            }
+
+            EmailVerificationCode::where('email', $user->email)->delete();
+
+            $code = (string) random_int(100000, 999999);
+            EmailVerificationCode::updateOrCreate(
+                ['email' => $user->email],
+                [
+                    'code_hash' => Hash::make($code),
+                    'expires_at' => now()->addMinutes(10),
+                    'verified_at' => null,
+                    'attempts' => 0,
+                    'last_sent_at' => now(),
+                ]
+            );
+            $data = [
+                'otp' => $code,
+            ];
+            $view = 'mail.otp';
+            Mail::to($user->email)->queue(new GlobalMail('Email Verification', $data, $view));
+
+            return to_route('ui.mail.verify')->with(
+                'success',
+                'A verification link has been sent to your email address. Please check your inbox and verify your email to continue.'
+            )->with('_flash_id', time());
+        } catch (\Throwable $th) {
+            return back()->with('error', 'Something else wrong, try again!')->with('_flash_id', time());
+        }
     }
 
     // social

@@ -53,7 +53,7 @@ const SlideUpButton = ({
         className={cn(
           "relative bg-primary text-white overflow-hidden px-6 py-3 rounded-xl text-[16px] font-medium duration-300 leading-normal cursor-pointer",
           className,
-          disabled && 'pointer-events-none cursor-no-drop'
+          disabled && 'pointer-events-none cursor-no-drop opacity-60'
         )}
       >
         {/* container for stacked text */}

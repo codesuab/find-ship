@@ -27,6 +27,9 @@ Route::middleware('guest')->prefix('/auth')->controller(AuthController::class)->
 });
 Route::middleware('auth')->prefix('/auth')->controller(AuthController::class)->group(function () {
     Route::get('/mail-verify', 'mailVerify')->name('ui.mail.verify');
+    Route::post('/mail-verify-logic', 'verifyLogic')->name('ui.mail.verify.logic');
+    Route::post('/mail-verify-resend', 'resendLogic')->name('ui.mail.verify.resend');
+
     Route::get('/logout', 'logout')->name('logout');
 });
 

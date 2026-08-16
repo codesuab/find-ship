@@ -12,6 +12,7 @@ import { PageProps } from "@/types/types";
 import Logo from "@/components/Logo";
 import Navbar from "@/components/partials/Navbar";
 import Lenis from "lenis";
+import { toast } from "@/components/ui/toast";
 
 export default function AppLayout({ children }: PropsWithChildren) {
     const { name: appName } = usePage<PageProps>().props;

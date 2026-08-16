@@ -1,4 +1,4 @@
-import { PropsWithChildren, useState } from 'react';
+import { PropsWithChildren, useEffect, useState } from 'react';
 import {
     Sidebar,
     SidebarHeader,
@@ -12,15 +12,37 @@ import Logo from '@/components/Logo';
 import { Search, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { usePage } from '@inertiajs/react';
+import { toast, Toaster } from '@/components/ui/toast';
+import { PageProps } from '@/types/types';
 
 export default function CustomerLayout({ children }: PropsWithChildren) {
     const [searchToggler, setSearchToggler] = useState(false);
-    const { name: appName } = usePage().props;
+    const { name: appName,flash } = usePage<PageProps>().props;
+
+    // show error
+    useEffect(() => {
+        if (flash?.error) {
+            toast.add({
+                type: 'error',
+                description: flash.error,
+                priority: 'high',
+            });
+        }
+
+        if (flash?.success) {
+            toast.add({
+                type: 'success',
+                description: flash.success,
+                priority: 'high',
+            });
+        }
+    }, [flash?.id]);
     return (
         <SidebarProvider
             className="min-h-svh text-foreground"
             defaultOpen={false}
         >
+            <Toaster />
             <div className="relative flex">
                 <UserSidebar
                     searchToggler={searchToggler}

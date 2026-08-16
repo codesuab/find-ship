@@ -12,6 +12,9 @@ import {
 } from '@/components/ui/input-otp';
 import { REGEXP_ONLY_DIGITS } from 'input-otp';
 import { Label } from '@/components/ui/label';
+import { FieldDescription } from '@/components/ui/field';
+import { Button } from '@/components/ui/button';
+import { Loader } from 'lucide-react';
 
 export default function Mail() {
     const { flash, auth } = usePage<PageProps>().props;
@@ -28,7 +31,6 @@ export default function Mail() {
             },
         },
     };
-
     const itemVariants: Variants = {
         hidden: {
             opacity: 0,
@@ -47,21 +49,29 @@ export default function Mail() {
 
     // form
     const { data, setData, processing, errors, post } = useForm<{
-        email: string;
-        password: string;
-        remember: boolean;
+        otp?: any;
     }>({
-        email: '',
-        password: '',
-        remember: false,
+        otp: '',
     });
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        post(route('login.post'), {
+        post(route('ui.mail.verify.logic'), {
             preserveScroll: true,
         });
     };
+
+    // resend form
+    const resendFrom = useForm({
+        id: '',
+    });
+    const handleResend = (e:any)=>{
+        e.preventDefault();
+        
+        resendFrom.post(route('ui.mail.verify.resend'), {
+            preserveScroll: true
+        })
+    }
 
     // show error
     useEffect(() => {
@@ -80,22 +90,22 @@ export default function Mail() {
                 priority: 'high',
             });
         }
-    }, [flash]);
+    }, [flash?.id]);
 
     return (
-        <div className="flex min-h-screen w-full bg-white font-sans text-slate-900 antialiased lg:flex-row">
+        <div className="relative flex min-h-screen w-full bg-white font-sans text-slate-900 antialiased lg:flex-row">
             <Head>
                 <title>Verify email address.</title>
             </Head>
             <Toaster />
 
             {/* form */}
-            <div className="flex w-full items-center justify-center p-6 sm:p-12">
+            <div className="z-2 flex w-full items-center justify-center p-6 sm:p-12">
                 <motion.div
                     variants={containerVariants}
                     initial="hidden"
                     animate="visible"
-                    className="w-full max-w-100"
+                    className="w-full md:max-w-100"
                 >
                     <motion.div variants={itemVariants} className="mb-10">
                         <h1 className="mb-4 text-[30px] leading-[1.05] font-semibold tracking-tight text-foreground md:text-[35px]">
@@ -114,7 +124,7 @@ export default function Mail() {
                         className="flex flex-col gap-4"
                         variants={itemVariants}
                     >
-                        <div className='space-y-3'>
+                        <div className="space-y-3">
                             <div className="space-y-1">
                                 <Label htmlFor={String(user?.id)}>
                                     Enter verification code
@@ -128,44 +138,58 @@ export default function Mail() {
                                 id={String(user?.id)}
                                 maxLength={6}
                                 pattern={REGEXP_ONLY_DIGITS}
+                                onChange={(e) => setData('otp', e)}
                                 className="flex w-full justify-center gap-4"
+                                disabled={resendFrom.processing}
                             >
                                 <InputOTPGroup className="flex w-full justify-center gap-2">
                                     <InputOTPSlot
                                         index={0}
-                                        className="data-[active=true]:ring-primary/30! data-[active=true]:border-primary/50 h-14 w-14 rounded-sm! border text-lg data-[active=true]:ring-2!"
+                                        className="h-12.5 w-12.5 rounded-sm! border text-lg data-[active=true]:border-primary/50 data-[active=true]:ring-2! data-[active=true]:ring-primary/30! md:h-14 md:w-14"
                                     />
                                     <InputOTPSlot
                                         index={1}
-                                       className="data-[active=true]:ring-primary/30! data-[active=true]:border-primary/50 h-14 w-14 rounded-sm! border text-lg data-[active=true]:ring-2!"
+                                        className="h-12.5 w-12.5 rounded-sm! border text-lg data-[active=true]:border-primary/50 data-[active=true]:ring-2! data-[active=true]:ring-primary/30! md:h-14 md:w-14"
                                     />
                                     <InputOTPSlot
                                         index={2}
-                                       className="data-[active=true]:ring-primary/30! data-[active=true]:border-primary/50 h-14 w-14 rounded-sm! border text-lg data-[active=true]:ring-2!"
+                                        className="h-12.5 w-12.5 rounded-sm! border text-lg data-[active=true]:border-primary/50 data-[active=true]:ring-2! data-[active=true]:ring-primary/30! md:h-14 md:w-14"
                                     />
                                 </InputOTPGroup>
                                 <InputOTPSeparator />
                                 <InputOTPGroup className="flex w-full justify-center gap-2">
                                     <InputOTPSlot
                                         index={3}
-                                       className="data-[active=true]:ring-primary/30! data-[active=true]:border-primary/50 h-14 w-14 rounded-sm! border text-lg data-[active=true]:ring-2!"
+                                        className="h-12.5 w-12.5 rounded-sm! border text-lg data-[active=true]:border-primary/50 data-[active=true]:ring-2! data-[active=true]:ring-primary/30! md:h-14 md:w-14"
                                     />
                                     <InputOTPSlot
                                         index={4}
-                                       className="data-[active=true]:ring-primary/30! data-[active=true]:border-primary/50 h-14 w-14 rounded-sm! border text-lg data-[active=true]:ring-2!"
+                                        className="h-12.5 w-12.5 rounded-sm! border text-lg data-[active=true]:border-primary/50 data-[active=true]:ring-2! data-[active=true]:ring-primary/30! md:h-14 md:w-14"
                                     />
                                     <InputOTPSlot
                                         index={5}
-                                       className="data-[active=true]:ring-primary/30! data-[active=true]:border-primary/50 h-14 w-14 rounded-sm! border text-lg data-[active=true]:ring-2!"
+                                        className="h-12.5 w-12.5 rounded-sm! border text-lg data-[active=true]:border-primary/50 data-[active=true]:ring-2! data-[active=true]:ring-primary/30! md:h-14 md:w-14"
                                     />
                                 </InputOTPGroup>
                             </InputOTP>
+                            <Label>
+                                Didn't receive the email?{' '}
+                                <Button onClick={handleResend} disabled={resendFrom.processing} variant="link" className="h-0 p-0">
+                                    {resendFrom?.processing ? <><Loader className='size-4 animate-spin'/>Sending..</> : 'Resend verification code'}
+                                </Button>
+                            </Label>
+
+                            {errors.otp && (
+                                <FieldDescription className="text-destructive">
+                                    {errors.otp}
+                                </FieldDescription>
+                            )}
                         </div>
 
                         <motion.div variants={itemVariants} className="mt-2">
                             <SlideUpButton
                                 className="w-full"
-                                disabled={processing}
+                                disabled={processing || data.otp.length !== 6 || resendFrom.processing}
                             >
                                 {processing ? 'Processing..' : 'Verify now'}
                             </SlideUpButton>
@@ -186,6 +210,9 @@ export default function Mail() {
                     </motion.div>
                 </motion.div>
             </div>
+
+            {/* bg */}
+            <div className="absolute -top-50 -left-50 z-1 hidden h-100 w-100 rounded-full bg-primary/30 blur-3xl md:block"></div>
         </div>
     );
 }

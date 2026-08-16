@@ -15,5 +15,9 @@ use Illuminate\Database\Eloquent\Model;
 ])]
 class EmailVerificationCode extends Model
 {
-    //
+    protected $casts = [
+        'expires_at' => 'datetime',
+        'verified_at' => 'datetime',
+        'last_sent_at' => 'datetime',
+    ];
 }

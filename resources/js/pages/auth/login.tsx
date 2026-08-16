@@ -66,20 +66,20 @@ export default function Login() {
     useEffect(() => {
         if (flash?.error) {
             toast.add({
-                type: "error",
+                type: 'error',
                 description: flash.error,
-                priority: "high",
+                priority: 'high',
             });
         }
 
         if (flash?.success) {
             toast.add({
-                type: "success",
+                type: 'success',
                 description: flash.success,
-                priority: "high",
+                priority: 'high',
             });
         }
-    }, [flash]);
+    }, [flash?.id]);
 
     return (
         <div className="flex min-h-screen w-full bg-white font-sans text-slate-900 antialiased lg:flex-row">

@@ -2,6 +2,7 @@ type Flash = {
     error?: string;
     success?: string;
     custom?: string;
+    id?:any
 };
 
 type PageProps = {
