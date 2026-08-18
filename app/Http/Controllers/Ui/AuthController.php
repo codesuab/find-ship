@@ -103,6 +103,12 @@ class AuthController extends Controller
 
             if (Auth::attempt($request->only('email', 'password'), true)) {
                 // create mail verification
+                // delete old queue
+                $queueKey = 'verification:'.Auth::id();
+                DB::table('jobs')
+                    ->where('payload', 'like', '%'.$queueKey.'%')
+                    ->delete();
+
                 $code = (string) random_int(100000, 999999);
                 EmailVerificationCode::updateOrCreate(
                     ['email' => $request->email],
@@ -118,7 +124,8 @@ class AuthController extends Controller
                     'otp' => $code,
                 ];
                 $view = 'mail.otp';
-                Mail::to($request->email)->queue(new GlobalMail('Email Verification', $data, $view));
+                $queueKey = 'verification:'.Auth::id();
+                Mail::to($request->email)->queue(new GlobalMail('Email Verification', $data, $view, $queueKey));
 
                 return to_route('ui.mail.verify')->with(
                     'success',
@@ -138,7 +145,7 @@ class AuthController extends Controller
     // mail verify
     public function mailVerify()
     {
-        if(Auth::user()->email_verified_at){
+        if (Auth::user()->email_verified_at) {
             return to_route('app.dashboard');
         }
 
@@ -203,6 +210,13 @@ class AuthController extends Controller
 
             EmailVerificationCode::where('email', $user->email)->delete();
 
+            // delete old queue
+            $queueKey = 'verification:'.$user->id;
+            DB::table('jobs')
+                ->where('payload', 'like', '%'.$queueKey.'%')
+                ->delete();
+
+            // send code
             $code = (string) random_int(100000, 999999);
             EmailVerificationCode::updateOrCreate(
                 ['email' => $user->email],
@@ -218,7 +232,8 @@ class AuthController extends Controller
                 'otp' => $code,
             ];
             $view = 'mail.otp';
-            Mail::to($user->email)->queue(new GlobalMail('Email Verification', $data, $view));
+            $queueKey = 'verification:'.$user->id;
+            Mail::to($user->email)->queue(new GlobalMail('Email Verification', $data, $view, $queueKey));
 
             return to_route('ui.mail.verify')->with(
                 'success',

@@ -22,11 +22,14 @@ class GlobalMail extends Mailable
 
     public $view;
 
-    public function __construct(string $subject, array $data, string $view)
+    public $queueKey = null;
+
+    public function __construct(string $subject, array $data, string $view, ?string $queueKey)
     {
         $this->subject = $subject;
         $this->data = $data;
         $this->view = $view;
+        $this->queueKey = $queueKey;
     }
 
     /**
