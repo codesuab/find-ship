@@ -10,7 +10,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\RateLimiter;
 use Inertia\Inertia;
 use Laravel\Socialite\Socialite;
 
@@ -143,13 +145,25 @@ class AuthController extends Controller
     }
 
     // mail verify
-    public function mailVerify()
+    public function mailVerify(Request $request)
     {
-        if (Auth::user()->email_verified_at) {
+        $user = Auth::user();
+
+        if ($user->email_verified_at) {
             return to_route('app.dashboard');
         }
 
-        return Inertia::render('auth/mail');
+        // rate limit init
+        $email = $user->email;
+        $key = 'reset-verification-email:'.$email;
+        $maxAttempts = 2;
+
+        $isBlocked = RateLimiter::tooManyAttempts($key, $maxAttempts);
+        $retryAfter = $isBlocked ? RateLimiter::availableIn($key) : 0;
+
+        return Inertia::render('auth/mail', [
+            'retry_after' => $retryAfter,
+        ]);
     }
 
     public function verifyLogic(Request $request)
@@ -204,9 +218,44 @@ class AuthController extends Controller
         try {
             $user = Auth::user();
 
+            // if not user found
             if (! $user) {
                 return back()->with('error', 'Something else wrong, try again!')->with('_flash_id', time());
             }
+
+            // if already verified
+            if ($user->email_verified_at) {
+                return to_route('app.dashboard')->with('success', 'Your email is already verified.')->with('_flash_id', time());
+            }
+
+            // rate limit
+            $email = $user->email;
+            $key = 'reset-verification-email:'.$email;
+            $maxAttempts = 2;
+            $decayMinutes = 10;
+
+            // 1 check rate limit
+            if (RateLimiter::tooManyAttempts($key, $maxAttempts)) {
+                $availableIn = RateLimiter::availableIn($key);
+                $minutes = floor($availableIn / 60);
+                $seconds = $availableIn % 60;
+
+                return back()->with('error', "Too many verification attempts. Please wait {$minutes} minutes {$seconds} seconds.")->with('_flash_id', time());
+            }
+
+            // 2. Check – whether the code is being sent too quickly (60-second gap).
+            $recentCode = EmailVerificationCode::where('email', $email)
+                ->where('last_sent_at', '>=', now()->subSeconds(60))
+                ->first();
+
+            if ($recentCode) {
+                $waitSeconds = 60 - now()->diffInSeconds($recentCode->last_sent_at);
+
+                return back()->with('error', "Please wait {$waitSeconds} seconds before requesting again.")->with('_flash_id', time());
+            }
+
+            // 3. Limit Hit (increase attempt count)
+            RateLimiter::hit($key, $decayMinutes * 60);
 
             EmailVerificationCode::where('email', $user->email)->delete();
 
@@ -240,6 +289,11 @@ class AuthController extends Controller
                 'A verification link has been sent to your email address. Please check your inbox and verify your email to continue.'
             )->with('_flash_id', time());
         } catch (\Throwable $th) {
+            Log::error('Resend verification failed: '.$th->getMessage(), [
+                'user_id' => Auth::id() ?? 'guest',
+                'trace' => $th->getTraceAsString(),
+            ]);
+
             return back()->with('error', 'Something else wrong, try again!')->with('_flash_id', time());
         }
     }

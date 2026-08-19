@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -79,39 +80,20 @@ class AppServiceProvider extends ServiceProvider
     // rate limit
     protected function rateLimit(): void
     {
-        RateLimiter::for('login', function (Request $request) {
-            return [
-                Limit::perMinute(5)
-                    ->by('ip:'.$request->ip()),
+        // for resend account verification email
+        RateLimiter::for('reset-verification-email', function (Request $request) {
+            $key = 'reset-verification-email:'.$request->email;
 
-                Limit::perMinute(3)
-                    ->by('email:'.strtolower(trim($request->input('email', '')))),
-            ];
-        });
+            return Limit::perMinutes(10, 2) // Per 10 minutes 2 Request
+                ->by($key)
+                ->response(function (Request $request, array $headers) {
+                    $retryAfter = $headers['Retry-After'] ?? 600; // 10 minutes = 600 seconds
+                    $minutes = ceil($retryAfter / 60);
 
-        RateLimiter::for('register', function (Request $request) {
-            return Limit::perMinutes(10, 5)
-                ->by('ip:'.$request->ip());
-        });
-
-        RateLimiter::for('verify-email', function (Request $request) {
-            return [
-                Limit::perMinutes(10, 5)
-                    ->by('user:'.$request->user()->id),
-
-                Limit::perMinutes(10, 20)
-                    ->by('ip:'.$request->ip()),
-            ];
-        });
-
-        RateLimiter::for('resend-verification', function (Request $request) {
-            return [
-                Limit::perMinutes(10, 2)
-                    ->by('user:'.$request->user()->id),
-
-                Limit::perMinutes(10, 10)
-                    ->by('ip:'.$request->ip()),
-            ];
+                    return back()->withErrors([
+                        'email' => "Too many verification attempts. Please wait {$minutes} minutes.",
+                    ])->withInput();
+                });
         });
     }
 }

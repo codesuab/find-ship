@@ -18,12 +18,10 @@ Route::controller(ContactController::class)->group(function () {
 Route::middleware('guest')->prefix('/auth')->controller(AuthController::class)->group(function () {
     Route::get('/login', 'login')->name('login');
     Route::post('/login-post', 'loginLogic')
-        ->middleware('throttle:login')
         ->name('login.post');
 
     Route::get('/sing-up', 'singUp')->name('ui.sing.up');
     Route::post('/sing-up-post', 'singUpLogic')
-        ->middleware('throttle:register')
         ->name('ui.sing.up.post');
 
     // social login
@@ -33,11 +31,9 @@ Route::middleware('guest')->prefix('/auth')->controller(AuthController::class)->
 Route::middleware('auth')->prefix('/auth')->controller(AuthController::class)->group(function () {
     Route::get('/mail-verify', 'mailVerify')->name('ui.mail.verify');
     Route::post('/mail-verify-logic', 'verifyLogic')
-        ->name('ui.mail.verify.logic')
-        ->middleware('throttle:verify-email');
+        ->name('ui.mail.verify.logic');
     Route::post('/mail-verify-resend', 'resendLogic')
-        ->name('ui.mail.verify.resend')
-        ->middleware('throttle:resend-verification');
+        ->name('ui.mail.verify.resend');
 
     Route::get('/logout', 'logout')->name('logout');
 });

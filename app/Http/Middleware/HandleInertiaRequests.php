@@ -47,6 +47,7 @@ class HandleInertiaRequests extends Middleware
                 'success' => fn() => $request->session()->get('success'),
                 'custom' => fn() => $request->session()->get('custom'),
                 'id' => fn() => $request->session()->get('_flash_id'),
+                'retry_after' => fn () => $request->session()->get('retry_after'),
             ],
         ];
     }
