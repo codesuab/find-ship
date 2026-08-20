@@ -33,10 +33,6 @@ use Illuminate\Support\Carbon;
     'city',
     'zip',
 
-    'plan_id',
-    'plan_started_at',
-    'plan_expires_at',
-
     'company_logo',
     'company_name',
     'company_type',

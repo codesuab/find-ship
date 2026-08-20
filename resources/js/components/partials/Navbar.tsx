@@ -1,23 +1,31 @@
-import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from "@/components/ui/navigation-menu";
-import { cn } from "@/lib/utils";
-import { Menu, X } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
-import Logo from "../Logo";
-import SlideUpButton from "../slideup-button";
-import { motion, AnimatePresence } from "motion/react"
-import { Button } from "@/components/ui/button"
-import { navigationMenuItems } from "@/constant/ui";
-import { Link, router, usePage } from "@inertiajs/react";
+import {
+    NavigationMenu,
+    NavigationMenuItem,
+    NavigationMenuLink,
+    NavigationMenuList,
+} from '@/components/ui/navigation-menu';
+import { cn } from '@/lib/utils';
+import { Menu, X } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+import Logo from '../Logo';
+import SlideUpButton from '../slideup-button';
+import { motion, AnimatePresence } from 'motion/react';
+import { Button } from '@/components/ui/button';
+import { navigationMenuItems } from '@/constant/ui';
+import { Link, router, usePage } from '@inertiajs/react';
 
-
-const CollaborateButton = () => (
-    <SlideUpButton onClick={() => router.get(route('login'))} className="bg-foreground text-white hover:bg-primary hidden md:flex py-2.5">
+const CollaborateButton = ({ link }: { link: string }) => (
+    <SlideUpButton
+        onClick={() => router.get(link)}
+        className="hidden bg-foreground py-2.5 text-white hover:bg-primary md:flex"
+    >
         Let's Get Start
     </SlideUpButton>
 );
 
 const Navbar = () => {
-    const { current_route } = usePage().props;
+    const { current_route, auth } = usePage().props;
+    const user = auth?.user;
 
     const [sticky, setSticky] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
@@ -30,38 +38,50 @@ const Navbar = () => {
     }, []);
 
     useEffect(() => {
-        window.addEventListener("scroll", handleScroll);
-        window.addEventListener("resize", handleResize);
+        window.addEventListener('scroll', handleScroll);
+        window.addEventListener('resize', handleResize);
 
         return () => {
-            window.removeEventListener("scroll", handleScroll);
-            window.removeEventListener("resize", handleResize);
+            window.removeEventListener('scroll', handleScroll);
+            window.removeEventListener('resize', handleResize);
         };
     }, [handleScroll, handleResize]);
 
     return (
         <header
-            className={cn('w-full py-4 duration-300',
+            className={cn(
+                'w-full py-4 duration-300',
                 sticky
-                    ? "backdrop-blur-lg border-b border-border/40 shadow-2xl shadow-primary/5"
-                    : "bg-transparent border-transparent"
-            )}>
+                    ? 'border-b border-border/40 shadow-2xl shadow-primary/5 backdrop-blur-lg'
+                    : 'border-transparent bg-transparent',
+            )}
+        >
             <div className="container">
-                <nav
-                    className='w-full flex items-center h-fit justify-between'
-                >
+                <nav className="flex h-fit w-full items-center justify-between">
                     <Link href="/">
-                        <Logo show='dynamic' />
+                        <Logo show="dynamic" />
                     </Link>
                     <div>
-                        <NavigationMenu className={`max-lg:hidden ${sticky ? 'bg-white' : 'bg-muted'} duration-300 p-0.5 rounded-full`}>
+                        <NavigationMenu
+                            className={`max-lg:hidden ${sticky ? 'bg-white' : 'bg-muted'} rounded-full p-0.5 duration-300`}
+                        >
                             <NavigationMenuList className="flex gap-0">
                                 {navigationMenuItems.map((navItem, i) => (
-                                    <NavigationMenuItem key={i} className='h-9 flex items-center'>
+                                    <NavigationMenuItem
+                                        key={i}
+                                        className="flex h-9 items-center"
+                                    >
                                         <Link
-                                            href={navItem?.link ?? "#"}
-                                            className={cn('px-2 lg:px-4 py-2 text-sm font-medium rounded-full text-muted-foreground hover:text-foreground hover:bg-background outline outline-transparent hover:outline-border hover:shadow-xs transition tracking-normal',
-                                                current_route == navItem?.link?.replace('/', '') ? 'bg-white text-foreground' : ''
+                                            href={navItem?.link ?? '#'}
+                                            className={cn(
+                                                'rounded-full px-2 py-2 text-sm font-medium tracking-normal text-muted-foreground outline outline-transparent transition hover:bg-background hover:text-foreground hover:shadow-xs hover:outline-border lg:px-4',
+                                                current_route ==
+                                                    navItem?.link?.replace(
+                                                        '/',
+                                                        '',
+                                                    )
+                                                    ? 'bg-white text-foreground'
+                                                    : '',
                                             )}
                                         >
                                             {navItem.label}
@@ -71,43 +91,49 @@ const Navbar = () => {
                             </NavigationMenuList>
                         </NavigationMenu>
                     </div>
-                    <CollaborateButton />
+                    <CollaborateButton
+                        link={user ? route('app.dashboard') : route('login')}
+                    />
 
                     <div className="md:hidden">
-                        <button onClick={() => setIsOpen(true)} className="rounded-full bg-background border border-border p-2 outline-none flex items-center justify-center cursor-pointer transition-colors">
+                        <button
+                            onClick={() => setIsOpen(true)}
+                            className="flex cursor-pointer items-center justify-center rounded-full border border-border bg-background p-2 transition-colors outline-none"
+                        >
                             <Menu size={20} />
                         </button>
                         <AnimatePresence>
                             {isOpen && (
                                 <motion.div
-                                    initial={{ x: "-100%" }}
+                                    initial={{ x: '-100%' }}
                                     animate={{ x: 0 }}
-                                    exit={{ x: "-100%" }}
+                                    exit={{ x: '-100%' }}
                                     transition={{
-                                        type: "spring",
+                                        type: 'spring',
                                         stiffness: 300,
                                         damping: 25,
                                         mass: 0.8,
                                     }}
-                                    className="fixed inset-0 z-50 flex flex-col justify-between w-full h-screen bg-white p-4"
+                                    className="fixed inset-0 z-50 flex h-screen w-full flex-col justify-between bg-white p-4"
                                 >
                                     <div>
                                         <motion.div
                                             initial={{
                                                 opacity: 0,
                                                 y: 20,
-                                                filter: "blur(10px)",
+                                                filter: 'blur(10px)',
                                             }}
                                             animate={{
                                                 opacity: 1,
                                                 y: 0,
-                                                filter: "blur(0px)",
+                                                filter: 'blur(0px)',
                                             }}
                                             transition={{
                                                 duration: 0.5,
-                                                ease: "easeOut",
+                                                ease: 'easeOut',
                                             }}
-                                            className="flex items-center justify-between py-3">
+                                            className="flex items-center justify-between py-3"
+                                        >
                                             <Logo
                                                 show={true}
                                                 textClass="text-xl"
@@ -125,32 +151,46 @@ const Navbar = () => {
 
                                         <NavigationMenu className="mt-4">
                                             <NavigationMenuList className="flex flex-col items-start justify-start gap-0">
-                                                {navigationMenuItems.map((navItem, i) => (
-                                                    <NavigationMenuItem key={i}>
-                                                        <motion.div
-                                                            initial={{
-                                                                opacity: 0,
-                                                                y: 20,
-                                                                filter: "blur(10px)",
-                                                            }}
-                                                            animate={{
-                                                                opacity: 1,
-                                                                y: 0,
-                                                                filter: "blur(0px)",
-                                                            }}
-                                                            transition={{
-                                                                duration: 0.5,
-                                                                delay: 0.4 + i * 0.1,
-                                                                ease: "easeOut",
-                                                            }}
-                                                            className="py-2"
+                                                {navigationMenuItems.map(
+                                                    (navItem, i) => (
+                                                        <NavigationMenuItem
+                                                            key={i}
                                                         >
-                                                            <Link href={navItem?.link ?? "#"} className="text-xl font-medium text-foreground">
-                                                                {navItem.label}
-                                                            </Link>
-                                                        </motion.div>
-                                                    </NavigationMenuItem>
-                                                ))}
+                                                            <motion.div
+                                                                initial={{
+                                                                    opacity: 0,
+                                                                    y: 20,
+                                                                    filter: 'blur(10px)',
+                                                                }}
+                                                                animate={{
+                                                                    opacity: 1,
+                                                                    y: 0,
+                                                                    filter: 'blur(0px)',
+                                                                }}
+                                                                transition={{
+                                                                    duration: 0.5,
+                                                                    delay:
+                                                                        0.4 +
+                                                                        i * 0.1,
+                                                                    ease: 'easeOut',
+                                                                }}
+                                                                className="py-2"
+                                                            >
+                                                                <Link
+                                                                    href={
+                                                                        navItem?.link ??
+                                                                        '#'
+                                                                    }
+                                                                    className="text-xl font-medium text-foreground"
+                                                                >
+                                                                    {
+                                                                        navItem.label
+                                                                    }
+                                                                </Link>
+                                                            </motion.div>
+                                                        </NavigationMenuItem>
+                                                    ),
+                                                )}
                                             </NavigationMenuList>
                                         </NavigationMenu>
                                     </div>
@@ -160,19 +200,33 @@ const Navbar = () => {
                                             initial={{
                                                 opacity: 0,
                                                 y: 20,
-                                                filter: "blur(10px)",
+                                                filter: 'blur(10px)',
                                             }}
                                             animate={{
                                                 opacity: 1,
                                                 y: 0,
-                                                filter: "blur(0px)",
+                                                filter: 'blur(0px)',
                                             }}
                                             transition={{
                                                 duration: 0.5,
-                                                delay: navigationMenuItems.length * 0.3,
-                                                ease: "easeOut",
-                                            }}>
-                                            <SlideUpButton className="w-full md:w-fit">
+                                                delay:
+                                                    navigationMenuItems.length *
+                                                    0.3,
+                                                ease: 'easeOut',
+                                            }}
+                                        >
+                                            <SlideUpButton
+                                                onClick={() =>
+                                                    router.get(
+                                                        user
+                                                            ? route(
+                                                                  'app.dashboard',
+                                                              )
+                                                            : route('login'),
+                                                    )
+                                                }
+                                                className="w-full md:w-fit"
+                                            >
                                                 Start Free Trial
                                             </SlideUpButton>
                                         </motion.div>
@@ -180,19 +234,22 @@ const Navbar = () => {
                                             initial={{
                                                 opacity: 0,
                                                 y: 20,
-                                                filter: "blur(10px)",
+                                                filter: 'blur(10px)',
                                             }}
                                             animate={{
                                                 opacity: 1,
                                                 y: 0,
-                                                filter: "blur(0px)",
+                                                filter: 'blur(0px)',
                                             }}
                                             transition={{
                                                 duration: 0.5,
-                                                delay: navigationMenuItems.length * 0.4,
-                                                ease: "easeOut",
-                                            }}>
-                                            <SlideUpButton className="w-full bg-foreground hover:bg-primary text-white md:w-fit">
+                                                delay:
+                                                    navigationMenuItems.length *
+                                                    0.4,
+                                                ease: 'easeOut',
+                                            }}
+                                        >
+                                            <SlideUpButton className="w-full bg-foreground text-white hover:bg-primary md:w-fit">
                                                 See How It Works
                                             </SlideUpButton>
                                         </motion.div>
@@ -202,8 +259,8 @@ const Navbar = () => {
                         </AnimatePresence>
                     </div>
                 </nav>
-            </div >
-        </header >
+            </div>
+        </header>
     );
 };
 

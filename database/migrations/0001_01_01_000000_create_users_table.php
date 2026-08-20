@@ -26,11 +26,6 @@ return new class extends Migration
             $table->string('zip')->nullable();
             $table->text('address')->nullable();
 
-            // SaaS
-            $table->unsignedBigInteger('plan_id')->default(0);
-            $table->timestamp('plan_started_at')->nullable();
-            $table->timestamp('plan_expires_at')->nullable();
-
             // company info
             $table->string('company_logo')->nullable();
             $table->string('company_name')->nullable();
