@@ -40,6 +40,7 @@ use Illuminate\Support\Carbon;
 
     'balance',
 
+    'onboarding_completed',
     'status',
     'status_message',
     'last_login_at',
