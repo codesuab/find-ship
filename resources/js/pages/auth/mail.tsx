@@ -20,28 +20,7 @@ import Logo from '@/components/Logo';
 export default function Mail({ retry_after }: { retry_after?: Number }) {
     const { flash, auth } = usePage<PageProps>().props;
     const user = auth?.user;
-
-    // rate limit
-    const [coolDown, setCoolDown] = useState(Number(retry_after || 0));
-    useEffect(() => {
-        setCoolDown(Number(retry_after || 0));
-    }, [retry_after]);
-    useEffect(() => {
-        if (coolDown <= 0) return;
-
-        const timer = setInterval(() => {
-            setCoolDown((prev) => Math.max(prev - 1, 0));
-        }, 1000);
-
-        return () => clearInterval(timer);
-    }, [coolDown]);
-    const formatCoolDown = (seconds: number) => {
-        const minutes = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-
-        return `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-    };
-
+    
     // animation
     const containerVariants: Variants = {
         hidden: { opacity: 0 },
@@ -211,28 +190,21 @@ export default function Mail({ retry_after }: { retry_after?: Number }) {
                                 </InputOTP>
                                 <Label>
                                     Didn't receive the email?{' '}
-                                    {coolDown > 0 ? (
-                                        <span>
-                                            Please wait{' '}
-                                            {formatCoolDown(coolDown)}
-                                        </span>
-                                    ) : (
-                                        <Button
-                                            onClick={handleResend}
-                                            disabled={resendFrom.processing}
-                                            variant="link"
-                                            className="h-0 p-0"
-                                        >
-                                            {resendFrom.processing ? (
-                                                <>
-                                                    <Loader className="size-4 animate-spin" />
-                                                    Sending..
-                                                </>
-                                            ) : (
-                                                'Resend verification code'
-                                            )}
-                                        </Button>
-                                    )}
+                                    <Button
+                                        onClick={handleResend}
+                                        disabled={resendFrom.processing}
+                                        variant="link"
+                                        className="h-0 p-0"
+                                    >
+                                        {resendFrom.processing ? (
+                                            <>
+                                                <Loader className="size-4 animate-spin" />
+                                                Sending..
+                                            </>
+                                        ) : (
+                                            'Resend verification code'
+                                        )}
+                                    </Button>
                                 </Label>
 
                                 {errors.otp && (
@@ -253,6 +225,7 @@ export default function Mail({ retry_after }: { retry_after?: Number }) {
                                         data.otp.length !== 6 ||
                                         resendFrom.processing
                                     }
+                                    variant="base"
                                 >
                                     {processing ? 'Processing..' : 'Verify now'}
                                 </SlideUpButton>

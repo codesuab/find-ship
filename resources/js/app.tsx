@@ -5,6 +5,6 @@ const appName = import.meta.env.VITE_APP_NAME || 'Find Ship';
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
     progress: {
-        color: '#f4671d',
+        color: '#01283c',
     },
 });

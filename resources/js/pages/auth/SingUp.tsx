@@ -338,7 +338,7 @@ export default function SingUp() {
                         </motion.div>
 
                         <motion.div variants={itemVariants} className="mt-2">
-                            <SlideUpButton className="w-full">
+                            <SlideUpButton className="w-full" variant='base'>
                                 {processing ? 'Processing..' : 'Sign up'}
                             </SlideUpButton>
                         </motion.div>

@@ -153,17 +153,7 @@ class AuthController extends Controller
             return to_route('app.dashboard');
         }
 
-        // rate limit init
-        $email = $user->email;
-        $key = 'reset-verification-email:'.$email;
-        $maxAttempts = 2;
-
-        $isBlocked = RateLimiter::tooManyAttempts($key, $maxAttempts);
-        $retryAfter = $isBlocked ? RateLimiter::availableIn($key) : 0;
-
-        return Inertia::render('auth/mail', [
-            'retry_after' => $retryAfter,
-        ]);
+        return Inertia::render('auth/mail');
     }
 
     public function verifyLogic(Request $request)

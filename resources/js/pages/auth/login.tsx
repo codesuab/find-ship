@@ -305,7 +305,7 @@ export default function Login() {
                             variants={itemVariants}
                             className="mt-2"
                         >
-                            <SlideUpButton className="w-full" disabled={processing}>
+                            <SlideUpButton className="w-full" disabled={processing} variant="base">
                                 {processing ? 'Processing..' : 'Sign in'}
                             </SlideUpButton>
                         </motion.div>

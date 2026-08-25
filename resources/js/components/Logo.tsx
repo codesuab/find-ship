@@ -1,4 +1,6 @@
 import { cn } from '@/lib/utils';
+import { PageProps } from '@/types/types';
+import { usePage } from '@inertiajs/react';
 import React from 'react';
 
 export default function Logo({
@@ -7,11 +9,12 @@ export default function Logo({
     imageSize,
     className,
 }: {
-    show?: any;
+    show?: string;
     textClass?: string;
     imageSize?: string;
     className?: string;
 }) {
+    const { name: appName } = usePage<PageProps>().props;
     return (
         <div className={cn('flex items-center gap-2', className)}>
             {/* logo svg */}
@@ -25,7 +28,7 @@ export default function Logo({
                     <g id="Folder 1">
                         <path
                             id="PATH 1 "
-                           fill="currentColor"
+                            fill="currentColor"
                             d="m309.97 815.92c6.82 0.13 11.18 3.47 15.71 6.14 6.89 4.06 13.61 8.41 20.26 12.85 29 19.34 56.52 15.16 83.38-4.71 21.8-16.13 55.27-10.98 71.64 10.43 3.47 4.54-0.73 5.03-2.87 6.3-16.32 9.75-32.65 19.46-49.12 28.96-18.77 10.82-37.74 21.32-56.52 32.14-6.28 3.61-11.87 4.28-18.64 0.39-34.08-19.54-70.28-35.4-101.82-59.32-8.74-6.63-8.84-6.75 0.56-12.56 9.91-6.12 19.14-13.41 30.05-17.84 2.75-1.12 5.56-2.1 7.37-2.78z"
                         />
                         <path
@@ -48,26 +51,25 @@ export default function Logo({
                     </g>
                 </g>
             </svg>
-            {show == 'dynamic' ? (
+            {show == 'dynamic' && (
                 <span
                     className={cn(
                         'hidden text-2xl font-normal text-white capitalize md:block',
                         textClass,
                     )}
                 >
-                    Findship
+                    {appName}
                 </span>
-            ) : (
-                show && (
-                    <span
-                        className={cn(
-                            'text-2xl font-normal text-white capitalize',
-                            textClass,
-                        )}
-                    >
-                        Findship
-                    </span>
-                )
+            )}
+            {show == 'true' && (
+                <span
+                    className={cn(
+                        'text-2xl font-normal text-white capitalize',
+                        textClass,
+                    )}
+                >
+                    {appName}
+                </span>
             )}
         </div>
     );

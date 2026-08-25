@@ -70,11 +70,11 @@ export default function index() {
             <div className="relative container flex w-full flex-col items-center justify-center">
                 <div className="absolute top-0 left-0 flex w-full items-center justify-between gap-4 px-5 py-6">
                     <Link href={route('home')}>
-                        <Logo imageSize="h-10 w-10" />
+                        <Logo imageSize="h-10 w-10 text-primary" show='true' textClass='text-foreground' />
                     </Link>
 
                     <Link href={route('logout')}>
-                        <Button variant="secondary">
+                        <Button variant='destructive'>
                             <LogOut className="size-3" />
                             Logout
                         </Button>
