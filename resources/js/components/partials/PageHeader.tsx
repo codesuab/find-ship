@@ -3,8 +3,8 @@ import { motion } from "motion/react"
 
 export default function PageHeader({ title, subtitle }: { title: string, subtitle?: string }) {
     return (
-        <header className='relative min-h-60 pt-23 md:pt-34 pb-13 flex items-center justify-center overflow-hidden'>
-            <div className="container z-1">
+        <header className='bg-primary'>
+            <div className="container z-1 border-x border-border-light py-10 md:py-15">
                 <div className='max-w-xl mx-auto'>
                     <motion.h1
                         initial={{
@@ -22,7 +22,7 @@ export default function PageHeader({ title, subtitle }: { title: string, subtitl
                             ease: 'easeInOut',
                         }}
                         viewport={{ once: true }}
-                        className='text-center text-gradient-up text-[50px] md:text-[80px] font-semibold'>{title}</motion.h1>
+                        className='text-center text-white text-[40px] md:text-[70px] font-semibold leading-10 md:leading-15 mb-5'>{title}</motion.h1>
                     {subtitle && (
                         <motion.p
                             initial={{
@@ -41,28 +41,12 @@ export default function PageHeader({ title, subtitle }: { title: string, subtitl
                                 delay: 0.2,
                             }}
                             viewport={{ once: true }}
-                            className='text-center text-foreground text-base md:text-lg'>
+                            className='text-center text-white text-sm font-normal md:text-base'>
                             {subtitle}
                         </motion.p>
                     )}
                 </div>
             </div>
-
-            {/* hero bg */}
-            <motion.img
-                initial={{
-                    opacity: 0,
-                }}
-                animate={{
-                    opacity: 0.6,
-                }}
-                transition={{
-                    duration: 0.9,
-                    delay: 0.5,
-                    ease: "easeOut",
-                }}
-                viewport={{ once: true }}
-                src="/media/system/page-header-bg.avif" className="w-full absolute left-0 h-80 md:h-160 top-0 opacity-60" />
         </header>
     )
 }
