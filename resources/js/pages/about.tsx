@@ -6,7 +6,6 @@ import { aboutOurCoreValue } from '@/constant/ui'
 import Shield from '@/components/icon/Shield'
 import Cpu from '@/components/icon/Cpu'
 import ScanEye from '@/components/icon/Eye'
-import { TestimonialsSection } from '@/components/partials/testimonials-section'
 import Faq from '@/components/partials/Faq'
 
 export default function about() {
@@ -210,35 +209,6 @@ export default function about() {
                                 <p className='text-base text-muted-foreground'>{val.subtitle}</p>
                             </motion.div>
                         ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* testimonial */}
-            <section className="py-25">
-                <div className="container">
-                    <motion.h1
-                        initial={{
-                            opacity: 0,
-                            y: 10,
-                            filter: "blur(10px)",
-                        }}
-                        whileInView={{
-                            opacity: 1,
-                            y: 0,
-                            filter: "blur(0px)",
-                        }}
-                        transition={{
-                            duration: 0.5,
-                            delay: 0.1,
-                            ease: "easeOut",
-                        }}
-                        viewport={{ once: true }}
-                        className="text-center text-3xl md:text-5xl font-medium text-gradient-up w-full md:w-1/2 mx-auto">Trusted by teams who lead people
-                    </motion.h1>
-
-                    <div className="mt-10 md:mt-14">
-                        <TestimonialsSection />
                     </div>
                 </div>
             </section>

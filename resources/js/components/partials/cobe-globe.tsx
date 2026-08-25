@@ -48,31 +48,66 @@ export function CobeGlobe({
                 1.5,
             );
 
+            // ============================================
+            // COLOR DEFINITIONS
+            // ============================================
+            
+            // Primary color: #01293d
+            // RGB: (1, 41, 61)
+            // Normalized: (0.004, 0.161, 0.239)
+            const primaryColor: [number, number, number] = [0.004, 0.161, 0.239];
+            
+            // Marker color: Orange/Red
+            // RGB: (240, 74, 20)
+            // Normalized: (0.94, 0.29, 0.08)
+            const markerColor: [number, number, number] = [0.94, 0.29, 0.08];
+            
+            // Glow/Highlight color: Orange/Red
+            // RGB: (230, 64, 15)
+            // Normalized: (0.9, 0.25, 0.06)
+            const glowColor: [number, number, number] = [0.9, 0.25, 0.06];
+            
+            // Alternative glow colors (commented):
+            // White glow: [1, 1, 1]
+            // Blue glow: [0.2, 0.5, 0.9]
+            // Green glow: [0.1, 0.9, 0.2]
+            // Yellow glow: [1, 0.9, 0.1]
+
+            // ============================================
+            // GLOBE CONFIGURATION
+            // ============================================
+
             globeRef.current = createGlobe(canvas, {
-                devicePixelRatio: dpr,
-                width: side * dpr,
-                height: side * dpr,
+                // --- Display Settings ---
+                devicePixelRatio: dpr,          // Device pixel ratio for sharpness
+                width: side * dpr,              // Canvas width
+                height: side * dpr,             // Canvas height
 
-                phi: 0,
-                theta: 0,
+                // --- Rotation Settings ---
+                phi: 0,                         // Initial horizontal rotation
+                theta: 0,                       // Initial vertical rotation
 
-                dark: 0.15,
-                diffuse: 1.8,
+                // --- Lighting Settings ---
+                dark: 0,                     // Darkness level (0 = bright, 1 = dark)
+                diffuse: 0.15,                   // Light diffusion/scattering
 
-                mapSamples: 10000,
-                mapBrightness: 5,
+                // --- Map Settings ---
+                mapSamples: 10000,              // Number of map sampling points
+                mapBrightness: 5,               // Map brightness level
 
-                baseColor: [0.08, 0.35, 0.42],
-                markerColor: [0.94, 0.29, 0.08],
-                glowColor: [0.9, 0.25, 0.06],
+                // --- Color Settings ---
+                baseColor: primaryColor,        // Main globe color (#01293d)
+                markerColor: markerColor,       // Marker dots color (Orange)
+                glowColor: glowColor,           // Glow/highlight color (Orange)
 
-                markers,
+                // --- Marker Data ---
+                markers,                        // Array of marker locations
             });
 
             const animate = () => {
                 if (cancelled) return;
 
-                phiRef.current += 0.001;
+                phiRef.current += 0.001;        // Rotation speed
 
                 globeRef.current?.update({
                     phi: phiRef.current,

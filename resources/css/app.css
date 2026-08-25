@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Cookie&display=swap');
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
@@ -14,8 +13,6 @@
         'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
         'Noto Color Emoji';
-
-    --font-highlight: 'Cookie', cursive;
 }
 
 @theme inline {
@@ -37,6 +34,7 @@
     --color-ring: var(--ring);
     --color-input: var(--input);
     --color-border: var(--border);
+    --color-border-light: var(--border-light);
     --color-destructive: var(--destructive);
     --color-accent-foreground: var(--accent-foreground);
     --color-accent: var(--accent);
@@ -46,6 +44,8 @@
     --color-secondary: var(--secondary);
     --color-primary-foreground: var(--primary-foreground);
     --color-primary: var(--primary);
+    --color-primary-accent: var(--primary-accent);
+    --color-primary-100: var(--primary-100);
     --color-popover-foreground: var(--popover-foreground);
     --color-popover: var(--popover);
     --color-card-foreground: var(--card-foreground);
@@ -68,10 +68,11 @@
     --card-foreground: oklch(0.141 0.005 285.823);
     --popover: oklch(1 0 0);
     --popover-foreground: oklch(0.141 0.005 285.823);
-    --primary: oklch(0.6811 0.1881 43.66);
-    /* --primary: #4471f6; */
+    --primary: oklch(26.2% 0.056 236.7);
+    --primary-accent: oklab(46.813% -0.05242 -0.09713);
+    --primary-100: oklab(81.119% -0.03763 -0.04767);
     --primary-foreground: oklch(0.98 0.016 73.684);
-    --secondary: oklch(0.967 0.001 286.375);
+    --secondary: oklch(94.1% 0.143 130.4);
     --secondary-foreground: oklch(0.21 0.006 285.885);
     --muted: oklch(0.967 0.001 286.375);
     --muted-foreground: oklch(0.552 0.016 285.938);
@@ -79,6 +80,7 @@
     --accent-foreground: oklch(0.21 0.006 285.885);
     --destructive: oklch(0.577 0.245 27.325);
     --border: oklch(0.92 0.004 286.32);
+    --border-light: oklch(100% 0 0 / 0.102);
     --input: oklch(0.92 0.004 286.32);
     --ring: oklch(0.705 0.015 286.067);
     --chart-1: oklch(0.871 0.006 286.286);
@@ -99,7 +101,7 @@
 
 @layer utilities {
     .container {
-        @apply mx-auto max-w-300 px-5;
+        @apply mx-auto w-[95%] max-w-320 px-3 md:px-6;
     }
 
     .shadow-smooth {
@@ -116,16 +118,56 @@
         -webkit-background-clip: text;
         color: transparent;
     }
+
+    .shadow-light {
+        box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.06);
+    }
+    .bg-liner-dev {
+        background: linear-gradient(
+            225deg,
+            rgb(169, 199, 245) 0%,
+            rgb(209, 215, 225) 100%
+        );
+    }
 }
 
 @layer base {
     * {
         @apply border-border outline-ring/50;
     }
-    body {
-        @apply h-auto bg-background text-foreground;
-    }
     html {
-        @apply font-sans selection:bg-primary selection:text-white;
+        @apply scroll-smooth font-sans selection:bg-secondary selection:text-primary;
     }
+    body {
+        @apply h-auto scroll-smooth bg-background text-foreground;
+    }
+}
+
+/* scroll */
+html::-webkit-scrollbar {
+    display: none;
+}
+html {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+html.lenis,
+html.lenis body {
+    height: auto;
+}
+
+.lenis-smooth {
+    scroll-behavior: auto !important;
+}
+
+.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+}
+
+.lenis-stopped {
+    overflow: hidden;
+}
+
+.lenis-scrolling iframe {
+    pointer-events: none;
 }
