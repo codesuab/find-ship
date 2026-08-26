@@ -66,7 +66,7 @@ export default function CustomerLayout({ children }: PropsWithChildren) {
                 )}
             </div>
 
-            <SidebarInset className="bg-muted">
+            <SidebarInset className="bg-white">
                 <div className="flex w-full items-center justify-between bg-white px-4.5 py-2 md:hidden">
                     <div className="flex items-center gap-2 px-1 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
                         <Logo show="false" imageSize="text-primary h-8 w-8" />

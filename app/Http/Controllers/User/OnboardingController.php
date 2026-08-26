@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -71,6 +72,8 @@ class OnboardingController extends Controller
             $user->update($data);
 
             DB::commit();
+
+            Cache::forget("auth:user:" . Auth::id());
 
             return back()
                 ->with('success', 'Personal information updated success!')

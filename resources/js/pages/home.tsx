@@ -230,7 +230,7 @@ export default function home() {
                     >
                         <ScrollRevealText
                             className="text-[25px] leading-9 font-normal text-foreground md:text-[32px] md:leading-11"
-                            text="ShipFinder helps you track and discover vessels with
+                            text="FindShip helps you track and discover vessels with
                         reliable maritime data. We make vessel information,
                         locations, arrivals, departures, and port activity
                         easier to access—helping businesses and maritime

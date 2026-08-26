@@ -6,7 +6,7 @@ type Props = {
 
 export default function PageHeader({ children, title, subtitle }: PropsWithChildren<Props>) {
     return (
-        <div className="flex flex-col gap-4 border-b border-border pb-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex flex-col gap-4 pb-4 sm:flex-row sm:items-end sm:justify-between border-b border-border">
             <div className="flex flex-col gap-1.5">
                 <h1 className="font-heading text-xl font-bold tracking-tight sm:text-2xl">
                     {title}

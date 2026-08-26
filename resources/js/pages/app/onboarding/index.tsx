@@ -190,9 +190,9 @@ export default function index({
     };
 
     const companyInfoForm = useForm({
-        company_logo: null,
+        company_logo: null as File | null,
         company_name: userData?.company_name || '',
-        company_type: userData?.company_type || 'shipping',
+        company_type: userData?.company_type || '',
         company_address: userData?.company_address || '',
     });
     const [logoPreview, setLogoPreview] = useState<string | null>(null);

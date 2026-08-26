@@ -22,6 +22,10 @@ Route::prefix('/app')->middleware(['auth', 'insSureEmailVerify'])->group(functio
         // account
         Route::controller(AccountController::class)->group(function () {
             Route::get('/account', 'index')->name('app.account.view');
+            Route::post('/account-personal', 'personal')->name('app.account.personal');
+            Route::post('/account-security', 'security')->name('app.account.security');
+            Route::post('/account-company', 'company')->name('app.account.company');
+            Route::post('/account-danger', 'danger')->name('app.account.danger');
         });
     });
 });

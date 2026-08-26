@@ -51,6 +51,7 @@ class HandleInertiaRequests extends Middleware
                             'avatar',
                             'company_name',
                             'company_logo',
+                            'avatar'
                         ])
                     )
                     : null,

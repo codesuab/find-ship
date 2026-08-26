@@ -46,10 +46,22 @@ class AuthController extends Controller
                 )->with('_flash_id', time());
             }
 
+            $maxDevices = 2; // TODO Its will be updated by user budget plan
+
             // Logout all old devices/sessions
-            DB::table('sessions')
+            $activeSessions = DB::table('sessions')
                 ->where('user_id', $user->id)
-                ->delete();
+                ->orderBy('last_activity')
+                ->get();
+
+            if ($activeSessions->count() >= $maxDevices) {
+                $sessionsToDelete = $activeSessions
+                    ->take($activeSessions->count() - $maxDevices + 1);
+
+                DB::table('sessions')
+                    ->whereIn('id', $sessionsToDelete->pluck('id'))
+                    ->delete();
+            }
 
             $deviceId = hash('sha256', $request->userAgent());
 
@@ -107,9 +119,9 @@ class AuthController extends Controller
             if (Auth::attempt($request->only('email', 'password'), true)) {
                 // create mail verification
                 // delete old queue
-                $queueKey = 'verification:'.Auth::id();
+                $queueKey = 'verification:' . Auth::id();
                 DB::table('jobs')
-                    ->where('payload', 'like', '%'.$queueKey.'%')
+                    ->where('payload', 'like', '%' . $queueKey . '%')
                     ->delete();
 
                 $code = (string) random_int(100000, 999999);
@@ -127,7 +139,7 @@ class AuthController extends Controller
                     'otp' => $code,
                 ];
                 $view = 'mail.otp';
-                $queueKey = 'verification:'.Auth::id();
+                $queueKey = 'verification:' . Auth::id();
                 Mail::to($request->email)->queue(new GlobalMail('Email Verification', $data, $view, $queueKey));
 
                 return to_route('ui.mail.verify')->with(
@@ -221,7 +233,7 @@ class AuthController extends Controller
 
             // rate limit
             $email = $user->email;
-            $key = 'reset-verification-email:'.$email;
+            $key = 'reset-verification-email:' . $email;
             $maxAttempts = 2;
             $decayMinutes = 10;
 
@@ -251,9 +263,9 @@ class AuthController extends Controller
             EmailVerificationCode::where('email', $user->email)->delete();
 
             // delete old queue
-            $queueKey = 'verification:'.$user->id;
+            $queueKey = 'verification:' . $user->id;
             DB::table('jobs')
-                ->where('payload', 'like', '%'.$queueKey.'%')
+                ->where('payload', 'like', '%' . $queueKey . '%')
                 ->delete();
 
             // send code
@@ -272,7 +284,7 @@ class AuthController extends Controller
                 'otp' => $code,
             ];
             $view = 'mail.otp';
-            $queueKey = 'verification:'.$user->id;
+            $queueKey = 'verification:' . $user->id;
             Mail::to($user->email)->queue(new GlobalMail('Email Verification', $data, $view, $queueKey));
 
             return to_route('ui.mail.verify')->with(
@@ -280,7 +292,7 @@ class AuthController extends Controller
                 'A verification link has been sent to your email address. Please check your inbox and verify your email to continue.'
             )->with('_flash_id', time());
         } catch (\Throwable $th) {
-            Log::error('Resend verification failed: '.$th->getMessage(), [
+            Log::error('Resend verification failed: ' . $th->getMessage(), [
                 'user_id' => Auth::id() ?? 'guest',
                 'trace' => $th->getTraceAsString(),
             ]);
