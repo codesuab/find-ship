@@ -11,11 +11,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use Laravel\Socialite\Socialite;
 
 class AccountController extends Controller
 {
     // index
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
 
@@ -28,7 +29,8 @@ class AccountController extends Controller
 
         return Inertia::render('app/account', [
             'user' => $user,
-            'country' => $country
+            'country' => $country,
+            'tab' => $request->query('tab')
         ]);
     }
 
@@ -191,7 +193,7 @@ class AccountController extends Controller
             DB::commit();
             return redirect()
                 ->route('login')
-                ->with('success', 'Your account has been permanently deleted.');
+                ->with('success', 'Your account has been permanently deleted.')->with('_flash_id', time());;
         } catch (\Throwable $th) {
             DB::rollBack();
 
@@ -199,5 +201,54 @@ class AccountController extends Controller
                 ->with('error', 'Something went wrong, try again!')
                 ->with('_flash_id', time());
         }
+    }
+
+    // social
+    public function connectRedirect($type)
+    {
+        return Socialite::driver($type)
+            ->redirectUrl(route('app.account.connect.callback', [
+                'type' => $type,
+            ]))
+            ->redirect();
+    }
+
+    public function connectCallback($type, Request $request)
+    {
+        $socialUser = Socialite::driver($type)
+            ->redirectUrl(route('app.account.connect.callback', [
+                'type' => $type,
+            ]))
+            ->user();
+
+        $user = $request->user();
+
+        $user->update([
+            "{$type}_id" => $socialUser->getId(),
+        ]);
+
+        return to_route('app.account.view', ['tab' => 'connect'])->with('success', ucfirst($type) . ' account connected successfully.')->with('_flash_id', time());;
+    }
+
+    // remove social 
+    public function removeSocial($type)
+    {
+        $user = User::find(Auth::id());
+
+        if ($type == 'google') {
+            $user->google_id = null;
+            $user->google_token = null;
+            $user->google_refresh_token = null;
+        }
+
+        if ($type == 'facebook') {
+            $user->facebook_id = null;
+            $user->facebook_token = null;
+            $user->facebook_refresh_token = null;
+        }
+
+        $user->save();
+
+        return to_route('app.account.view', ['tab' => 'account'])->with('success', 'Account disconnected success.')->with('_flash_id', time());
     }
 }

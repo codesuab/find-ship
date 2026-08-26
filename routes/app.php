@@ -26,6 +26,10 @@ Route::prefix('/app')->middleware(['auth', 'insSureEmailVerify'])->group(functio
             Route::post('/account-security', 'security')->name('app.account.security');
             Route::post('/account-company', 'company')->name('app.account.company');
             Route::post('/account-danger', 'danger')->name('app.account.danger');
+            Route::get('/account-social-remove/{type}', 'removeSocial')->name('app.account.social.remove');
+
+            Route::get('/account/connect/{type}', 'connectRedirect')->name('app.account.connect');
+            Route::get('/account/connect/{type}/callback', 'connectCallback')->name('app.account.connect.callback');
         });
     });
 });

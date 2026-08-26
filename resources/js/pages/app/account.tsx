@@ -7,8 +7,10 @@ import {
     EyeOff,
     FingerprintPattern,
     Loader,
+    PlugZap,
     Save,
     Trash2,
+    Unplug,
     User,
     Workflow,
 } from 'lucide-react';
@@ -23,7 +25,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Field, FieldDescription, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useForm, usePage } from '@inertiajs/react';
+import { Link, useForm, usePage } from '@inertiajs/react';
 import {
     Combobox,
     ComboboxContent,
@@ -34,7 +36,7 @@ import {
 } from '@/components/ui/combobox';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { PageProps } from '@/types/types';
 import {
@@ -48,6 +50,8 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { FacebookIcon } from '@/components/icon/Facebook';
+import { GoogleIcon } from '@/components/icon/Google';
 
 interface UserProps {
     id: number;
@@ -65,6 +69,8 @@ interface UserProps {
     company_type: string | null;
     company_address: string | null;
     created_at: string;
+    google_id?: any;
+    facebook_id?: any;
 }
 
 interface Country {
@@ -78,9 +84,11 @@ interface CountryProps {
 export default function account({
     user,
     country,
+    tab,
 }: {
     user: UserProps;
     country: CountryProps[];
+    tab?: string;
 }) {
     const { name: appName } = usePage<PageProps>().props;
     const genderItems = [
@@ -116,6 +124,20 @@ export default function account({
         },
     ];
     const [showPassword, setShowPassword] = useState(false);
+
+    // tab activity
+    const [activeTab, setActiveTab] = useState(() => {
+        return localStorage.getItem('settings-tab') || 'personal';
+    });
+    useEffect(() => {
+        if (tab) {
+            setActiveTab(tab);
+        }
+    }, [tab]);
+    const handleTabChange = (value: string) => {
+        setActiveTab(value);
+        localStorage.setItem('settings-tab', value);
+    };
 
     // personal info
     const personalInfoForm = useForm({
@@ -214,13 +236,14 @@ export default function account({
             />
 
             <Tabs
-                defaultValue="profile"
-                className="mt-6 w-full"
+                defaultValue={activeTab}
+                onValueChange={handleTabChange}
+                className="mt-2 md:mt-6 w-full flex-col md:flex-row"
                 orientation="vertical"
             >
                 <TabsList
                     variant="default"
-                    className="min-w-50 space-y-2 bg-transparent"
+                    className="w-full md:w-50 space-y-2 bg-transparent"
                 >
                     <TabsTrigger value="profile" className="py-1.5">
                         <User
@@ -263,7 +286,7 @@ export default function account({
                 </TabsList>
 
                 {/* for profile */}
-                <TabsContent value="profile" className="ml-10 max-w-170">
+                <TabsContent value="profile" className="md:ml-10 max-w-170">
                     <Card className="rounded-xl p-0 ring-0">
                         <CardHeader className="px-0">
                             <CardTitle>Profile for {user.name}</CardTitle>
@@ -595,7 +618,7 @@ export default function account({
                 </TabsContent>
 
                 {/* for security */}
-                <TabsContent value="security" className="ml-10 max-w-170">
+                <TabsContent value="security" className="md:ml-10 max-w-170">
                     <Card className="rounded-xl p-0 ring-0">
                         <CardHeader className="px-0">
                             <CardTitle>Secure your {appName} account</CardTitle>
@@ -744,7 +767,7 @@ export default function account({
                 </TabsContent>
 
                 {/* company */}
-                <TabsContent value="company" className="ml-10 max-w-170">
+                <TabsContent value="company" className="md:ml-10 max-w-170">
                     <Card className="rounded-xl p-0 ring-0">
                         <CardHeader className="px-0">
                             <CardTitle>Set up your company profile</CardTitle>
@@ -928,8 +951,129 @@ export default function account({
                     </Card>
                 </TabsContent>
 
+                {/* Connect */}
+                <TabsContent value="connect" className="md:ml-10 max-w-170">
+                    <Card className="rounded-xl p-0 ring-0">
+                        <CardHeader className="px-0">
+                            <CardTitle>Connect your social accounts</CardTitle>
+                            <CardDescription>
+                                Link your Google and Facebook accounts for
+                                faster, easier, and more secure sign-ins to your{' '}
+                                {appName} workspace.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="px-0 py-3 text-sm text-muted-foreground">
+                            {/* facebook */}
+                            <div className="flex items-center justify-between rounded-t-xl border border-border bg-card p-4 transition-colors hover:bg-muted/40">
+                                <div className="flex items-center gap-3">
+                                    <div className="flex size-11 items-center justify-center rounded-lg border border-border bg-background">
+                                        <FacebookIcon className="size-6" />
+                                    </div>
+
+                                    <div>
+                                        <h1 className="text-sm font-medium text-foreground">
+                                            Facebook
+                                        </h1>
+                                        <p className="text-xs text-muted-foreground">
+                                            Connect your Facebook account
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {!user?.facebook_id ? (
+                                    <a
+                                        href={route(
+                                            'app.account.connect',
+                                            'facebook',
+                                        )}
+                                    >
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            className="rounded-lg"
+                                        >
+                                            <PlugZap className="size-3" />
+                                            <span>Connect</span>
+                                        </Button>
+                                    </a>
+                                ) : (
+                                    <Link
+                                        href={route(
+                                            'app.account.social.remove',
+                                            { type: 'facebook' },
+                                        )}
+                                    >
+                                        <Button
+                                            variant="destructive"
+                                            size="sm"
+                                            className="rounded-lg"
+                                        >
+                                            <Unplug className="size-3" />
+                                            <span>Disconnect</span>
+                                        </Button>
+                                    </Link>
+                                )}
+                            </div>
+
+                            {/* google */}
+                            <div className="flex items-center justify-between rounded-b-xl border border-t-0 border-border bg-card p-4 transition-colors hover:bg-muted/40">
+                                <div className="flex items-center gap-3">
+                                    <div className="flex size-11 items-center justify-center rounded-lg border border-border bg-background">
+                                        <GoogleIcon className="size-6" />
+                                    </div>
+
+                                    <div>
+                                        <h1 className="text-sm font-medium text-foreground">
+                                            Google
+                                        </h1>
+                                        <p className="text-xs text-muted-foreground">
+                                            Connect your Google account
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {!user?.google_id ? (
+                                    <a
+                                        href={route(
+                                            'app.account.connect',
+                                            'google',
+                                        )}
+                                    >
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            className="rounded-lg"
+                                        >
+                                            <PlugZap className="size-3" />
+                                            <span>Connect</span>
+                                        </Button>
+                                    </a>
+                                ) : (
+                                    <Link
+                                        href={route(
+                                            'app.account.social.remove',
+                                            {
+                                                type: 'google',
+                                            },
+                                        )}
+                                    >
+                                        <Button
+                                            variant="destructive"
+                                            size="sm"
+                                            className="rounded-lg"
+                                        >
+                                            <Unplug className="size-3" />
+                                            <span>Disconnect</span>
+                                        </Button>
+                                    </Link>
+                                )}
+                            </div>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+
                 {/* for danger */}
-                <TabsContent value="danger" className="ml-10 max-w-170">
+                <TabsContent value="danger" className="md:ml-10 max-w-170">
                     <Card className="rounded-xl p-0 ring-0">
                         <CardHeader className="px-0">
                             <CardTitle>Danger Zone</CardTitle>
