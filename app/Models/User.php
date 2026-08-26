@@ -29,7 +29,7 @@ use Illuminate\Support\Carbon;
     'address',
     'avatar',
     'gender',
-    'county',
+    'country',
     'city',
     'zip',
 

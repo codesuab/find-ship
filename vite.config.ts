@@ -22,4 +22,5 @@ export default defineConfig({
             formVariants: true,
         }),
     ],
+    assetsInclude: ['**/*.lottie'],
 });

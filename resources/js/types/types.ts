@@ -2,7 +2,7 @@ type Flash = {
     error?: string;
     success?: string;
     custom?: string;
-    id?:any,
+    id?: any,
 };
 
 type PageProps = {
@@ -10,4 +10,4 @@ type PageProps = {
     flash: Flash;
 };
 
-export type { PageProps,Flash }
+export type { PageProps, Flash }

@@ -9,14 +9,19 @@ Route::prefix('/app')->middleware(['auth', 'insSureEmailVerify'])->group(functio
     // Onboarding
     Route::controller(OnboardingController::class)->group(function () {
         Route::get('/onboarding', 'index')->name('app.onboarding.index');
+        Route::post('/onboarding-personal', 'personal')->name('app.onboarding.personal');
+        Route::post('/onboarding-company', 'company')->name('app.onboarding.company');
+        Route::post('/onboarding-final', 'final')->name('app.onboarding.final');
     });
 
     // final routes
-    // Dashboard
-    Route::get('/', [DashboardController::class, 'index'])->name('app.dashboard');
+    Route::middleware('insOnboarding')->group(function () {
+        // Dashboard
+        Route::get('/', [DashboardController::class, 'index'])->name('app.dashboard');
 
-    // account
-    Route::controller(AccountController::class)->group(function () {
-        Route::get('/account', 'index')->name('app.account.view');
+        // account
+        Route::controller(AccountController::class)->group(function () {
+            Route::get('/account', 'index')->name('app.account.view');
+        });
     });
 });
