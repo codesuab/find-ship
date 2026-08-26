@@ -46,7 +46,7 @@ class AuthController extends Controller
                 )->with('_flash_id', time());
             }
 
-            $maxDevices = 2; // TODO Its will be updated by user budget plan
+            $maxDevices = 2; // TODO Its will be updated by user budget plan!
 
             // Logout all old devices/sessions
             $activeSessions = DB::table('sessions')
