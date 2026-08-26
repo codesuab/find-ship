@@ -17,7 +17,7 @@ import { PageProps } from '@/types/types';
 
 export default function CustomerLayout({ children }: PropsWithChildren) {
     const [searchToggler, setSearchToggler] = useState(false);
-    const { name: appName,flash } = usePage<PageProps>().props;
+    const { name: appName, flash } = usePage<PageProps>().props;
 
     // show error
     useEffect(() => {
@@ -68,13 +68,8 @@ export default function CustomerLayout({ children }: PropsWithChildren) {
 
             <SidebarInset className="bg-muted">
                 <div className="flex w-full items-center justify-between bg-white px-4.5 py-2 md:hidden">
-                    <div className="flex items-center gap-2.5 px-1 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
-                        <div
-                            className="flex size-9 shrink-0 items-center justify-center rounded-md bg-primary/10 p-2"
-                            aria-hidden="true"
-                        >
-                            <Logo show={false} className="h-10 w-10" />
-                        </div>
+                    <div className="flex items-center gap-2 px-1 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
+                        <Logo show="false" imageSize="text-primary h-8 w-8" />
                         <div className="min-w-0 flex-1 group-data-[collapsible=icon]:hidden">
                             <p className="truncate text-sm font-bold tracking-tight">
                                 {appName}

@@ -1,7 +1,7 @@
-import React from 'react'
-import { router, usePage } from "@inertiajs/react";
+import React from 'react';
+import { router, usePage } from '@inertiajs/react';
 import Logo from '@/components/Logo';
-import { HiChevronUpDown } from "react-icons/hi2";
+import { HiChevronUpDown } from 'react-icons/hi2';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -9,8 +9,8 @@ import {
     DropdownMenuItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+} from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
     Sidebar,
     SidebarContent,
@@ -25,58 +25,81 @@ import {
     SidebarMenuItem,
     SidebarTrigger,
     useSidebar,
-} from "@/components/ui/sidebar"
+} from '@/components/ui/sidebar';
 import { navGroups, secondNavGroups } from '@/constant/CustomerMenu';
-import { BadgeCheck, Bell, CreditCard, LogOut, Search, Sparkles } from 'lucide-react';
+import {
+    BadgeCheck,
+    Bell,
+    CreditCard,
+    LogOut,
+    Search,
+    Sparkles,
+} from 'lucide-react';
 import {
     Tooltip,
     TooltipContent,
     TooltipTrigger,
-} from "@/components/ui/tooltip"
+} from '@/components/ui/tooltip';
 import { Button } from '../ui/button';
-
 
 interface UserSidebarProps {
     searchToggler?: boolean;
     setSearchToggler?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function UserSidebar({ searchToggler, setSearchToggler }: UserSidebarProps) {
+export default function UserSidebar({
+    searchToggler,
+    setSearchToggler,
+}: UserSidebarProps) {
     const { name: appName, auth } = usePage().props;
-    const { state } = useSidebar()
+    const { state } = useSidebar();
     const user = auth?.user;
 
     return (
         <Sidebar collapsible="icon">
-            <SidebarHeader className={`${state == 'expanded' && 'px-3'} justify-center pt-4`}>
-                <div className={`flex ${state == 'expanded' ? 'flex-row justify-between' : 'md:flex-col justify-between gap-3 md:justify-center'} items-center`}>
-                    <div className="flex items-center gap-2.5 px-1 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
-                        <div
-                            className="flex size-9 shrink-0 items-center justify-center rounded-md bg-primary/10 p-2"
-                            aria-hidden="true"
-                        >
-                            <Logo show={false} className="h-13 w-13" />
-                        </div>
+            <SidebarHeader
+                className={`${state == 'expanded' && 'px-3'} justify-center pt-4`}
+            >
+                <div
+                    className={`flex ${state == 'expanded' ? 'flex-row justify-between' : 'justify-between gap-3 md:flex-col md:justify-center'} items-center`}
+                >
+                    <div
+                        onClick={() => router.get(route('app.dashboard'))}
+                        className="flex items-center gap-2.5 px-1 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0"
+                    >
+                        <Logo show="false" imageSize="h-8 w-8 text-primary" />
                         <div className="min-w-0 flex-1 group-data-[collapsible=icon]:hidden">
-                            <p className="truncate text-sm font-bold tracking-tight">{appName}</p>
+                            <p className="truncate text-sm font-bold tracking-tight">
+                                {appName}
+                            </p>
                             <p className="truncate text-xs text-muted-foreground">
                                 Workspace
                             </p>
                         </div>
                     </div>
 
-                    <div className={`flex ${state == 'expanded' ? 'flex-row gap-1' : 'md:flex-col-reverse gap-2'} items-center`}>
+                    <div
+                        className={`flex ${state == 'expanded' ? 'flex-row gap-1' : 'gap-2 md:flex-col-reverse'} items-center`}
+                    >
                         {/* search */}
-                        <div className='hidden md:block'>
+                        <div className="hidden md:block">
                             <Tooltip>
                                 <TooltipTrigger
                                     render={
-                                        <Button variant='outline' size='icon' onClick={() => setSearchToggler?.(!searchToggler)}>
+                                        <Button
+                                            variant="outline"
+                                            size="icon"
+                                            onClick={() =>
+                                                setSearchToggler?.(
+                                                    !searchToggler,
+                                                )
+                                            }
+                                        >
                                             <Search />
                                         </Button>
                                     }
                                 />
-                                {state == "collapsed" && (
+                                {state == 'collapsed' && (
                                     <TooltipContent side="right">
                                         Search
                                     </TooltipContent>
@@ -86,11 +109,16 @@ export default function UserSidebar({ searchToggler, setSearchToggler }: UserSid
 
                         {/* menu trigger */}
                         <Tooltip>
-                            <TooltipTrigger render={
-                                <SidebarTrigger variant='outline' size='icon' />
-                            } />
+                            <TooltipTrigger
+                                render={
+                                    <SidebarTrigger
+                                        variant="outline"
+                                        size="icon"
+                                    />
+                                }
+                            />
                             {state == 'collapsed' && (
-                                <TooltipContent side='right'>
+                                <TooltipContent side="right">
                                     Extended Menu
                                 </TooltipContent>
                             )}
@@ -113,7 +141,7 @@ export default function UserSidebar({ searchToggler, setSearchToggler }: UserSid
                                 {group.items.map((item, i) => (
                                     <SidebarMenuItem key={i}>
                                         <SidebarMenuButton
-                                            size='lg'
+                                            size="lg"
                                             isActive={item.active}
                                             tooltip={
                                                 item.badge
@@ -121,7 +149,9 @@ export default function UserSidebar({ searchToggler, setSearchToggler }: UserSid
                                                     : item.label
                                             }
                                             render={<a href="#" />}
-                                            aria-current={item.active ? "page" : undefined}
+                                            aria-current={
+                                                item.active ? 'page' : undefined
+                                            }
                                             className="group-data-[collapsible=icon]:justify-center"
                                         >
                                             <item.icon aria-hidden="true" />
@@ -148,10 +178,8 @@ export default function UserSidebar({ searchToggler, setSearchToggler }: UserSid
                             {secondNavGroups.map((item, i) => (
                                 <SidebarMenuItem key={i}>
                                     <SidebarMenuButton
-                                        size='lg'
-                                        tooltip={
-                                            item.label
-                                        }
+                                        size="lg"
+                                        tooltip={item.label}
                                         render={<a href="#" />}
                                         className="group-data-[collapsible=icon]:justify-center"
                                     >
@@ -178,9 +206,14 @@ export default function UserSidebar({ searchToggler, setSearchToggler }: UserSid
                                         className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                                     >
                                         <Avatar className="h-8 w-8 rounded-lg">
-                                            <AvatarImage src={user?.avatar} alt={user?.name} />
+                                            <AvatarImage
+                                                src={user?.avatar}
+                                                alt={user?.name}
+                                            />
                                             <AvatarFallback className="rounded-lg">
-                                                {user?.name?.slice(0, 2).toUpperCase()}
+                                                {user?.name
+                                                    ?.slice(0, 2)
+                                                    .toUpperCase()}
                                             </AvatarFallback>
                                         </Avatar>
 
@@ -199,7 +232,7 @@ export default function UserSidebar({ searchToggler, setSearchToggler }: UserSid
                             />
 
                             <DropdownMenuContent
-                                side='top'
+                                side="top"
                                 align="center"
                                 sideOffset={8}
                                 className="min-w-56 rounded-lg shadow-none"
@@ -220,7 +253,7 @@ export default function UserSidebar({ searchToggler, setSearchToggler }: UserSid
                                 <DropdownMenuSeparator />
 
                                 <DropdownMenuGroup>
-                                    <DropdownMenuItem className='py-2'>
+                                    <DropdownMenuItem className="py-2">
                                         <Sparkles />
                                         Upgrade to Pro
                                     </DropdownMenuItem>
@@ -229,17 +262,24 @@ export default function UserSidebar({ searchToggler, setSearchToggler }: UserSid
                                 <DropdownMenuSeparator />
 
                                 <DropdownMenuGroup>
-                                    <DropdownMenuItem className='py-1.5' onClick={() => router.get(route('app.account.view'))}>
+                                    <DropdownMenuItem
+                                        className="py-1.5"
+                                        onClick={() =>
+                                            router.get(
+                                                route('app.account.view'),
+                                            )
+                                        }
+                                    >
                                         <BadgeCheck />
                                         Account
                                     </DropdownMenuItem>
 
-                                    <DropdownMenuItem className='py-1.5'>
+                                    <DropdownMenuItem className="py-1.5">
                                         <CreditCard />
                                         Billing
                                     </DropdownMenuItem>
 
-                                    <DropdownMenuItem className='py-1.5'>
+                                    <DropdownMenuItem className="py-1.5">
                                         <Bell />
                                         Notifications
                                     </DropdownMenuItem>
@@ -247,7 +287,10 @@ export default function UserSidebar({ searchToggler, setSearchToggler }: UserSid
 
                                 <DropdownMenuSeparator />
 
-                                <DropdownMenuItem variant='destructive' onClick={() => router.get(route('logout'))}>
+                                <DropdownMenuItem
+                                    variant="destructive"
+                                    onClick={() => router.get(route('logout'))}
+                                >
                                     <LogOut />
                                     Log out
                                 </DropdownMenuItem>
@@ -256,6 +299,6 @@ export default function UserSidebar({ searchToggler, setSearchToggler }: UserSid
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarFooter>
-        </Sidebar >
-    )
+        </Sidebar>
+    );
 }

@@ -22,7 +22,6 @@
     "hooks": "@/hooks"
   },
   "registries": {
-    "@7ovr": "https://7ovr.com/r/{name}.json",
     "@aceternity": "https://ui.aceternity.com/registry/{name}.json",
     "@efferd": "https://efferd.com/r/{name}.json"
   }

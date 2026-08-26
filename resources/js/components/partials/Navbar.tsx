@@ -23,7 +23,7 @@ const Navbar = () => {
                 'w-full border-b border-border-light bg-primary duration-300',
             )}
         >
-            <div className="container border-x border-border-light py-5 relative">
+            <div className="relative container border-x border-border-light py-5">
                 <nav className="flex h-fit w-full items-center justify-between">
                     <div className="flex items-center gap-3">
                         <Link href="/">
@@ -69,7 +69,7 @@ const Navbar = () => {
                             size="sm"
                             className="font-normal"
                         >
-                            Login
+                            {user ? 'Go to app' : 'Login'}
                         </SlideUpButton>
                         <div className="hidden md:block">
                             <SlideUpButton
@@ -102,7 +102,7 @@ const Navbar = () => {
                         height: { duration: 0.3, ease: 'easeInOut' },
                         opacity: { duration: 0.2 },
                     }}
-                    className="w-full overflow-hidden bg-primary h-0"
+                    className="h-0 w-full overflow-hidden bg-primary"
                 >
                     <NavigationMenu className="mt-4 mb-5">
                         <NavigationMenuList className="flex flex-col items-start justify-start gap-3">

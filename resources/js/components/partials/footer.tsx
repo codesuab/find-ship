@@ -155,7 +155,7 @@ export default function Footer() {
                             }}
                             className="flex flex-col gap-6 lg:col-span-4"
                         >
-                            <Logo imageSize="text-primary h-10" show={false} />
+                            <Logo imageSize="text-primary h-10" show='false' />
                             <motion.h1
                                 initial={{
                                     opacity: 0,

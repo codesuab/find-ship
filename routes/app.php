@@ -12,13 +12,11 @@ Route::prefix('/app')->middleware(['auth', 'insSureEmailVerify'])->group(functio
     });
 
     // final routes
-    Route::middleware('insOnboarding')->group(function () {
-        // Dashboard
-        Route::get('/', [DashboardController::class, 'index'])->name('app.dashboard');
+    // Dashboard
+    Route::get('/', [DashboardController::class, 'index'])->name('app.dashboard');
 
-        // account
-        Route::controller(AccountController::class)->group(function () {
-            Route::get('/account', 'index')->name('app.account.view');
-        });
+    // account
+    Route::controller(AccountController::class)->group(function () {
+        Route::get('/account', 'index')->name('app.account.view');
     });
 });

@@ -1,66 +1,127 @@
 import Logo from '@/components/Logo';
 import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
 import { Toaster } from '@/components/ui/toast';
-import { Head, Link, router } from '@inertiajs/react';
-import { LogOut } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'motion/react';
+import { Field, FieldDescription, FieldLabel } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+import { useRef, useState } from 'react';
+import { Loader } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import {
+    Combobox,
+    ComboboxContent,
+    ComboboxEmpty,
+    ComboboxInput,
+    ComboboxItem,
+    ComboboxList,
+} from '@/components/ui/combobox';
+import { Textarea } from '@/components/ui/textarea';
+
+interface StepInterface {
+    title: string;
+    subtitle: string;
+}
 
 export default function index() {
-    const [step, setStep] = useState(0);
-    const direction = useRef(1);
-
-    const [form, setForm] = useState({
-        company_name: '',
-        business_type: '',
-        country: '',
-        timezone: '',
-        phone: '',
-    });
-
-    const update = (key: keyof typeof form, value: string) => {
-        setForm((prev) => ({
-            ...prev,
-            [key]: value,
-        }));
+    const stepTitle: Record<number, StepInterface> = {
+        1: {
+            title: 'Personal Details',
+            subtitle:
+                'Set up your personal identity, profile avatar, and verified phone number.',
+        },
+        2: {
+            title: 'Company & Business',
+            subtitle:
+                'Provide your organization credentials, brand logo, industry type, and headquarters.',
+        },
     };
-
-    const tabs = [
-        {
-            title: 'Tell us about your business',
-            description: 'Add your business information to get started.',
-        },
-        {
-            title: 'Where is your business located?',
-            description: 'This helps us provide relevant information.',
-        },
-        {
-            title: 'Contact information',
-            description: 'Add your contact information.',
-        },
-        {
-            title: "You're all set",
-            description: 'Your ShipFinder workspace is ready.',
-        },
+    const countryItems = [
+        { label: 'Select a country', value: null },
+        { label: 'Bangladesh', value: 'bangladesh' },
+        { label: 'China', value: 'china' },
+        { label: 'India', value: 'india' },
+    ];
+    const genderItems = [
+        { label: 'Select gender', value: null },
+        { label: 'Male', value: 'male' },
+        { label: 'Female', value: 'female' },
+        { label: 'Other', value: 'other' },
     ];
 
-    const next = () => {
+    const [step, setStep] = useState(1);
+    const [isLoading, setIsLoading] = useState(false);
+    const direction = useRef(1);
+
+    const stepCount = Object.keys(stepTitle).length;
+
+    const contentVariants = {
+        enter: (direction: number) => ({
+            x: direction > 0 ? 24 : -24,
+            opacity: 0,
+            scale: 0.985,
+            filter: 'blur(3px)',
+        }),
+        center: {
+            x: 0,
+            opacity: 1,
+            scale: 1,
+            filter: 'blur(0px)',
+        },
+        exit: (direction: number) => ({
+            x: direction > 0 ? -24 : 24,
+            opacity: 0,
+            scale: 0.985,
+            filter: 'blur(3px)',
+        }),
+    };
+
+    const contentTransition = {
+        duration: 0.45,
+        ease: [0.22, 1, 0.36, 1] as const,
+    };
+
+    const handleNext = async (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+
+        if (step >= stepCount) return;
+
         direction.current = 1;
+        setIsLoading(true);
 
-        if (step < tabs.length - 1) {
-            setStep((prev) => prev + 1);
-        } else {
-            router.post(route('app.onboarding.complete'), form);
-        }
+        await new Promise((resolve) => setTimeout(resolve, 350));
+
+        setStep((prev) => prev + 1);
+        setIsLoading(false);
     };
 
-    const previous = () => {
+    const handleBack = () => {
+        if (step <= 1) return;
+
         direction.current = -1;
-        setStep((prev) => Math.max(0, prev - 1));
+        setStep((prev) => prev - 1);
     };
 
+    // form
+    const personalInfoForm = useForm({
+        phone: '',
+        avatar: null,
+        gender: '',
+        country: 'bangladesh',
+        city: '',
+        zip: '',
+        address: '',
+    });
+
+    const companyInfoForm = useForm({
+        company_logo: null,
+        company_name: '',
+        company_type: '',
+        company_address: '',
+    });
     return (
-        <div className="relative flex min-h-screen w-full bg-white font-sans text-slate-900 antialiased lg:flex-row">
+        <div className="flex min-h-screen w-full bg-white font-sans text-slate-900 antialiased lg:flex-row">
             <Head>
                 <title>Verify email address.</title>
             </Head>
@@ -70,247 +131,569 @@ export default function index() {
             <div className="relative container flex w-full flex-col items-center justify-center">
                 <div className="absolute top-0 left-0 flex w-full items-center justify-between gap-4 px-5 py-6">
                     <Link href={route('home')}>
-                        <Logo imageSize="h-10 w-10 text-primary" show='true' textClass='text-foreground' />
+                        <Button variant="link" className="text-foreground">
+                            Back Home
+                        </Button>
                     </Link>
 
                     <Link href={route('logout')}>
-                        <Button variant='destructive'>
-                            <LogOut className="size-3" />
-                            Logout
+                        <Button variant="link" className="text-foreground">
+                            Sign out
                         </Button>
                     </Link>
                 </div>
 
                 {/* tabs */}
-                <motion.div
-                    layout
-                    transition={{
-                        layout: {
-                            duration: 0.6,
-                            ease: [0.22, 1, 0.36, 1],
-                        },
-                    }}
-                    className="mx-auto w-full md:w-120"
-                >
-                    <div className="mb-1 flex items-center justify-between gap-5">
-                        <h1 className="text-md font-semibold">
-                            Getting Started
-                        </h1>
+                <div className="mx-auto w-full md:w-140">
+                    {/* Header */}
+                    <div>
+                        <div className="mb-2 flex items-center justify-between">
+                            <AnimatePresence mode="wait" initial={false}>
+                                <motion.h1
+                                    key={step}
+                                    initial={{ opacity: 0, y: 3 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -3 }}
+                                    transition={{
+                                        duration: 0.25,
+                                        ease: 'easeOut',
+                                    }}
+                                    className="text-base font-medium text-foreground"
+                                >
+                                    {stepTitle[step].title}
+                                </motion.h1>
+                            </AnimatePresence>
 
-                        <p className="text-sm font-medium">
-                            {step + 1}/
-                            <span className="text-muted-foreground">
-                                {tabs.length} Done
-                            </span>
-                        </p>
+                            <motion.div
+                                layout
+                                className="text-sm font-medium text-foreground"
+                            >
+                                {step}
+                                <span className="text-muted-foreground">
+                                    /{stepCount} Done
+                                </span>
+                            </motion.div>
+                        </div>
+
+                        <div className="relative h-1 overflow-hidden rounded-full bg-muted">
+                            <motion.div
+                                className="absolute inset-y-0 left-0 rounded-full bg-primary"
+                                animate={{
+                                    width: `${(step / stepCount) * 100}%`,
+                                }}
+                                transition={{
+                                    duration: 0.6,
+                                    ease: [0.22, 1, 0.36, 1],
+                                }}
+                            />
+                        </div>
                     </div>
 
-                    <div className="h-1 w-full overflow-hidden rounded-full bg-muted">
-                        <motion.div
-                            className="h-full bg-primary"
-                            animate={{
-                                width: `${((step + 1) / tabs.length) * 100}%`,
-                            }}
-                            transition={{
-                                duration: 0.6,
-                                ease: [0.22, 1, 0.36, 1],
-                            }}
-                        />
-                    </div>
-
+                    {/* Content */}
                     <motion.div
                         layout
-                        className="relative py-8"
                         transition={{
                             layout: {
-                                duration: 0.6,
-                                ease: [0.22, 1, 0.36, 1],
+                                duration: 0.45,
+                                ease: 'linear',
                             },
                         }}
+                        className="overflow-hidden"
                     >
                         <AnimatePresence
+                            mode="wait"
                             initial={false}
                             custom={direction.current}
                         >
                             <motion.div
                                 key={step}
                                 custom={direction.current}
-                                variants={{
-                                    enter: (direction: number) => ({
-                                        opacity: 0,
-                                        x: direction > 0 ? 45 : -45,
-                                        filter: 'blur(8px)',
-                                    }),
-                                    center: {
-                                        opacity: 1,
-                                        x: 0,
-                                        filter: 'blur(0px)',
-                                    },
-                                    exit: (direction: number) => ({
-                                        opacity: 0,
-                                        x: direction > 0 ? -45 : 45,
-                                        filter: 'blur(8px)',
-                                    }),
-                                }}
+                                variants={contentVariants}
                                 initial="enter"
                                 animate="center"
                                 exit="exit"
-                                transition={{
-                                    duration: 0.4,
-                                    ease: [0.22, 1, 0.36, 1],
-                                }}
-                                className="w-full"
+                                transition={contentTransition}
+                                className="py-6"
                             >
-                                <div className="mb-10">
-                                    <h2 className="text-4xl font-semibold tracking-tight">
-                                        {tabs[step].title}
-                                    </h2>
+                                {/* Header */}
+                                <div className="mb-6">
+                                    <motion.h2
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        transition={{
+                                            duration: 0.35,
+                                            ease: 'easeOut',
+                                        }}
+                                        className="text-xl font-medium text-foreground"
+                                    >
+                                        {stepTitle[step].title}
+                                    </motion.h2>
 
-                                    <p className="mt-3 text-muted-foreground">
-                                        {tabs[step].description}
-                                    </p>
+                                    <motion.p
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        transition={{
+                                            duration: 0.35,
+                                            ease: 'easeOut',
+                                        }}
+                                        className="text-sm text-muted-foreground"
+                                    >
+                                        {stepTitle[step].subtitle}
+                                    </motion.p>
                                 </div>
 
-                                {step === 0 && (
-                                    <div className="space-y-4">
-                                        <input
-                                            value={form.company_name}
-                                            onChange={(e) =>
-                                                update(
-                                                    'company_name',
-                                                    e.target.value,
-                                                )
-                                            }
-                                            placeholder="Company name"
-                                            className="w-full rounded-lg border px-4 py-3"
-                                        />
-
-                                        <select
-                                            value={form.business_type}
-                                            onChange={(e) =>
-                                                update(
-                                                    'business_type',
-                                                    e.target.value,
-                                                )
-                                            }
-                                            className="w-full rounded-lg border px-4 py-3"
-                                        >
-                                            <option value="">
-                                                Select business type
-                                            </option>
-                                            <option value="shipping">
-                                                Shipping Company
-                                            </option>
-                                            <option value="freight">
-                                                Freight Forwarder
-                                            </option>
-                                            <option value="import_export">
-                                                Import / Export
-                                            </option>
-                                        </select>
-                                    </div>
-                                )}
-
+                                {/* Personal */}
                                 {step === 1 && (
-                                    <div className="space-y-4">
-                                        <select
-                                            value={form.country}
-                                            onChange={(e) =>
-                                                update(
-                                                    'country',
-                                                    e.target.value,
-                                                )
-                                            }
-                                            className="w-full rounded-lg border px-4 py-3"
-                                        >
-                                            <option value="">
-                                                Select country
-                                            </option>
-                                            <option value="BD">
-                                                Bangladesh
-                                            </option>
-                                            <option value="IN">India</option>
-                                            <option value="SG">
-                                                Singapore
-                                            </option>
-                                        </select>
+                                    <motion.div
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        transition={{
+                                            duration: 0.35,
+                                            ease: [0.22, 1, 0.36, 1],
+                                        }}
+                                        className="space-y-3"
+                                    >
+                                        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                                            <Field
+                                                data-invalid={
+                                                    !!personalInfoForm.errors
+                                                        .country
+                                                }
+                                            >
+                                                <FieldLabel>
+                                                    Country*
+                                                </FieldLabel>
 
-                                        <select
-                                            value={form.timezone}
-                                            onChange={(e) =>
-                                                update(
-                                                    'timezone',
-                                                    e.target.value,
-                                                )
+                                                <Combobox
+                                                    items={countryItems}
+                                                    onValueChange={(value) =>
+                                                        personalInfoForm.setData(
+                                                            'country',
+                                                            value ?? '',
+                                                        )
+                                                    }
+                                                    defaultValue={
+                                                        personalInfoForm.data
+                                                            .country
+                                                    }
+                                                >
+                                                    <ComboboxInput
+                                                        placeholder="Select a country"
+                                                        showClear
+                                                        aria-invalid={
+                                                            !!personalInfoForm
+                                                                .errors.country
+                                                        }
+                                                        className="h-12 rounded-xl"
+                                                    />
+                                                    <ComboboxContent>
+                                                        <ComboboxEmpty>
+                                                            No items found.
+                                                        </ComboboxEmpty>
+                                                        <ComboboxList>
+                                                            {(items, i) => (
+                                                                <ComboboxItem
+                                                                    key={i}
+                                                                    value={
+                                                                        items.value
+                                                                    }
+                                                                >
+                                                                    {
+                                                                        items.label
+                                                                    }
+                                                                </ComboboxItem>
+                                                            )}
+                                                        </ComboboxList>
+                                                    </ComboboxContent>
+                                                </Combobox>
+
+                                                <FieldDescription className="text-destructive">
+                                                    {
+                                                        personalInfoForm.errors
+                                                            .country
+                                                    }
+                                                </FieldDescription>
+                                            </Field>
+
+                                            <Field
+                                                data-invalid={
+                                                    !!personalInfoForm.errors
+                                                        .city
+                                                }
+                                            >
+                                                <FieldLabel>City*</FieldLabel>
+
+                                                <Input
+                                                    type="text"
+                                                    placeholder="Enter your city"
+                                                    value={
+                                                        personalInfoForm.data
+                                                            .city
+                                                    }
+                                                    aria-invalid={
+                                                        !!personalInfoForm
+                                                            .errors.city
+                                                    }
+                                                    onChange={(e) =>
+                                                        personalInfoForm.setData(
+                                                            'city',
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                />
+                                                <FieldDescription className="text-destructive">
+                                                    {
+                                                        personalInfoForm.errors
+                                                            .city
+                                                    }
+                                                </FieldDescription>
+                                            </Field>
+                                        </div>
+                                        <Field
+                                            data-invalid={
+                                                !!personalInfoForm.errors.phone
                                             }
-                                            className="w-full rounded-lg border px-4 py-3"
                                         >
-                                            <option value="">
-                                                Select timezone
-                                            </option>
-                                            <option value="Asia/Dhaka">
-                                                Asia/Dhaka
-                                            </option>
-                                            <option value="Asia/Kolkata">
-                                                Asia/Kolkata
-                                            </option>
-                                            <option value="Asia/Singapore">
-                                                Asia/Singapore
-                                            </option>
-                                        </select>
-                                    </div>
+                                            <FieldLabel>Phone*</FieldLabel>
+
+                                            <Input
+                                                type="tel"
+                                                placeholder="Enter your phone"
+                                                value={
+                                                    personalInfoForm.data.phone
+                                                }
+                                                aria-invalid={
+                                                    !!personalInfoForm.errors
+                                                        .phone
+                                                }
+                                                onChange={(e) =>
+                                                    personalInfoForm.setData(
+                                                        'phone',
+                                                        e.target.value,
+                                                    )
+                                                }
+                                            />
+                                            <FieldDescription className="text-destructive">
+                                                {personalInfoForm.errors.phone}
+                                            </FieldDescription>
+                                        </Field>
+                                        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                                            <Field
+                                                data-invalid={
+                                                    !!personalInfoForm.errors
+                                                        .zip
+                                                }
+                                            >
+                                                <FieldLabel>
+                                                    Zip code*
+                                                </FieldLabel>
+
+                                                <Input
+                                                    type="text"
+                                                    placeholder="Enter your zip"
+                                                    value={
+                                                        personalInfoForm.data
+                                                            .zip
+                                                    }
+                                                    aria-invalid={
+                                                        !!personalInfoForm
+                                                            .errors.zip
+                                                    }
+                                                    onChange={(e) =>
+                                                        personalInfoForm.setData(
+                                                            'zip',
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                />
+                                                <FieldDescription className="text-destructive">
+                                                    {
+                                                        personalInfoForm.errors
+                                                            .zip
+                                                    }
+                                                </FieldDescription>
+                                            </Field>
+                                            <Field
+                                                data-invalid={
+                                                    !!personalInfoForm.errors
+                                                        .gender
+                                                }
+                                            >
+                                                <FieldLabel>Gender*</FieldLabel>
+
+                                                <Combobox
+                                                    items={genderItems}
+                                                    onValueChange={(value) =>
+                                                        personalInfoForm.setData(
+                                                            'gender',
+                                                            value ?? '',
+                                                        )
+                                                    }
+                                                    defaultValue={
+                                                        personalInfoForm.data
+                                                            .gender
+                                                    }
+                                                >
+                                                    <ComboboxInput
+                                                        placeholder="Select gender"
+                                                        showClear
+                                                        aria-invalid={
+                                                            !!personalInfoForm
+                                                                .errors.gender
+                                                        }
+                                                        className="h-12 rounded-xl"
+                                                    />
+                                                    <ComboboxContent>
+                                                        <ComboboxEmpty>
+                                                            No items found.
+                                                        </ComboboxEmpty>
+                                                        <ComboboxList>
+                                                            {(items, i) => (
+                                                                <ComboboxItem
+                                                                    key={i}
+                                                                    value={
+                                                                        items.value
+                                                                    }
+                                                                >
+                                                                    {
+                                                                        items.label
+                                                                    }
+                                                                </ComboboxItem>
+                                                            )}
+                                                        </ComboboxList>
+                                                    </ComboboxContent>
+                                                </Combobox>
+
+                                                <FieldDescription className="text-destructive">
+                                                    {
+                                                        personalInfoForm.errors
+                                                            .gender
+                                                    }
+                                                </FieldDescription>
+                                            </Field>
+                                        </div>
+                                        <Field
+                                            data-invalid={
+                                                !!personalInfoForm.errors
+                                                    .address
+                                            }
+                                        >
+                                            <FieldLabel>Address*</FieldLabel>
+                                            <Textarea
+                                                placeholder="Enter your address"
+                                                value={
+                                                    personalInfoForm.data.address
+                                                }
+                                                aria-invalid={
+                                                    !!personalInfoForm.errors
+                                                        .address
+                                                }
+                                                onChange={(e) =>
+                                                    personalInfoForm.setData(
+                                                        'address',
+                                                        e.target.value,
+                                                    )
+                                                }
+                                            />
+                                            <FieldDescription className="text-destructive">
+                                                {
+                                                    personalInfoForm.errors
+                                                        .address
+                                                }
+                                            </FieldDescription>
+                                        </Field>
+                                    </motion.div>
                                 )}
 
+                                {/* Company */}
                                 {step === 2 && (
-                                    <input
-                                        type="tel"
-                                        value={form.phone}
-                                        onChange={(e) =>
-                                            update('phone', e.target.value)
-                                        }
-                                        placeholder="+880 1XXXXXXXXX"
-                                        className="w-full rounded-lg border px-4 py-3"
-                                    />
-                                )}
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 8 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{
+                                            duration: 0.35,
+                                            ease: [0.22, 1, 0.36, 1],
+                                        }}
+                                    >
+                                        <Field
+                                            data-invalid={
+                                                !!companyInfoForm.errors
+                                                    .company_name
+                                            }
+                                        >
+                                            <FieldLabel>
+                                                Company Name
+                                            </FieldLabel>
 
-                                {step === 3 && (
-                                    <div className="rounded-xl border p-8 text-center">
-                                        🚢
-                                        <p className="mt-3">
-                                            Your workspace is ready.
-                                        </p>
-                                    </div>
+                                            <Input
+                                                type="text"
+                                                placeholder="Enter your company name"
+                                                value={
+                                                    companyInfoForm.data
+                                                        .company_name
+                                                }
+                                                aria-invalid={
+                                                    !!companyInfoForm.errors
+                                                        .company_name
+                                                }
+                                                onChange={(e) =>
+                                                    companyInfoForm.setData(
+                                                        'company_name',
+                                                        e.target.value,
+                                                    )
+                                                }
+                                            />
+
+                                            <AnimatePresence initial={false}>
+                                                {companyInfoForm.errors
+                                                    .company_name && (
+                                                    <motion.div
+                                                        initial={{
+                                                            opacity: 0,
+                                                            height: 0,
+                                                            y: -4,
+                                                        }}
+                                                        animate={{
+                                                            opacity: 1,
+                                                            height: 'auto',
+                                                            y: 0,
+                                                        }}
+                                                        exit={{
+                                                            opacity: 0,
+                                                            height: 0,
+                                                            y: -4,
+                                                        }}
+                                                    >
+                                                        <FieldDescription className="text-destructive">
+                                                            {
+                                                                companyInfoForm
+                                                                    .errors
+                                                                    .company_name
+                                                            }
+                                                        </FieldDescription>
+                                                    </motion.div>
+                                                )}
+                                            </AnimatePresence>
+                                        </Field>
+
+                                        {/* Other company fields */}
+                                    </motion.div>
                                 )}
                             </motion.div>
                         </AnimatePresence>
                     </motion.div>
 
-                    <div className="flex items-center justify-between border-t pt-6">
-                        <button
-                            type="button"
-                            onClick={previous}
-                            disabled={step === 0}
-                            className="rounded-lg px-5 py-2.5 disabled:opacity-30"
-                        >
-                            Back
-                        </button>
+                    {/* Footer */}
+                    <div className="mt-2 flex items-center justify-between border-t border-border pt-4">
+                        <div>
+                            <AnimatePresence initial={false}>
+                                {step > 1 && (
+                                    <motion.div
+                                        initial={{
+                                            opacity: 0,
+                                            x: -8,
+                                        }}
+                                        animate={{
+                                            opacity: 1,
+                                            x: 0,
+                                        }}
+                                        exit={{
+                                            opacity: 0,
+                                            x: -8,
+                                        }}
+                                        transition={{
+                                            duration: 0.3,
+                                            ease: 'easeOut',
+                                        }}
+                                    >
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            onClick={handleBack}
+                                            disabled={isLoading}
+                                        >
+                                            Back
+                                        </Button>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
 
-                        <motion.button
-                            type="button"
-                            onClick={next}
-                            whileTap={{ scale: 0.96 }}
-                            className="rounded-lg bg-primary px-6 py-2.5 text-primary-foreground"
+                        <motion.div
+                            layout
+                            transition={{
+                                layout: {
+                                    duration: 0.35,
+                                    ease: [0.22, 1, 0.36, 1],
+                                },
+                            }}
                         >
-                            {step === tabs.length - 1
-                                ? 'Get Started'
-                                : 'Continue'}
-                        </motion.button>
+                            <Button
+                                type="button"
+                                onClick={handleNext}
+                                disabled={isLoading}
+                                className={cn(
+                                    'relative overflow-hidden',
+                                    step === 1 && 'w-full',
+                                )}
+                            >
+                                <AnimatePresence mode="wait" initial={false}>
+                                    {isLoading ? (
+                                        <motion.span
+                                            key="loading"
+                                            initial={{
+                                                opacity: 0,
+                                                scale: 0.7,
+                                            }}
+                                            animate={{
+                                                opacity: 1,
+                                                scale: 1,
+                                            }}
+                                            exit={{
+                                                opacity: 0,
+                                                scale: 0.7,
+                                            }}
+                                            transition={{
+                                                duration: 0.2,
+                                            }}
+                                            className="flex items-center"
+                                        >
+                                            <Loader className="size-5 animate-spin" />
+                                        </motion.span>
+                                    ) : (
+                                        <motion.span
+                                            key={
+                                                step === stepCount
+                                                    ? 'finish'
+                                                    : 'continue'
+                                            }
+                                            initial={{
+                                                opacity: 0,
+                                                y: 4,
+                                            }}
+                                            animate={{
+                                                opacity: 1,
+                                                y: 0,
+                                            }}
+                                            exit={{
+                                                opacity: 0,
+                                                y: -4,
+                                            }}
+                                            transition={{
+                                                duration: 0.2,
+                                            }}
+                                        >
+                                            {step === stepCount
+                                                ? 'Finish setup'
+                                                : 'Continue'}
+                                        </motion.span>
+                                    )}
+                                </AnimatePresence>
+                            </Button>
+                        </motion.div>
                     </div>
-                </motion.div>
+                </div>
             </div>
-
-            {/* bg */}
-            <div className="absolute -top-50 -left-50 z-1 hidden h-100 w-100 rounded-full bg-primary/30 blur-3xl md:block"></div>
         </div>
     );
 }

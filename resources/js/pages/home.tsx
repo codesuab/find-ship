@@ -36,6 +36,7 @@ import { Badge } from '@/components/ui/badge';
 import Faq from '@/components/partials/Faq';
 import InfiniteQuestionBadge from '@/components/icon/InfiniteQuestionBadge';
 import Logo from '@/components/Logo';
+import HighlightedText from '@/components/highlighted-text';
 
 export default function home() {
     const { name: appName, auth } = usePage<PageProps>().props;
@@ -228,7 +229,7 @@ export default function home() {
                         className="mt-10 w-full max-w-[85%]"
                     >
                         <ScrollRevealText
-                            className="text-[32px] leading-11 font-normal text-foreground"
+                            className="text-[25px] leading-9 font-normal text-foreground md:text-[32px] md:leading-11"
                             text="ShipFinder helps you track and discover vessels with
                         reliable maritime data. We make vessel information,
                         locations, arrivals, departures, and port activity
@@ -459,24 +460,9 @@ export default function home() {
                                 )}
 
                                 {val.id == 2 && (
-                                    <motion.div
-                                        initial={{
-                                            opacity: 0,
-                                            scale: 0.8,
-                                        }}
-                                        whileInView={{
-                                            opacity: 1,
-                                            scale: 1,
-                                        }}
-                                        transition={{
-                                            duration: 0.4,
-                                            ease: 'easeIn',
-                                        }}
-                                        viewport={{ once: true, amount: 0.1 }}
-                                        className="h-100 w-100"
-                                    >
+                                    <div className="h-100 w-100 z-1">
                                         <CobeGlobe />
-                                    </motion.div>
+                                    </div>
                                 )}
 
                                 {val.id == 3 && (

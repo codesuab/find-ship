@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -39,7 +40,20 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'name' => config('app.name'),
             'auth' => [
-                'user' => $request->user(),
+                'user' => fn() => $request->user()
+                    ? Cache::remember(
+                        "auth:user:{$request->user()->id}",
+                        now()->addMinutes(10),
+                        fn() => $request->user()->only([
+                            'id',
+                            'name',
+                            'email',
+                            'avatar',
+                            'company_name',
+                            'company_logo',
+                        ])
+                    )
+                    : null,
             ],
             'current_route' => request()->route()?->uri(),
             'flash' => [
@@ -47,7 +61,7 @@ class HandleInertiaRequests extends Middleware
                 'success' => fn() => $request->session()->get('success'),
                 'custom' => fn() => $request->session()->get('custom'),
                 'id' => fn() => $request->session()->get('_flash_id'),
-                'retry_after' => fn () => $request->session()->get('retry_after'),
+                'retry_after' => fn() => $request->session()->get('retry_after'),
             ],
         ];
     }
