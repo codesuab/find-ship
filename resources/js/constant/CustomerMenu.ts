@@ -1,4 +1,4 @@
-import { IconHelp, IconSettings } from "@tabler/icons-react"
+import { IconHelp } from "@tabler/icons-react"
 import { Anchor, Info, LocateFixed, Ship } from "lucide-react"
 import { RxDashboard } from "react-icons/rx"
 import { LuMapPinned } from "react-icons/lu";
@@ -66,10 +66,6 @@ const navGroups: { heading?: string; items: NavItem[] }[] = [
 ]
 
 const secondNavGroups = [
-    {
-        label: "Settings",
-        icon: IconSettings,
-    },
     {
         label: "Get Help",
         icon: IconHelp,

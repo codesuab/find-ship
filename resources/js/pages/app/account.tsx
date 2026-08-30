@@ -7,8 +7,10 @@ import {
     EyeOff,
     FingerprintPattern,
     Loader,
+    Moon,
     PlugZap,
     Save,
+    SunMoon,
     Trash2,
     Unplug,
     User,
@@ -48,10 +50,10 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-    AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { FacebookIcon } from '@/components/icon/Facebook';
 import { GoogleIcon } from '@/components/icon/Google';
+import { ModeToggle } from '@/components/mode-toggle';
 
 interface UserProps {
     id: number;
@@ -126,17 +128,9 @@ export default function account({
     const [showPassword, setShowPassword] = useState(false);
 
     // tab activity
-    const [activeTab, setActiveTab] = useState(() => {
-        return localStorage.getItem('settings-tab') || 'personal';
-    });
-    useEffect(() => {
-        if (tab) {
-            setActiveTab(tab);
-        }
-    }, [tab]);
+    const [activeTab, setActiveTab] = useState<string>('profile');
     const handleTabChange = (value: string) => {
         setActiveTab(value);
-        localStorage.setItem('settings-tab', value);
     };
 
     // personal info
@@ -238,12 +232,12 @@ export default function account({
             <Tabs
                 defaultValue={activeTab}
                 onValueChange={handleTabChange}
-                className="mt-2 md:mt-6 w-full flex-col md:flex-row"
+                className="mt-2 w-full flex-col md:mt-6 md:flex-row"
                 orientation="vertical"
             >
                 <TabsList
                     variant="default"
-                    className="w-full md:w-50 space-y-2 bg-transparent"
+                    className="w-full space-y-2 bg-transparent md:w-50"
                 >
                     <TabsTrigger value="profile" className="py-1.5">
                         <User
@@ -273,6 +267,13 @@ export default function account({
                         />
                         Connect
                     </TabsTrigger>
+                    <TabsTrigger value="theme" className="py-1.5">
+                        <SunMoon
+                            className="size-3.5 shrink-0"
+                            aria-hidden="true"
+                        />
+                        Appearance
+                    </TabsTrigger>
                     <TabsTrigger
                         value="danger"
                         className="py-1.5 text-destructive"
@@ -286,9 +287,9 @@ export default function account({
                 </TabsList>
 
                 {/* for profile */}
-                <TabsContent value="profile" className="md:ml-10 max-w-170">
+                <TabsContent value="profile" className="max-w-170 md:ml-10">
                     <Card className="rounded-xl p-0 ring-0">
-                        <CardHeader className="px-0">
+                        <CardHeader>
                             <CardTitle>Profile for {user.name}</CardTitle>
                             <CardDescription>
                                 Complete your profile details to personalize
@@ -296,7 +297,7 @@ export default function account({
                                 VesselFinder workspace.
                             </CardDescription>
                         </CardHeader>
-                        <CardContent className="px-0 py-3 text-sm text-muted-foreground">
+                        <CardContent className="text-sm text-muted-foreground">
                             <form
                                 onSubmit={handlePersonalInfo}
                                 method="post"
@@ -322,7 +323,7 @@ export default function account({
                                                     .toLocaleUpperCase()}
                                             </AvatarFallback>
                                         </Avatar>
-                                        <span className="rounded-lg bg-primary px-3 py-1.5 font-normal text-white">
+                                        <span className="rounded-lg bg-primary dark:bg-background px-3 py-1.5 font-normal text-white dark:text-foreground">
                                             Select Photo
                                         </span>
                                     </div>
@@ -618,9 +619,9 @@ export default function account({
                 </TabsContent>
 
                 {/* for security */}
-                <TabsContent value="security" className="md:ml-10 max-w-170">
+                <TabsContent value="security" className="max-w-170 md:ml-10">
                     <Card className="rounded-xl p-0 ring-0">
-                        <CardHeader className="px-0">
+                        <CardHeader>
                             <CardTitle>Secure your {appName} account</CardTitle>
                             <CardDescription>
                                 Strengthen your account security by setting up
@@ -628,7 +629,7 @@ export default function account({
                                 {appName} workspace.
                             </CardDescription>
                         </CardHeader>
-                        <CardContent className="px-0 py-3 text-sm text-muted-foreground">
+                        <CardContent className="text-sm text-muted-foreground">
                             <form
                                 onSubmit={handleSecurity}
                                 method="post"
@@ -767,9 +768,9 @@ export default function account({
                 </TabsContent>
 
                 {/* company */}
-                <TabsContent value="company" className="md:ml-10 max-w-170">
+                <TabsContent value="company" className="max-w-170 md:ml-10">
                     <Card className="rounded-xl p-0 ring-0">
-                        <CardHeader className="px-0">
+                        <CardHeader>
                             <CardTitle>Set up your company profile</CardTitle>
                             <CardDescription>
                                 Add your company information to personalize your{' '}
@@ -777,7 +778,7 @@ export default function account({
                                 experience.
                             </CardDescription>
                         </CardHeader>
-                        <CardContent className="px-0 py-3 text-sm text-muted-foreground">
+                        <CardContent className="text-sm text-muted-foreground">
                             <form
                                 onSubmit={handleCompany}
                                 method="post"
@@ -810,7 +811,7 @@ export default function account({
                                                         .toLocaleUpperCase()}
                                             </AvatarFallback>
                                         </Avatar>
-                                        <span className="rounded-lg bg-primary px-3 py-1.5 font-normal text-white">
+                                        <span className="rounded-lg bg-primary dark:bg-background px-3 py-1.5 font-normal text-white dark:text-foreground">
                                             Select Logo
                                         </span>
                                     </div>
@@ -952,9 +953,9 @@ export default function account({
                 </TabsContent>
 
                 {/* Connect */}
-                <TabsContent value="connect" className="md:ml-10 max-w-170">
+                <TabsContent value="connect" className="max-w-170 md:ml-10">
                     <Card className="rounded-xl p-0 ring-0">
-                        <CardHeader className="px-0">
+                        <CardHeader>
                             <CardTitle>Connect your social accounts</CardTitle>
                             <CardDescription>
                                 Link your Google and Facebook accounts for
@@ -962,7 +963,7 @@ export default function account({
                                 {appName} workspace.
                             </CardDescription>
                         </CardHeader>
-                        <CardContent className="px-0 py-3 text-sm text-muted-foreground">
+                        <CardContent className="text-sm text-muted-foreground">
                             {/* facebook */}
                             <div className="flex items-center justify-between rounded-t-xl border border-border bg-card p-4 transition-colors hover:bg-muted/40">
                                 <div className="flex items-center gap-3">
@@ -1072,10 +1073,27 @@ export default function account({
                     </Card>
                 </TabsContent>
 
-                {/* for danger */}
-                <TabsContent value="danger" className="md:ml-10 max-w-170">
+                {/* theme */}
+                <TabsContent value="theme" className="max-w-170 md:ml-10">
                     <Card className="rounded-xl p-0 ring-0">
-                        <CardHeader className="px-0">
+                        <CardHeader>
+                            <CardTitle>Customize your appearance</CardTitle>
+                            <CardDescription>
+                                Personalize your {appName} workspace with your
+                                preferred theme and appearance settings for a
+                                more comfortable experience.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="text-sm text-muted-foreground">
+                            <ModeToggle/>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+
+                {/* for danger */}
+                <TabsContent value="danger" className="max-w-170 md:ml-10">
+                    <Card className="rounded-xl p-0 ring-0">
+                        <CardHeader>
                             <CardTitle>Danger Zone</CardTitle>
                             <CardDescription>
                                 Permanently delete your {appName} account and
@@ -1083,7 +1101,7 @@ export default function account({
                                 undone.
                             </CardDescription>
                         </CardHeader>
-                        <CardContent className="px-0 py-3 text-sm text-muted-foreground">
+                        <CardContent className="text-sm text-muted-foreground">
                             <div className="space-y-3">
                                 <Field
                                     data-invalid={!!dangerForm.errors.password}

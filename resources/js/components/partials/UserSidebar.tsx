@@ -28,8 +28,8 @@ import {
 } from '@/components/ui/sidebar';
 import { navGroups, secondNavGroups } from '@/constant/CustomerMenu';
 import {
+    ArrowRightLeft,
     BadgeCheck,
-    Bell,
     CreditCard,
     LogOut,
     Search,
@@ -41,6 +41,7 @@ import {
     TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { Button } from '../ui/button';
+import { PageProps } from '@/types/types';
 
 interface UserSidebarProps {
     searchToggler?: boolean;
@@ -51,7 +52,7 @@ export default function UserSidebar({
     searchToggler,
     setSearchToggler,
 }: UserSidebarProps) {
-    const { name: appName, auth } = usePage().props;
+    const { name: appName, auth } = usePage<PageProps>().props;
     const { state } = useSidebar();
     const user = auth?.user;
 
@@ -249,7 +250,6 @@ export default function UserSidebar({
                                         </div>
                                     </div>
                                 </div>
-
                                 <DropdownMenuSeparator />
 
                                 <DropdownMenuGroup>
@@ -258,7 +258,6 @@ export default function UserSidebar({
                                         Upgrade to Pro
                                     </DropdownMenuItem>
                                 </DropdownMenuGroup>
-
                                 <DropdownMenuSeparator />
 
                                 <DropdownMenuGroup>
@@ -276,15 +275,14 @@ export default function UserSidebar({
 
                                     <DropdownMenuItem className="py-1.5">
                                         <CreditCard />
-                                        Billing
+                                        Active Plan
                                     </DropdownMenuItem>
 
                                     <DropdownMenuItem className="py-1.5">
-                                        <Bell />
-                                        Notifications
+                                        <ArrowRightLeft />
+                                        Transactions
                                     </DropdownMenuItem>
                                 </DropdownMenuGroup>
-
                                 <DropdownMenuSeparator />
 
                                 <DropdownMenuItem
