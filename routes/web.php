@@ -16,13 +16,23 @@ Route::controller(ContactController::class)->group(function () {
 
 // Auth ============
 Route::middleware('guest')->prefix('/auth')->controller(AuthController::class)->group(function () {
+    // for login
     Route::get('/login', 'login')->name('login');
     Route::post('/login-post', 'loginLogic')
         ->name('login.post');
 
+    // for signup
     Route::get('/sing-up', 'singUp')->name('ui.sing.up');
     Route::post('/sing-up-post', 'singUpLogic')
         ->name('ui.sing.up.post');
+
+    // for forgat
+    Route::get('/forgat', 'forgat')->name('ui.forgat');
+    Route::post('/forgat-send', 'forgatLogic')->name('ui.forgat.login');
+
+    // reset password
+    Route::get('/reset-password/{email}/{token}', 'resetPassword')->name('ui.reset.password');
+    Route::post('/reset-password-post', 'updateResetpassword')->name('ui.reset.password.post');
 
     // social login
     Route::get('/social/redirect/{type}', 'authRedirect')->name('ui.social.redirect');
@@ -39,4 +49,4 @@ Route::middleware('auth')->prefix('/auth')->controller(AuthController::class)->g
 });
 
 // extra routes
-require __DIR__.'/app.php';
+require __DIR__ . '/app.php';

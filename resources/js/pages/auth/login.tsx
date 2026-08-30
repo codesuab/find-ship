@@ -10,6 +10,7 @@ import { toast, Toaster } from "@/components/ui/toast";
 import { PageProps } from "@/types/types";
 import { GoogleIcon } from "@/components/icon/Google";
 import { FacebookIcon } from "@/components/icon/Facebook";
+import Illustrator from "./Illustrator";
 
 
 export default function Login() {
@@ -89,114 +90,7 @@ export default function Login() {
             <Toaster />
 
             {/* illustrator */}
-            <div className="relative hidden w-[45%] lg:flex lg:min-h-screen">
-                <div className="relative h-full w-full overflow-hidden bg-neutral-100 shadow-xl">
-                    <img
-                        src="/media/system/auth-banner.avif"
-                        alt=""
-                        className="absolute inset-0 h-full w-full object-fill"
-                    />
-
-                    <div className="absolute inset-0 bg-linear-to-b from-transparent to-black/80" />
-
-                    <div className="absolute left-10 bottom-10 w-[60%]">
-                        <motion.h2
-                            initial={{
-                                opacity: 0,
-                                y: 20,
-                                filter: 'blur(5px)',
-                            }}
-                            whileInView={{
-                                opacity: 1,
-                                y: 0,
-                                filter: 'blur(0)'
-                            }}
-                            transition={{
-                                duration: 0.4,
-                                ease: 'easeInOut',
-                            }}
-                            viewport={{ once: true }}
-                            className="text-lg text-white capitalize">You can easily</motion.h2>
-                        <motion.h1
-                            initial={{
-                                opacity: 0,
-                                y: 20,
-                                filter: 'blur(5px)',
-                            }}
-                            whileInView={{
-                                opacity: 1,
-                                y: 0,
-                                filter: 'blur(0)'
-                            }}
-                            transition={{
-                                duration: 0.4,
-                                ease: 'easeInOut',
-                                delay: 0.2,
-                            }}
-                            viewport={{ once: true }}
-                            className="text-5xl font-semibold text-white mt-3">Get complete visibility into every vessel movement</motion.h1>
-                        <motion.p
-                            initial={{
-                                opacity: 0,
-                                y: 20,
-                                filter: 'blur(5px)',
-                            }}
-                            whileInView={{
-                                opacity: 1,
-                                y: 0,
-                                filter: 'blur(0)'
-                            }}
-                            transition={{
-                                duration: 0.4,
-                                ease: 'easeInOut',
-                                delay: 0.3,
-                            }}
-                            viewport={{ once: true }}
-                            className="text-base font-light text-white  mt-3">Track arrivals, departures, schedules, and port activity from one centralized hub built for modern maritime operations.</motion.p>
-                    </div>
-
-                    <div className="flex items-center justify-between w-[90%] absolute top-10 left-10">
-                        <motion.h1
-                            initial={{
-                                opacity: 0,
-                                x: -30,
-                            }}
-                            whileInView={{
-                                opacity: 1,
-                                x: 0
-                            }}
-                            transition={{
-                                duration: 0.5,
-                                ease: 'easeOut'
-                            }}
-                            viewport={{ once: true }}
-                            className="text-xl font-bold text-white">
-                            FindShip
-                        </motion.h1>
-
-                        <motion.div
-                            initial={{
-                                opacity: 0,
-                                x: 30,
-                            }}
-                            whileInView={{
-                                opacity: 1,
-                                x: 0
-                            }}
-                            transition={{
-                                duration: 0.5,
-                                delay: 1,
-                                ease: 'easeOut'
-                            }}
-                            viewport={{ once: true }}>
-                            <Link href='/' className="flex text-white text-base duration-300 hover:underline font-medium capitalize items-center gap-1 group">
-                                <ChevronLeft size={16} className="mt-0.5 duration-300 group-hover:mr-1" />
-                                <span>Back to Website</span>
-                            </Link>
-                        </motion.div>
-                    </div>
-                </div>
-            </div>
+            <Illustrator/>
 
             {/* form */}
             <div className="flex w-full items-center justify-center p-6 sm:p-12 lg:w-[55%]">
@@ -207,10 +101,8 @@ export default function Login() {
                     className="w-full max-w-100"
                 >
                     <motion.div variants={itemVariants} className="mb-10">
-                        <h1 className="mb-4 text-[35px] md:text-[48px] font-semibold leading-[1.05] tracking-tight text-foreground">
-                            Welcome
-                            <br />
-                            back
+                        <h1 className="mb-2 text-[25px] leading-[1.05] font-semibold tracking-tight text-foreground md:text-[35px]">
+                            Welcome back
                         </h1>
 
                         <p className="text-[15px] text-muted-foreground text-balance">
@@ -228,7 +120,7 @@ export default function Login() {
                             className="flex flex-col gap-2"
                         >
                             <Field data-invalid={errors.email ? true : false}>
-                                <FieldLabel>Email or username</FieldLabel>
+                                <FieldLabel>Email</FieldLabel>
                                 <Input
                                     type="email"
                                     autoComplete="username"
@@ -294,7 +186,7 @@ export default function Login() {
                                 </Field>
                             </FieldGroup>
                             <a
-                                href="/forgot-password"
+                                href={route('ui.forgat')}
                                 className="text-[14px] font-medium text-slate-800 underline decoration-slate-800 underline-offset-4 transition-colors hover:text-black"
                             >
                                 Forgot password?

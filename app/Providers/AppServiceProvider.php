@@ -44,14 +44,15 @@ class AppServiceProvider extends ServiceProvider
             app()->isProduction(),
         );
 
-        Password::defaults(fn (): ?Password => app()->isProduction()
-            ? Password::min(12)
+        Password::defaults(
+            fn(): ?Password => app()->isProduction()
+                ? Password::min(12)
                 ->mixedCase()
                 ->letters()
                 ->numbers()
                 ->symbols()
                 ->uncompromised()
-            : null,
+                : null,
         );
     }
 
@@ -82,7 +83,7 @@ class AppServiceProvider extends ServiceProvider
     {
         // for resend account verification email
         RateLimiter::for('reset-verification-email', function (Request $request) {
-            $key = 'reset-verification-email:'.$request->email;
+            $key = 'reset-verification-email:' . $request->email;
 
             return Limit::perMinutes(10, 2) // Per 10 minutes 2 Request
                 ->by($key)
@@ -92,6 +93,23 @@ class AppServiceProvider extends ServiceProvider
 
                     return back()->withErrors([
                         'email' => "Too many verification attempts. Please wait {$minutes} minutes.",
+                    ])->withInput();
+                });
+        });
+
+
+        // for reset password link
+        RateLimiter::for('reset-password-email', function (Request $request) {
+            $key = 'reset-password-email:' . $request->email;
+
+            return Limit::perMinutes(10, 2) // Per 10 minutes 2 Request
+                ->by($key)
+                ->response(function (Request $request, array $headers) {
+                    $retryAfter = $headers['Retry-After'] ?? 600; // 10 minutes = 600 seconds
+                    $minutes = ceil($retryAfter / 60);
+
+                    return back()->withErrors([
+                        'email' => "Too many reset password attempts. Please wait {$minutes} minutes.",
                     ])->withInput();
                 });
         });

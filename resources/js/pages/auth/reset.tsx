@@ -1,19 +1,30 @@
 import { FormEvent, useEffect, useState } from 'react';
 import { motion, type Variants } from 'motion/react';
-import { ChevronLeft, Eye, EyeOff } from 'lucide-react';
-import { Field, FieldDescription, FieldLabel } from '@/components/ui/field';
+import { Eye, EyeOff } from 'lucide-react';
+import { Field, FieldLabel, FieldDescription } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import SlideUpButton from '@/components/slideup-button';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import { GoogleIcon } from '@/components/icon/Google';
-import { FacebookIcon } from '@/components/icon/Facebook';
-import { PageProps } from '@/types/types';
 import { toast, Toaster } from '@/components/ui/toast';
+import { PageProps } from '@/types/types';
 import Illustrator from './Illustrator';
 
-export default function SingUp() {
-    const { flash } = usePage<PageProps>().props;
+interface DateProps {
+    email: string;
+    token: string;
+}
+
+interface FromData {
+    password: string;
+    password_confirmation: string;
+    token: string;
+    email: string;
+}
+
+export default function reset({ email, token }: DateProps) {
     const [showPassword, setShowPassword] = useState(false);
+    const { flash } = usePage<PageProps>().props;
+
     // animation
     const containerVariants: Variants = {
         hidden: { opacity: 0 },
@@ -42,23 +53,20 @@ export default function SingUp() {
         },
     };
 
-    const { data, setData, post, processing, errors } = useForm<{
-        name: string;
-        password: string;
-        email: string;
-    }>({
-        name: '',
-        email: '',
+    // form
+    const { data, setData, processing, errors, post } = useForm<FromData>({
         password: '',
+        password_confirmation: '',
+        email: email || '',
+        token: token || '',
     });
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        post(route('ui.sing.up.post'), {
+
+        post(route('ui.reset.password.post'), {
             preserveScroll: true,
-            onError: (e) => console.log(e),
         });
     };
-
 
     // show error
     useEffect(() => {
@@ -78,16 +86,17 @@ export default function SingUp() {
             });
         }
     }, [flash?.id]);
+    
 
     return (
         <div className="flex min-h-screen w-full bg-white font-sans text-slate-900 antialiased lg:flex-row">
             <Head>
-                <title>Create new account.</title>
+                <title>Reset your password.</title>
             </Head>
-             <Toaster />
+            <Toaster />
 
             {/* illustrator */}
-            <Illustrator/>
+            <Illustrator />
 
             {/* form */}
             <div className="flex w-full items-center justify-center p-6 sm:p-12 lg:w-[55%]">
@@ -99,69 +108,19 @@ export default function SingUp() {
                 >
                     <motion.div variants={itemVariants} className="mb-10">
                         <h1 className="mb-2 text-[25px] leading-[1.05] font-semibold tracking-tight text-foreground md:text-[35px]">
-                            Create your free account
+                            Reset your password
                         </h1>
 
                         <p className="text-[15px] text-balance text-muted-foreground">
-                            Join modern port teams managing vessel operations
-                            smarter, faster, and with confidence.
+                            Enter a new password below to secure your account.
                         </p>
                     </motion.div>
 
                     <form
                         onSubmit={handleSubmit}
+                        method="post"
                         className="flex flex-col gap-5"
                     >
-                        <motion.div
-                            variants={itemVariants}
-                            className="flex flex-col gap-2"
-                        >
-                            <Field data-invalid={errors.name ? true : false}>
-                                <FieldLabel>Name</FieldLabel>
-                                <Input
-                                    type="text"
-                                    placeholder="Enter your name"
-                                    value={data.name}
-                                    onChange={(e) =>
-                                        setData('name', e.target.value)
-                                    }
-                                    aria-invalid={errors.name ? true : false}
-                                />
-                                {errors.name && (
-                                    <FieldDescription className="text-destructive">
-                                        {errors.name}
-                                    </FieldDescription>
-                                )}
-                            </Field>
-                        </motion.div>
-
-                        <motion.div
-                            variants={itemVariants}
-                            className="flex flex-col gap-2"
-                        >
-                            <Field data-invalid={errors.email ? true : false}>
-                                <FieldLabel>Email</FieldLabel>
-                                <Input
-                                    type="email"
-                                    placeholder="Enter your email"
-                                    value={data.email}
-                                    onChange={(e) =>
-                                        setData('email', e.target.value)
-                                    }
-                                    aria-invalid={errors.email ? true : false}
-                                />
-                                <FieldDescription className="text-xs">
-                                    Only Gmail, Yahoo, Outlook, and iCloud email
-                                    addresses are accepted.
-                                </FieldDescription>
-                                {errors.email && (
-                                    <FieldDescription className="text-destructive">
-                                        {errors.email}
-                                    </FieldDescription>
-                                )}
-                            </Field>
-                        </motion.div>
-
                         <motion.div
                             variants={itemVariants}
                             className="flex flex-col gap-2"
@@ -178,11 +137,11 @@ export default function SingUp() {
                                         autoComplete="current-password"
                                         placeholder="Enter your password"
                                         value={data.password}
-                                        onChange={(e) =>
-                                            setData('password', e.target.value)
-                                        }
                                         aria-invalid={
                                             errors.password ? true : false
+                                        }
+                                        onChange={(e) =>
+                                            setData('password', e.target.value)
                                         }
                                     />
                                     <button
@@ -212,44 +171,79 @@ export default function SingUp() {
                             </Field>
                         </motion.div>
 
+                        <motion.div
+                            variants={itemVariants}
+                            className="flex flex-col gap-2"
+                        >
+                            <Field
+                                data-invalid={
+                                    errors.password_confirmation ? true : false
+                                }
+                            >
+                                <FieldLabel>Confirm Password</FieldLabel>
+                                <div className="relative">
+                                    <Input
+                                        type={
+                                            showPassword ? 'text' : 'password'
+                                        }
+                                        autoComplete="current-password"
+                                        placeholder="Enter your password"
+                                        value={data.password_confirmation}
+                                        aria-invalid={
+                                            errors.password_confirmation
+                                                ? true
+                                                : false
+                                        }
+                                        onChange={(e) =>
+                                            setData(
+                                                'password_confirmation',
+                                                e.target.value,
+                                            )
+                                        }
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            setShowPassword((prev) => !prev)
+                                        }
+                                        aria-label={
+                                            showPassword
+                                                ? 'Hide password'
+                                                : 'Show password'
+                                        }
+                                        className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 transition-colors hover:text-slate-600"
+                                    >
+                                        {showPassword ? (
+                                            <Eye size={20} />
+                                        ) : (
+                                            <EyeOff size={20} />
+                                        )}
+                                    </button>
+                                </div>
+                                {errors.password_confirmation && (
+                                    <FieldDescription className="text-destructive">
+                                        {errors.password_confirmation}
+                                    </FieldDescription>
+                                )}
+                            </Field>
+                        </motion.div>
+
                         <motion.div variants={itemVariants} className="mt-2">
-                            <SlideUpButton className="w-full" variant='base'>
-                                {processing ? 'Processing..' : 'Sign up'}
+                            <SlideUpButton
+                                className="w-full"
+                                disabled={processing}
+                                variant="base"
+                            >
+                                {processing ? 'Processing..' : 'Update'}
                             </SlideUpButton>
                         </motion.div>
                     </form>
 
                     <motion.div
                         variants={itemVariants}
-                        className="mt-4 grid grid-cols-2 gap-3"
-                    >
-                        <a
-                            type="button"
-                            href={route('ui.social.redirect', {
-                                type: 'google',
-                            })}
-                            className="flex w-full items-center justify-center gap-2.5 rounded-md border border-slate-200 bg-white py-3 text-[14px] font-medium text-slate-700 transition-all hover:bg-slate-50 active:scale-[0.98]"
-                        >
-                            <GoogleIcon className="size-4.5" />
-                            Google
-                        </a>
-                        <a
-                            type="button"
-                            href={route('ui.social.redirect', {
-                                type: 'facebook',
-                            })}
-                            className="flex w-full items-center justify-center gap-2.5 rounded-md border border-slate-200 bg-white py-3 text-[14px] font-medium text-slate-700 transition-all hover:bg-slate-50 active:scale-[0.98]"
-                        >
-                            <FacebookIcon className="size-4.5" />
-                            Facebook
-                        </a>
-                    </motion.div>
-
-                    <motion.div
-                        variants={itemVariants}
                         className="mt-10 text-center text-[14px] text-slate-500"
                     >
-                        Already have an account?{' '}
+                        Remember your password?{' '}
                         <Link
                             href={route('login')}
                             className="font-semibold text-slate-800 underline decoration-slate-800 underline-offset-4 transition-colors hover:text-black"

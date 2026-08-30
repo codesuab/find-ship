@@ -8,12 +8,14 @@ use App\Models\EmailVerificationCode;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Laravel\Socialite\Socialite;
 
@@ -176,7 +178,7 @@ class AuthController extends Controller
         ]);
 
         try {
-            $user = Auth::user();
+            $user = User::find(Auth::id());
 
             $verification = EmailVerificationCode::where('email', $user->email)->first();
 
@@ -366,6 +368,124 @@ class AuthController extends Controller
         $request->session()->regenerate();
 
         return to_route('app.dashboard');
+    }
+
+    // forgat
+    public function forgat()
+    {
+        return Inertia::render('auth/forgat');
+    }
+    public function forgatLogic(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+        ]);
+
+        try {
+            $user = User::where('email', $request->email)->first();
+
+            // rate limit
+            $email = $user->email;
+            $key = 'reset-password-email:' . $email;
+            $maxAttempts = 2;
+            $decayMinutes = 10;
+
+            // 1 check rate limit
+            if (RateLimiter::tooManyAttempts($key, $maxAttempts)) {
+                $availableIn = RateLimiter::availableIn($key);
+                $minutes = floor($availableIn / 60);
+                $seconds = $availableIn % 60;
+
+                return back()->with('error', "Too many reset password attempts. Please wait {$minutes} minutes {$seconds} seconds.")->with('_flash_id', time());
+            }
+
+            // 3. Limit Hit (increase attempt count)
+            RateLimiter::hit($key, $decayMinutes * 60);
+
+            // delete old link
+            Password::deleteToken(User::where('email', $request->email)->first());
+
+            // delete old queue
+            $queueKey = 'reset-password:' . $user->id;
+            DB::table('jobs')
+                ->where('payload', 'like', '%' . $queueKey . '%')
+                ->delete();
+
+            // send mail
+            $token = Password::createToken($user);
+            $resetUrl = url(route('ui.reset.password', [
+                'email' => Crypt::encryptString($user->email),
+                'token' => $token,
+            ], false));
+            $subject = "Reset password - " . config('app.name');
+            $data = [
+                'link' => $resetUrl
+            ];
+            $view = "mail.reset";
+            $queueKey = 'reset-password:' . $user->id;
+            Mail::to($request->email)->queue(new GlobalMail($subject, $data, $view, $queueKey));
+
+            return redirect()
+                ->route('login')
+                ->with('success', 'A password reset link has been sent to your email address.')->with('_flash_id', time());
+        } catch (\Exception $th) {
+            return back()->with('error', 'Reset link send fail, please try again')->with('_flash_id', time());
+        }
+    }
+
+    // reset password
+    public function resetPassword($email, $token)
+    {
+        $normalEmail = Crypt::decryptString($email);
+
+        $status = Password::tokenExists(User::where('email', $normalEmail)->first(), $token);
+        if (!$status) {
+            return redirect()
+                ->route('login')
+                ->with('error', 'Your password reset link has expired. Please request a new one.')
+                ->with('_flash_id', time());
+        }
+        return Inertia::render('auth/reset', [
+            'email' => $normalEmail,
+            'token' => $token,
+        ]);
+    }
+    public function updateResetpassword(Request $request)
+    {
+        $request->validate([
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+
+        try {
+            if (!$request->token || !$request->email) {
+                return back()
+                    ->with('error', 'Invalid request. Please request a new password reset link.')
+                    ->with('_flash_id', time());
+            }
+
+            $status = Password::reset(
+                $request->only('email', 'password', 'token'),
+                function ($user, $password) {
+                    $user->forceFill([
+                        'password' => bcrypt($password)
+                    ])->setRememberToken(Str::random(60));
+
+                    $user->save();
+                }
+            );
+
+            if ($status == Password::PASSWORD_RESET) {
+                return redirect()
+                    ->route('login')
+                    ->with('success', 'Your password has been successfully changed. Please log in.')
+                    ->with('_flash_id', time());
+            } else {
+                return redirect()->back()->with('error', __($status));
+            }
+        } catch (\Exception $th) {
+            return redirect()->back()->with('error', 'Something else wrong try again!')
+                ->with('_flash_id', time());
+        }
     }
 
     // logout

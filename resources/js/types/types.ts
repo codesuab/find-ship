@@ -8,6 +8,9 @@ type Flash = {
 type PageProps = {
     name: string;
     flash: Flash;
+    auth: {
+        user?: any
+    }
 };
 
 export type { PageProps, Flash }

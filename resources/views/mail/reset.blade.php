@@ -5,23 +5,20 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="x-apple-disable-message-reformatting">
-    <title>Verify your {{config('app.name')}} account</title>
+    <title>Reset your FindShip password</title>
     <style>
         :root {
             --primary-color: #01283c;
             /* Deeper, more corporate blue */
+            --primary-hover: #1e40af;
             --bg-color: #f3f4f6;
             --card-bg: #ffffff;
-            --text-main: #0f172a;
+            --text-main: #111827;
             --text-secondary: #374151;
             --text-muted: #6b7280;
             --border-color: #e5e7eb;
-            --otp-bg: #f9fafb;
-            --otp-border: #d1d5db;
-            --warning-bg: #fef2f2;
-            --warning-text: #991b1b;
+            --footer-bg: #f9fafb;
             --font-main: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
         }
 
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
@@ -70,9 +67,9 @@
             max-width: 600px;
             background-color: var(--card-bg, #ffffff);
             border-radius: 8px;
-            /* Slightly sharper corners for a professional look */
             border: 1px solid var(--border-color, #e5e7eb);
             overflow: hidden;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
             margin: 0 auto;
         }
 
@@ -109,17 +106,17 @@
                 font-size: 22px !important;
             }
 
-            .otp-container {
-                padding: 16px 20px !important;
-            }
-
-            .otp-text {
-                font-size: 28px !important;
-                letter-spacing: 6px !important;
-            }
-
             p {
                 font-size: 15px !important;
+            }
+
+            .btn-table {
+                width: 100% !important;
+            }
+
+            .btn-table a {
+                display: block !important;
+                text-align: center !important;
             }
 
             .footer-links td {
@@ -156,7 +153,7 @@
                     <td style="padding: 40px 48px 0;" class="content-padding">
                         <table width="100%" border="0" cellspacing="0" cellpadding="0">
                             <tr>
-                                {{-- logo --}}
+                                <td align="left">
                                 <td align="left">
                                     <svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 764 920"
                                         class='logo'>
@@ -184,38 +181,46 @@
                     <td style="padding: 10px 48px 30px;" class="content-padding">
                         <h1
                             style="margin: 0 0 16px; font-size: 24px; font-weight: 600; color: var(--text-main, #111827); line-height: 1.3;">
-                            Verify your identity
+                            Reset your password
                         </h1>
                         <p
-                            style="margin: 0 0 32px; font-size: 15px; line-height: 1.6; color: var(--text-secondary, #374151);">
-                            We received a request to sign in to your <strong>FindShip</strong> account. Please enter the
-                            following single-use verification code to securely access your account.
+                            style="margin: 0 0 24px; font-size: 15px; line-height: 1.6; color: var(--text-secondary, #374151);">
+                            We received a request to reset the password for your <strong>FindShip</strong> account.
+                            Click the button below to choose a new password. This link will expire in 1 hour.
                         </p>
 
-                        <!-- OTP Box -->
-                        <table border="0" cellspacing="0" cellpadding="0" style="width: 100%;">
+                        <!-- Call to Action Button -->
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 24px;">
                             <tr>
-                                <td align="center" class="otp-container"
-                                    style="background-color: var(--otp-bg, #f9fafb); border-radius: 6px; padding: 20px 32px; border: 1px solid var(--otp-border, #d1d5db);">
-                                    <span class="otp-text"
-                                        style="font-family: var(--font-mono, 'SFMono-Regular', Consolas, monospace); font-size: 32px; font-weight: 600; color: var(--text-main, #111827); letter-spacing: 12px; display: inline-block; padding-left: 12px;">{{$data['otp']}}</span>
+                                <td align="left">
+                                    <table border="0" cellspacing="0" cellpadding="0" class="btn-table">
+                                        <tr>
+                                            <td align="center" bgcolor="#01293d" style="border-radius: 6px;">
+                                                <a href="{{$data['link']}}" target="_blank"
+                                                    style="font-size: 15px; font-family: var(--font-main, 'Inter', Helvetica, Arial, sans-serif); color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 6px; border: 1px solid #01293d; display: inline-block; font-weight: 500;">
+                                                    Reset Password
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </td>
                             </tr>
                         </table>
 
-                        <!-- Security Warning -->
-                        <p style="margin: 32px 0 0; font-size: 14px; line-height: 1.5; color: var(--text-muted, #6b7280);"
-                            class="text-muted">
-                            This code is valid for the next 10 minutes.
+                        <!-- Fallback Link -->
+                        <p
+                            style="margin: 0 0 24px; font-size: 14px; line-height: 1.5; color: var(--text-muted, #6b7280);">
+                            If the button doesn't work, copy and paste this link into your browser:<br>
+                            <a href="{{$data['link']}}"
+                                style="color: var(--primary-color, #01293d); text-decoration: underline; word-break: break-all;">{{$data['link']}}</a>
                         </p>
 
+                        <!-- Security Warning -->
                         <div
-                            style="margin-top: 16px; padding: 12px 16px; background-color: var(--warning-bg, #fef2f2); border-left: 4px solid var(--warning-text, #991b1b); border-radius: 0 4px 4px 0;">
-                            <p
-                                style="margin: 0; font-size: 13px; line-height: 1.5; color: var(--warning-text, #991b1b);">
-                                <strong>Security Notice:</strong> Never share this code with anyone. FindShip personnel
-                                will never ask you for this code. If you did not request this, please ignore this email
-                                or contact support.
+                            style="margin-top: 16px; padding-top: 24px; border-top: 1px solid var(--border-color, #e5e7eb);">
+                            <p style="margin: 0; font-size: 13px; line-height: 1.5; color: var(--text-muted, #6b7280);">
+                                If you did not request a password reset, you can safely ignore this email. Your password
+                                will not be changed and your account remains secure.
                             </p>
                         </div>
                     </td>
@@ -231,21 +236,21 @@
                             <tr>
                                 <td align="center" style="padding: 0 12px;">
                                     <a href="#"
-                                        style="color: var(--primary-color, #1d4ed8); text-decoration: none; font-size: 13px; font-weight: 500;">Contact
+                                        style="color: var(--primary-color, #01293d); text-decoration: none; font-size: 13px; font-weight: 500;">Contact
                                         Support</a>
                                 </td>
                                 <td align="center" class="footer-separator"
                                     style="color: var(--otp-border, #d1d5db); width: 10px;">|</td>
                                 <td align="center" style="padding: 0 12px;">
                                     <a href="#"
-                                        style="color: var(--primary-color, #1d4ed8); text-decoration: none; font-size: 13px; font-weight: 500;">Privacy
+                                        style="color: var(--primary-color, #01293d); text-decoration: none; font-size: 13px; font-weight: 500;">Privacy
                                         Policy</a>
                                 </td>
                                 <td align="center" class="footer-separator"
                                     style="color: var(--otp-border, #d1d5db); width: 10px;">|</td>
                                 <td align="center" style="padding: 0 12px;">
                                     <a href="#"
-                                        style="color: var(--primary-color, #1d4ed8); text-decoration: none; font-size: 13px; font-weight: 500;">Terms
+                                        style="color: var(--primary-color, #01293d); text-decoration: none; font-size: 13px; font-weight: 500;">Terms
                                         of Service</a>
                                 </td>
                             </tr>
