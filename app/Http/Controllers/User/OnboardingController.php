@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -16,7 +17,7 @@ class OnboardingController extends Controller
     // index
     public function index()
     {
-        $user = Auth::user();
+        $user = User::find(Auth::id());
         if ($user && $user->onboarding_completed == 1) {
             return to_route('app.dashboard');
         }
@@ -28,9 +29,16 @@ class OnboardingController extends Controller
             ['label' => 'India', 'value' => 'india'],
         ];
 
+
+        $userHasPassword = false;
+        if($user->password){
+            $userHasPassword = true;
+        }
+
         return Inertia::render('app/onboarding/index', [
             'userData' => $user,
-            'country' => $country
+            'country' => $country,
+            'userHasPassword'=>$userHasPassword
         ]);
     }
 
@@ -45,6 +53,7 @@ class OnboardingController extends Controller
             'city' => 'required|string|max:100',
             'zip' => 'required|string|max:20',
             'address' => 'required|string|min:5|max:500',
+            'password' => 'nullable|min:6'
         ]);
 
         DB::beginTransaction();
@@ -60,6 +69,10 @@ class OnboardingController extends Controller
                 'zip',
                 'address',
             ]);
+
+            if ($request->has('password') && !empty($request->password)) {
+                $data['password'] = Hash::make($request->password);
+            }
 
             if ($request->hasFile('avatar')) {
                 if ($user->avatar) {

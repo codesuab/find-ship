@@ -56,9 +56,11 @@ interface CountryProps {
 export default function index({
     userData,
     country,
+    userHasPassword,
 }: {
     userData?: UserData;
     country: CountryProps[];
+    userHasPassword: boolean;
 }) {
     // flash message
     const { flash } = usePage<PageProps>().props;
@@ -174,7 +176,9 @@ export default function index({
         city: userData?.city || '',
         zip: userData?.zip || '',
         address: userData?.address || '',
+        password: '',
     });
+
     const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
     const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0] ?? null;
@@ -216,13 +220,16 @@ export default function index({
         userData?.zip &&
         userData?.address,
     );
+
+    const hasPassword: boolean = personalInfoForm.data.password?.trim() !== '';
     const isPersonalChanged = Boolean(
         userData?.phone !== personalInfoForm.data.phone ||
         userData?.country !== personalInfoForm.data.country ||
         userData?.city !== personalInfoForm.data.city ||
         userData?.gender !== personalInfoForm.data.gender ||
         userData?.zip !== personalInfoForm.data.zip ||
-        userData?.address !== personalInfoForm.data.address,
+        userData?.address !== personalInfoForm.data.address ||
+        userHasPassword !== hasPassword,
     );
 
     const isCompleteCompany = Boolean(
@@ -318,7 +325,7 @@ export default function index({
                 <div className="mx-auto w-full py-10 md:w-140">
                     {/* Header */}
                     <div>
-                        <div className="mb-2 flex items-center justify-between">
+                        <div className="fixed top-0 left-0 z-10 mb-2 flex w-full items-center justify-between border-b border-border bg-white px-5 py-4 md:static md:z-auto md:border-b-0 md:bg-transparent md:px-0 md:py-0">
                             <div className="flex h-5 items-center gap-3">
                                 <Link href={route('home')} className="group">
                                     <Button
@@ -374,7 +381,7 @@ export default function index({
                                 ease: 'linear',
                             },
                         }}
-                        className="overflow-hidden"
+                        className="overflow-hidden pt-4 md:pt-0"
                     >
                         <AnimatePresence
                             mode="wait"
@@ -567,6 +574,49 @@ export default function index({
                                                 </FieldDescription>
                                             </Field>
                                         </div>
+                                        {!userHasPassword && (
+                                            <Field
+                                                data-invalid={
+                                                    !!personalInfoForm.errors
+                                                        .phone
+                                                }
+                                            >
+                                                <FieldLabel>
+                                                    Password
+                                                </FieldLabel>
+
+                                                <Input
+                                                    type="tel"
+                                                    placeholder="Enter your phone"
+                                                    value={
+                                                        personalInfoForm.data
+                                                            .password
+                                                    }
+                                                    aria-invalid={
+                                                        !!personalInfoForm
+                                                            .errors.password
+                                                    }
+                                                    onChange={(e) =>
+                                                        personalInfoForm.setData(
+                                                            'password',
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                />
+                                                <FieldDescription className="text-xs">
+                                                    Set a password to secure
+                                                    your account and sign in
+                                                    without using your social
+                                                    account.
+                                                </FieldDescription>
+                                                <FieldDescription className="text-destructive">
+                                                    {
+                                                        personalInfoForm.errors
+                                                            .password
+                                                    }
+                                                </FieldDescription>
+                                            </Field>
+                                        )}
                                         <Field
                                             data-invalid={
                                                 !!personalInfoForm.errors.phone

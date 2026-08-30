@@ -221,6 +221,21 @@ class AccountController extends Controller
             ]))
             ->user();
 
+
+        // check already uses or not
+        $existing = false;
+        if ($type == 'google') {
+
+            $existing = User::where('google_id', $socialUser->id)->exists();
+        } elseif ($type == 'facebook') {
+            $existing = User::where('facebook_id', $socialUser->id)->exists();
+        }
+        if ($existing) {
+            return to_route('app.account.view', ['tab' => 'connect'])
+                ->with('error', 'This account is already connected to another account.')
+                ->with('_flash_id', time());
+        }
+
         $user = $request->user();
 
         $user->update([

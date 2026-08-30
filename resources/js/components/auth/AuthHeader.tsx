@@ -39,10 +39,10 @@ export default function AuthHeader({ title, subtitle }: PropsInterface) {
                     ease: 'easeOut',
                 }}
                 viewport={{ once: true }}
-                className="mb-5 flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl bg-primary/10"
+                className="mb-5 flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl bg-primary"
                 onClick={() => router.get(route('home'))}
             >
-                <Logo show="false" imageSize="h-8 text-primary" />
+                <Logo show="false" imageSize="h-8 text-white" />
             </motion.div>
             <motion.div variants={itemVariants} className="mb-8">
                 <h1 className="mb-1 leading-[1.05] font-semibold tracking-tight text-foreground text-[25px]">

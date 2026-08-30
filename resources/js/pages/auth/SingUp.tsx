@@ -56,7 +56,6 @@ export default function SingUp() {
         e.preventDefault();
         post(route('ui.sing.up.post'), {
             preserveScroll: true,
-            onError: (e) => console.log(e),
         });
     };
 
