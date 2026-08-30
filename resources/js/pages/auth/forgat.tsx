@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect } from 'react';
 import { motion, type Variants } from 'motion/react';
 import { Field, FieldLabel, FieldDescription } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
@@ -6,7 +6,8 @@ import SlideUpButton from '@/components/slideup-button';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { toast, Toaster } from '@/components/ui/toast';
 import { PageProps } from '@/types/types';
-import Illustrator from './Illustrator';
+import Illustrator from '../../components/auth/Illustrator';
+import AuthHeader from '@/components/auth/AuthHeader';
 
 export default function forgat() {
     const { flash } = usePage<PageProps>().props;
@@ -90,16 +91,11 @@ export default function forgat() {
                     animate="visible"
                     className="w-full max-w-100"
                 >
-                    <motion.div variants={itemVariants} className="mb-10">
-                        <h1 className="mb-2 text-[25px] leading-[1.05] font-semibold tracking-tight text-foreground md:text-[35px]">
-                            Forgot your password?
-                        </h1>
-
-                        <p className="text-[15px] text-balance text-muted-foreground">
-                            Enter your email address and we'll send you a link
-                            to reset your password.
-                        </p>
-                    </motion.div>
+                    <AuthHeader
+                        title=" Forgot your password?"
+                        subtitle=" Enter your email address and we'll send you a link
+                            to reset your password."
+                    />
 
                     <form
                         onSubmit={handleSubmit}
@@ -143,7 +139,7 @@ export default function forgat() {
 
                     <motion.div
                         variants={itemVariants}
-                        className="mt-10 text-center text-[14px] text-slate-500"
+                        className="mt-4 text-center text-[14px] text-slate-500"
                     >
                         Remember your password?{' '}
                         <Link

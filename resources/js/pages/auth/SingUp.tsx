@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useState } from 'react';
 import { motion, type Variants } from 'motion/react';
-import { ChevronLeft, Eye, EyeOff } from 'lucide-react';
+import {Eye, EyeOff } from 'lucide-react';
 import { Field, FieldDescription, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import SlideUpButton from '@/components/slideup-button';
@@ -9,7 +9,8 @@ import { GoogleIcon } from '@/components/icon/Google';
 import { FacebookIcon } from '@/components/icon/Facebook';
 import { PageProps } from '@/types/types';
 import { toast, Toaster } from '@/components/ui/toast';
-import Illustrator from './Illustrator';
+import Illustrator from '@/components/auth/Illustrator';
+import AuthHeader from '@/components/auth/AuthHeader';
 
 export default function SingUp() {
     const { flash } = usePage<PageProps>().props;
@@ -59,7 +60,6 @@ export default function SingUp() {
         });
     };
 
-
     // show error
     useEffect(() => {
         if (flash?.error) {
@@ -84,10 +84,10 @@ export default function SingUp() {
             <Head>
                 <title>Create new account.</title>
             </Head>
-             <Toaster />
+            <Toaster />
 
             {/* illustrator */}
-            <Illustrator/>
+            <Illustrator />
 
             {/* form */}
             <div className="flex w-full items-center justify-center p-6 sm:p-12 lg:w-[55%]">
@@ -97,16 +97,11 @@ export default function SingUp() {
                     animate="visible"
                     className="w-full max-w-100"
                 >
-                    <motion.div variants={itemVariants} className="mb-10">
-                        <h1 className="mb-2 text-[25px] leading-[1.05] font-semibold tracking-tight text-foreground md:text-[35px]">
-                            Create your free account
-                        </h1>
-
-                        <p className="text-[15px] text-balance text-muted-foreground">
-                            Join modern port teams managing vessel operations
-                            smarter, faster, and with confidence.
-                        </p>
-                    </motion.div>
+                    <AuthHeader
+                        title="Create your free account"
+                        subtitle="Join modern port teams managing vessel operations
+                            smarter, faster, and with confidence."
+                    />
 
                     <form
                         onSubmit={handleSubmit}
@@ -213,7 +208,7 @@ export default function SingUp() {
                         </motion.div>
 
                         <motion.div variants={itemVariants} className="mt-2">
-                            <SlideUpButton className="w-full" variant='base'>
+                            <SlideUpButton className="w-full" variant="base">
                                 {processing ? 'Processing..' : 'Sign up'}
                             </SlideUpButton>
                         </motion.div>
@@ -247,7 +242,7 @@ export default function SingUp() {
 
                     <motion.div
                         variants={itemVariants}
-                        className="mt-10 text-center text-[14px] text-slate-500"
+                        className="mt-4 text-center text-[14px] text-slate-500"
                     >
                         Already have an account?{' '}
                         <Link

@@ -6,7 +6,6 @@ import { Field, FieldDescription, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, Loader } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import {
     Combobox,
     ComboboxContent,
@@ -436,27 +435,29 @@ export default function index({
                                             className="flex flex-col items-start gap-1 pb-3"
                                             htmlFor="avatar"
                                         >
-                                            <Avatar size="xl">
-                                                <AvatarImage
-                                                    src={
-                                                        avatarPreview ||
-                                                        `/storage/${userData?.avatar}` ||
-                                                        ''
-                                                    }
-                                                    alt={
-                                                        userData?.name ||
-                                                        'Avatar'
-                                                    }
-                                                />
-                                                <AvatarFallback>
-                                                    {userData?.name
-                                                        ?.slice(0, 2)
-                                                        .toLocaleUpperCase()}
-                                                </AvatarFallback>
-                                            </Avatar>
-                                            <span className="font-normal">
-                                                Select Avatar
-                                            </span>
+                                            <div className="flex items-center gap-2">
+                                                <Avatar size="xl">
+                                                    <AvatarImage
+                                                        src={
+                                                            avatarPreview ||
+                                                            `/storage/${userData?.avatar}` ||
+                                                            ''
+                                                        }
+                                                        alt={
+                                                            userData?.name ||
+                                                            'Avatar'
+                                                        }
+                                                    />
+                                                    <AvatarFallback>
+                                                        {userData?.name
+                                                            ?.slice(0, 2)
+                                                            .toLocaleUpperCase()}
+                                                    </AvatarFallback>
+                                                </Avatar>
+                                                <span className="rounded-lg bg-primary px-3 py-1.5 font-normal text-white">
+                                                    Select Photo
+                                                </span>
+                                            </div>
                                             <Input
                                                 type="file"
                                                 accept="image/jpeg,image/png,image/webp"
@@ -738,31 +739,35 @@ export default function index({
                                             className="flex flex-col items-start gap-1 pb-3"
                                             htmlFor="logo"
                                         >
-                                            <Avatar size="xl">
-                                                <AvatarImage
-                                                    src={
-                                                        logoPreview ||
-                                                        `/storage/${userData?.company_logo}` ||
-                                                        ''
-                                                    }
-                                                    alt={
-                                                        companyInfoForm?.data
-                                                            .company_name ||
-                                                        'Company logo'
-                                                    }
-                                                />
-                                                <AvatarFallback>
-                                                    {companyInfoForm?.data.company_name
-                                                        ?.slice(0, 2)
-                                                        .toLocaleUpperCase() ||
-                                                        userData?.name
+                                            <div className="flex items-center gap-2">
+                                                <Avatar size="xl">
+                                                    <AvatarImage
+                                                        src={
+                                                            logoPreview ||
+                                                            `/storage/${userData?.company_logo}` ||
+                                                            ''
+                                                        }
+                                                        alt={
+                                                            companyInfoForm
+                                                                ?.data
+                                                                .company_name ||
+                                                            'Company logo'
+                                                        }
+                                                    />
+                                                    <AvatarFallback>
+                                                        {companyInfoForm?.data.company_name
                                                             ?.slice(0, 2)
-                                                            .toLocaleUpperCase()}
-                                                </AvatarFallback>
-                                            </Avatar>
-                                            <span className="font-normal">
-                                                Select Logo
-                                            </span>
+                                                            .toLocaleUpperCase() ||
+                                                            userData?.name
+                                                                ?.slice(0, 2)
+                                                                .toLocaleUpperCase()}
+                                                    </AvatarFallback>
+                                                </Avatar>
+                                                <span className="rounded-lg bg-primary px-3 py-1.5 font-normal text-white">
+                                                    Select Logo
+                                                </span>
+                                            </div>
+
                                             <Input
                                                 type="file"
                                                 accept="image/jpeg,image/png,image/webp"

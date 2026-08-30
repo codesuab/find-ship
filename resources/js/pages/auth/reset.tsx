@@ -7,7 +7,8 @@ import SlideUpButton from '@/components/slideup-button';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { toast, Toaster } from '@/components/ui/toast';
 import { PageProps } from '@/types/types';
-import Illustrator from './Illustrator';
+import Illustrator from '../../components/auth/Illustrator';
+import AuthHeader from '@/components/auth/AuthHeader';
 
 interface DateProps {
     email: string;
@@ -86,7 +87,6 @@ export default function reset({ email, token }: DateProps) {
             });
         }
     }, [flash?.id]);
-    
 
     return (
         <div className="flex min-h-screen w-full bg-white font-sans text-slate-900 antialiased lg:flex-row">
@@ -106,15 +106,10 @@ export default function reset({ email, token }: DateProps) {
                     animate="visible"
                     className="w-full max-w-100"
                 >
-                    <motion.div variants={itemVariants} className="mb-10">
-                        <h1 className="mb-2 text-[25px] leading-[1.05] font-semibold tracking-tight text-foreground md:text-[35px]">
-                            Reset your password
-                        </h1>
-
-                        <p className="text-[15px] text-balance text-muted-foreground">
-                            Enter a new password below to secure your account.
-                        </p>
-                    </motion.div>
+                    <AuthHeader
+                        title="Reset your password"
+                        subtitle="Enter a new password below to secure your account."
+                    />
 
                     <form
                         onSubmit={handleSubmit}
@@ -241,7 +236,7 @@ export default function reset({ email, token }: DateProps) {
 
                     <motion.div
                         variants={itemVariants}
-                        className="mt-10 text-center text-[14px] text-slate-500"
+                        className="mt-4 text-center text-[14px] text-slate-500"
                     >
                         Remember your password?{' '}
                         <Link

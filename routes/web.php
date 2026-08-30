@@ -17,7 +17,7 @@ Route::controller(ContactController::class)->group(function () {
 // Auth ============
 Route::middleware('guest')->prefix('/auth')->controller(AuthController::class)->group(function () {
     // for login
-    Route::get('/login', 'login')->name('login');
+    Route::get('/', 'login')->name('login');
     Route::post('/login-post', 'loginLogic')
         ->name('login.post');
 
@@ -50,3 +50,4 @@ Route::middleware('auth')->prefix('/auth')->controller(AuthController::class)->g
 
 // extra routes
 require __DIR__ . '/app.php';
+require __DIR__ . '/admin.php';
