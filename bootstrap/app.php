@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\AdminAuth;
+use App\Http\Middleware\AdminGuest;
 use App\Http\Middleware\EnsureEmailIsVerified;
 use App\Http\Middleware\EnsureOnboardingCompleted;
 use App\Http\Middleware\HandleInertiaRequests;
@@ -25,6 +27,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'insSureEmailVerify' => EnsureEmailIsVerified::class,
             'insOnboarding' => EnsureOnboardingCompleted::class,
+
+            'adminGuest' => AdminGuest::class,
+            'adminAuth' => AdminAuth::class
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

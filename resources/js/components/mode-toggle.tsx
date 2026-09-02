@@ -26,7 +26,7 @@ export function ModeToggle() {
                 onClick={() => setTheme('dark')}
             >
                 <MdDarkMode />
-                Light
+                Dark
             </Button>
             <ButtonGroupSeparator />
             <Button

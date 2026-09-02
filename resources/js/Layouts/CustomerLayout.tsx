@@ -54,7 +54,7 @@ export default function CustomerLayout({ children }: PropsWithChildren) {
                     {searchToggler && (
                         <Sidebar
                             collapsible="none"
-                            className="fixed top-0 left-0 z-90 flex-1 shadow-sm md:static md:z-auto md:flex md:shadow-none"
+                            className="fixed top-0 left-0 z-90 flex-1 shadow-sm md:static md:z-auto md:flex md:shadow-none border-r border-border"
                         >
                             <SidebarHeader className="gap-3.5 border-b p-4">
                                 <div className="flex w-full items-center justify-between">

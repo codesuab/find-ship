@@ -5,11 +5,18 @@ type Flash = {
     id?: any,
 };
 
+type Admin = {
+    name: string,
+    email: string,
+    avatar?: string | null,
+}
+
 type PageProps = {
     name: string;
     flash: Flash;
     auth: {
-        user?: any
+        user?: any,
+        admin?: Admin | null
     }
 };
 

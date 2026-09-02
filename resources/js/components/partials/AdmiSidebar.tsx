@@ -26,36 +26,19 @@ import {
     SidebarTrigger,
     useSidebar,
 } from '@/components/ui/sidebar';
-import { navGroups, secondNavGroups } from '@/constant/CustomerMenu';
-import {
-    ArrowRightLeft,
-    BadgeCheck,
-    CreditCard,
-    LogOut,
-    Search,
-    Sparkles,
-    X,
-} from 'lucide-react';
+import { BadgeCheck, LogOut } from 'lucide-react';
 import {
     Tooltip,
     TooltipContent,
     TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { Button } from '../ui/button';
 import { PageProps } from '@/types/types';
+import { navGroups, secondNavGroups } from '@/constant/AdminMenu';
 
-interface UserSidebarProps {
-    searchToggler?: boolean;
-    setSearchToggler?: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-export default function UserSidebar({
-    searchToggler,
-    setSearchToggler,
-}: UserSidebarProps) {
+export default function AdminSidebar() {
     const { name: appName, auth } = usePage<PageProps>().props;
     const { state } = useSidebar();
-    const user = auth?.user;
+    const user = auth?.admin;
 
     return (
         <Sidebar collapsible="icon">
@@ -66,7 +49,7 @@ export default function UserSidebar({
                     className={`flex ${state == 'expanded' ? 'flex-row justify-between' : 'justify-between gap-3 md:flex-col md:justify-center'} items-center`}
                 >
                     <div
-                        onClick={() => router.get(route('app.dashboard'))}
+                        onClick={() => router.get(route('admin.dashboard'))}
                         className="flex items-center gap-2.5 px-1 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0"
                     >
                         <Logo show="false" imageSize="h-8 w-8 text-primary" />
@@ -75,7 +58,7 @@ export default function UserSidebar({
                                 {appName}
                             </p>
                             <p className="truncate text-xs text-muted-foreground">
-                                Workspace
+                                Controller
                             </p>
                         </div>
                     </div>
@@ -83,32 +66,6 @@ export default function UserSidebar({
                     <div
                         className={`flex ${state == 'expanded' ? 'flex-row gap-1' : 'gap-2 md:flex-col-reverse'} items-center`}
                     >
-                        {/* search */}
-                        <div className="hidden md:block">
-                            <Tooltip>
-                                <TooltipTrigger
-                                    render={
-                                        <Button
-                                            variant="outline"
-                                            size="icon"
-                                            onClick={() =>
-                                                setSearchToggler?.(
-                                                    !searchToggler,
-                                                )
-                                            }
-                                        >
-                                            {searchToggler ? <X /> : <Search />}
-                                        </Button>
-                                    }
-                                />
-                                {state == 'collapsed' && (
-                                    <TooltipContent side="right">
-                                        Search
-                                    </TooltipContent>
-                                )}
-                            </Tooltip>
-                        </div>
-
                         {/* menu trigger */}
                         <Tooltip>
                             <TooltipTrigger
@@ -154,6 +111,16 @@ export default function UserSidebar({
                                             aria-current={
                                                 item.active ? 'page' : undefined
                                             }
+                                            onClick={() => {
+                                                if (
+                                                    item.link &&
+                                                    item.link !== '#'
+                                                ) {
+                                                    router.get(
+                                                        route(item.link),
+                                                    );
+                                                }
+                                            }}
                                             className="group-data-[collapsible=icon]:justify-center"
                                         >
                                             <item.icon aria-hidden="true" />
@@ -254,14 +221,6 @@ export default function UserSidebar({
                                 <DropdownMenuSeparator />
 
                                 <DropdownMenuGroup>
-                                    <DropdownMenuItem className="py-2">
-                                        <Sparkles />
-                                        Upgrade to Pro
-                                    </DropdownMenuItem>
-                                </DropdownMenuGroup>
-                                <DropdownMenuSeparator />
-
-                                <DropdownMenuGroup>
                                     <DropdownMenuItem
                                         className="py-1.5"
                                         onClick={() =>
@@ -273,22 +232,14 @@ export default function UserSidebar({
                                         <BadgeCheck />
                                         Account
                                     </DropdownMenuItem>
-
-                                    <DropdownMenuItem className="py-1.5">
-                                        <CreditCard />
-                                        Active Plan
-                                    </DropdownMenuItem>
-
-                                    <DropdownMenuItem className="py-1.5">
-                                        <ArrowRightLeft />
-                                        Transactions
-                                    </DropdownMenuItem>
                                 </DropdownMenuGroup>
                                 <DropdownMenuSeparator />
 
                                 <DropdownMenuItem
                                     variant="destructive"
-                                    onClick={() => router.get(route('logout'))}
+                                    onClick={() =>
+                                        router.get(route('admin.logout'))
+                                    }
                                 >
                                     <LogOut />
                                     Log out

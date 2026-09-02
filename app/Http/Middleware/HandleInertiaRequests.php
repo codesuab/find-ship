@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Inertia\Middleware;
 
@@ -55,6 +56,28 @@ class HandleInertiaRequests extends Middleware
                         ])
                     )
                     : null,
+                'admin' => function () {
+                    if (!request()->is('admin*')) {
+                        return null;
+                    }
+
+                    $admin = Auth::guard('admin')->user();
+
+                    if (!$admin) {
+                        return null;
+                    }
+
+                    return Cache::remember(
+                        "auth:admin:{$admin->id}",
+                        now()->addMinutes(10),
+                        fn() => $admin->only([
+                            'id',
+                            'name',
+                            'email',
+                            'avatar',
+                        ])
+                    );
+                },
             ],
             'current_route' => request()->route()?->uri(),
             'flash' => [
