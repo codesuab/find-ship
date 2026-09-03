@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AccountController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -20,6 +21,13 @@ Route::prefix('/admin')->group(function () {
         // Admin
         Route::controller(AdminController::class)->group(function () {
             Route::get('/admin-list', 'index')->name('admin.admin.index');
+        });
+
+        // Account
+        Route::controller(AccountController::class)->group(function () {
+            Route::get('/account-index', 'index')->name('admin.account.index');
+            Route::post('/account-personal', 'personal')->name('admin.account.personal');
+            Route::post('/account-security', 'security')->name('admin.account.security');
         });
 
         // logout

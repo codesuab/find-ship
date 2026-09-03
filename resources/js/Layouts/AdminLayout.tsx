@@ -45,7 +45,7 @@ export default function AdminLayout({ children, title }: PageData) {
             </Head>
             <SidebarProvider
                 className="min-h-svh text-foreground"
-                defaultOpen={false}
+                defaultOpen={true}
             >
                 {/* sidebar */}
                 <AdminSidebar />
@@ -74,7 +74,6 @@ export default function AdminLayout({ children, title }: PageData) {
                     </div>
 
                     <div className="flex min-w-0 flex-1 flex-col p-6 sm:p-8">
-                        <h1 className='text-2xl text-foreground font-medium mb-5'>{title}</h1>
                         {children}
                     </div>
                 </SidebarInset>

@@ -225,7 +225,7 @@ export default function AdminSidebar() {
                                         className="py-1.5"
                                         onClick={() =>
                                             router.get(
-                                                route('app.account.view'),
+                                                route('admin.account.index'),
                                             )
                                         }
                                     >

@@ -18,7 +18,13 @@ class AccountController extends Controller
     // index
     public function index(Request $request)
     {
-        $user = Auth::user();
+        $userId = Auth::id();
+
+        $user = Cache::remember(
+            "account:user-data:{$userId}",
+            now()->addMinutes(10),
+            fn() => User::find($userId)?->toArray()
+        );
 
         $country = [
             ['label' => 'Select a country', 'value' => null],

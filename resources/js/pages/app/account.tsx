@@ -38,7 +38,7 @@ import {
 } from '@/components/ui/combobox';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { PageProps } from '@/types/types';
 import {
@@ -323,7 +323,7 @@ export default function account({
                                                     .toLocaleUpperCase()}
                                             </AvatarFallback>
                                         </Avatar>
-                                        <span className="rounded-lg bg-primary dark:bg-background px-3 py-1.5 font-normal text-white dark:text-foreground">
+                                        <span className="rounded-lg bg-primary px-3 py-1.5 font-normal text-white dark:bg-background dark:text-foreground">
                                             Select Photo
                                         </span>
                                     </div>
@@ -811,7 +811,7 @@ export default function account({
                                                         .toLocaleUpperCase()}
                                             </AvatarFallback>
                                         </Avatar>
-                                        <span className="rounded-lg bg-primary dark:bg-background px-3 py-1.5 font-normal text-white dark:text-foreground">
+                                        <span className="rounded-lg bg-primary px-3 py-1.5 font-normal text-white dark:bg-background dark:text-foreground">
                                             Select Logo
                                         </span>
                                     </div>
@@ -1085,7 +1085,7 @@ export default function account({
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="text-sm text-muted-foreground">
-                            <ModeToggle/>
+                            <ModeToggle />
                         </CardContent>
                     </Card>
                 </TabsContent>
