@@ -36,7 +36,7 @@ import { PageProps } from '@/types/types';
 import { navGroups, secondNavGroups } from '@/constant/AdminMenu';
 
 export default function AdminSidebar() {
-    const { name: appName, auth } = usePage<PageProps>().props;
+    const { name: appName, auth, current_route } = usePage<PageProps>().props;
     const { state } = useSidebar();
     const user = auth?.admin;
 
@@ -101,7 +101,11 @@ export default function AdminSidebar() {
                                     <SidebarMenuItem key={i}>
                                         <SidebarMenuButton
                                             size="lg"
-                                            isActive={item.active}
+                                            isActive={
+                                                item.link == current_route
+                                                    ? true
+                                                    : false
+                                            }
                                             tooltip={
                                                 item.badge
                                                     ? `${item.label} (${item.badge})`
@@ -109,7 +113,9 @@ export default function AdminSidebar() {
                                             }
                                             render={<a href="#" />}
                                             aria-current={
-                                                item.active ? 'page' : undefined
+                                                item.link == current_route
+                                                    ? 'page'
+                                                    : undefined
                                             }
                                             onClick={() => {
                                                 if (

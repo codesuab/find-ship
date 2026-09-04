@@ -76,6 +76,21 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+
+            'last_login_at'=>'date:d M, Y'
         ];
+    }
+
+    public function scopeFilter($query, $filters)
+    {
+        if (!empty($filters['search']) && is_string($filters['search'])) {
+            $query->where(function ($q) use ($filters) {
+                $search = '%' . $filters['search'] . '%';
+
+                $q->where('id', $search)
+                    ->orWhere('name', 'like', $search)
+                    ->orWhere('email', 'like', $search);
+            });
+        }
     }
 }

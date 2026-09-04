@@ -5,7 +5,7 @@ use App\Http\Controllers\User\DashboardController;
 use App\Http\Controllers\User\OnboardingController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('/app')->middleware(['auth', 'insSureEmailVerify'])->group(function () {
+Route::prefix('/app')->middleware(['auth', 'customerStatus', 'insSureEmailVerify'])->group(function () {
     // Onboarding
     Route::controller(OnboardingController::class)->group(function () {
         Route::get('/onboarding', 'index')->name('app.onboarding.index');

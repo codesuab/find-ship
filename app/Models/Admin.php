@@ -28,7 +28,7 @@ class Admin extends Authenticatable
         return [
             'password' => 'hashed',
             'is_active' => 'boolean',
-            'last_login_at' => 'date:D m, Y',
+            'last_login_at' => 'date:d m, Y',
         ];
     }
 

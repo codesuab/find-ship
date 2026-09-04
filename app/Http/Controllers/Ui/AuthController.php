@@ -44,7 +44,7 @@ class AuthController extends Controller
             if ($user->status !== 'active') {
                 return back()->with(
                     'error',
-                    $user->status_message ?? 'Your account is not active.'
+                    'Account currently suspended, Reason: ' . $user->status_message ?? 'Your account is not active.'
                 )->with('_flash_id', time());
             }
 

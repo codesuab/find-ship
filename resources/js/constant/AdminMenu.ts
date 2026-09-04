@@ -12,7 +12,6 @@ type IconRenderer = React.ComponentType<IconProps>
 type NavItem = {
     label: string
     icon: IconRenderer
-    active?: boolean
     badge?: string
     link?: string | '#'
 }
@@ -24,7 +23,6 @@ const navGroups: { heading?: string; items: NavItem[] }[] = [
             {
                 label: "Dashboard",
                 icon: RxDashboard,
-                active: true,
                 link: 'admin.dashboard'
             },
         ],
@@ -35,6 +33,7 @@ const navGroups: { heading?: string; items: NavItem[] }[] = [
             {
                 label: "Customer",
                 icon: User,
+                link:'admin.customer.index'
             },
             {
                 label: "Admins",

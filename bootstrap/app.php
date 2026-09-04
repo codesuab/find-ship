@@ -3,6 +3,7 @@
 use App\Http\Middleware\AdminAuth;
 use App\Http\Middleware\AdminGuest;
 use App\Http\Middleware\AdminStatus;
+use App\Http\Middleware\CustomerStatus;
 use App\Http\Middleware\EnsureEmailIsVerified;
 use App\Http\Middleware\EnsureOnboardingCompleted;
 use App\Http\Middleware\HandleInertiaRequests;
@@ -31,7 +32,9 @@ return Application::configure(basePath: dirname(__DIR__))
 
             'adminGuest' => AdminGuest::class,
             'adminAuth' => AdminAuth::class,
-            'adminStatus'=>AdminStatus::class
+            'adminStatus'=>AdminStatus::class,
+
+            'customerStatus'=>CustomerStatus::class
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

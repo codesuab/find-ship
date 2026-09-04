@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Route;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -79,7 +80,7 @@ class HandleInertiaRequests extends Middleware
                     );
                 },
             ],
-            'current_route' => request()->route()?->uri(),
+            'current_route' => Route::currentRouteName(),
             'flash' => [
                 'error' => fn() => $request->session()->get('error'),
                 'success' => fn() => $request->session()->get('success'),
