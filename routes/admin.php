@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AccountController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\Config\SmtpController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DashboardController;
 use Illuminate\Support\Facades\Route;
@@ -33,6 +34,12 @@ Route::prefix('/admin')->group(function () {
             Route::post('/customer-store', 'store')->name('admin.customer.store');
             Route::delete('/customer-delete/{id}', 'destroy')->name('admin.customer.delete');
             Route::post('/customer-delete/bulk', 'destroyBuk')->name('admin.customer.delete.bulk');
+        });
+
+        // Config ===========
+        Route::controller(SmtpController::class)->group(function () {
+            Route::get('/smtp-index', 'index')->name('admin.smtp.index');
+            Route::post('/smtp-store', 'store')->name('admin.smtp.store');
         });
 
         // Account

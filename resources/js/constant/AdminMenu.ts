@@ -1,6 +1,6 @@
-import { IconHelp } from "@tabler/icons-react"
+import { IconHelp, IconMailStar } from "@tabler/icons-react"
 import { RxDashboard } from "react-icons/rx"
-import { User, UserStar } from "lucide-react";
+import { Settings, Ship, User, UserStar } from "lucide-react";
 
 type IconProps = {
     className?: string
@@ -38,6 +38,26 @@ const navGroups: { heading?: string; items: NavItem[] }[] = [
             {
                 label: "Admins",
                 icon: UserStar,
+                link: 'admin.admin.index'
+            },
+        ],
+    },
+    {
+        heading: 'Configure',
+        items: [
+            {
+                label: "Setting",
+                icon: Settings,
+                link:'admin.customer.index'
+            },
+            {
+                label: "Mail SMTP",
+                icon: IconMailStar,
+                link: 'admin.smtp.index'
+            },
+            {
+                label: "Vessel Api",
+                icon: Ship,
                 link: 'admin.admin.index'
             },
         ],
