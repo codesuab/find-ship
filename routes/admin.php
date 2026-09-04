@@ -21,6 +21,9 @@ Route::prefix('/admin')->group(function () {
         // Admin
         Route::controller(AdminController::class)->group(function () {
             Route::get('/admin-list', 'index')->name('admin.admin.index');
+            Route::post('/admin-store', 'store')->name('admin.admin.store');
+            Route::delete('/admin-delete/{id}', 'destroy')->name('admin.admin.delete');
+            Route::post('/admin-delete/bulk', 'destroyBuk')->name('admin.admin.delete.bulk');
         });
 
         // Account

@@ -6,6 +6,7 @@ type Flash = {
 };
 
 type Admin = {
+    id: number,
     name: string,
     email: string,
     avatar?: string | null,
