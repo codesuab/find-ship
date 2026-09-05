@@ -32,6 +32,7 @@ interface RoleData {
     name: string;
     slug: string;
     created_at: string;
+    admins_count:number | 0;
     permissions: {
         [module: string]: string[];
     };
@@ -222,6 +223,10 @@ export default function role({ data: initData, filter }: PageData) {
                                 Permission
                             </Badge>
                         ),
+                    },
+                    {
+                        key: 'admins_count',
+                        label: 'Total Admins',
                     },
                     {
                         key: 'created_at',

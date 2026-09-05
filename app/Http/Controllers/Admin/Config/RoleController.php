@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Config;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,6 +18,7 @@ class RoleController extends Controller
     {
         $data = Role::filter($request->only('search'))
             ->latest()
+            ->withCount('admins')
             ->paginate(10)
             ->withQueryString();
 
@@ -37,8 +39,11 @@ class RoleController extends Controller
         try {
             Role::updateOrCreate(['id' => $request->id], $request->except('id'));
 
-            $adminId = Auth::guard('admin')->id();
-            Cache::forget("auth:admin:{$adminId}");
+            // remove cache
+            $adminId = Admin::all();
+            foreach ($adminId  as $admin) {
+                Cache::forget("auth:admin:{$admin['id']}");
+            }
 
             DB::commit();
             return back()->with('success', 'Role saved success')->with('_flash_id', time());
@@ -52,8 +57,14 @@ class RoleController extends Controller
     public function destroy($id)
     {
         $admin =  Role::find($id);
-
         $admin->delete();
+
+        // remove cache
+        $adminId = Admin::all();
+        foreach ($adminId  as $admin) {
+            Cache::forget("auth:admin:{$admin['id']}");
+        }
+
         return back()->with('success', 'Role delete success.')->with('_flash_id', time());
     }
 
@@ -66,6 +77,12 @@ class RoleController extends Controller
 
             foreach ($admins as $items) {
                 $items->delete();
+            }
+
+            // remove cache
+            $adminId = Admin::all();
+            foreach ($adminId  as $admin) {
+                Cache::forget("auth:admin:{$admin['id']}");
             }
 
             DB::commit();
