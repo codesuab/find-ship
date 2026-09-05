@@ -44,6 +44,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
+import Can from '@/components/Can';
 
 interface AdminData {
     id: number | null;
@@ -201,12 +202,14 @@ export default function customer({ data: initData, filter }: PageData) {
                             <SearchIcon className="text-muted-foreground" />
                         </InputGroupAddon>
                     </InputGroup>
-                    <Button onClick={() => setFormModel(true)}>
-                        <Plus />
-                        Add New
-                    </Button>
+                    {Can('customers.create') && (
+                        <Button onClick={() => setFormModel(true)}>
+                            <Plus />
+                            Add New
+                        </Button>
+                    )}
 
-                    {selectedIds.length > 0 && (
+                    {selectedIds.length > 0 && Can('customers.delete') && (
                         <>
                             <Confirmation
                                 callBack={() => {
@@ -335,57 +338,67 @@ export default function customer({ data: initData, filter }: PageData) {
                             label: 'Actions',
                             render: (row) => (
                                 <div className="flex items-center gap-2 md:max-w-5">
-                                    <Button
-                                        variant="ghost"
-                                        size="icon-sm"
-                                        onClick={() => setPreview(row)}
-                                    >
-                                        <Eye />
-                                    </Button>
-                                    <Confirmation
-                                        callBack={() =>
-                                            router.delete(
-                                                route('admin.customer.delete', {
-                                                    id: row.id,
-                                                }),
-                                            )
-                                        }
-                                    >
+                                    {Can('customers.preview') && (
                                         <Button
-                                            variant="ghostDel"
+                                            variant="ghost"
+                                            size="icon-sm"
+                                            onClick={() => setPreview(row)}
+                                        >
+                                            <Eye />
+                                        </Button>
+                                    )}
+                                    {Can('customers.delete') && (
+                                        <Confirmation
+                                            callBack={() =>
+                                                router.delete(
+                                                    route(
+                                                        'admin.customer.delete',
+                                                        {
+                                                            id: row.id,
+                                                        },
+                                                    ),
+                                                )
+                                            }
+                                        >
+                                            <Button
+                                                variant="ghostDel"
+                                                size="icon-sm"
+                                            >
+                                                <Trash />
+                                            </Button>
+                                        </Confirmation>
+                                    )}
+
+                                    {Can('customers.update') && (
+                                        <Button
+                                            onClick={() => {
+                                                setData('id', row.id);
+                                                setData('email', row.email);
+                                                setData('name', row.name);
+                                                setData(
+                                                    'balance',
+                                                    row.balance || 0,
+                                                );
+                                                setData('phone', row.phone);
+                                                setData('status', row.status);
+                                                setData(
+                                                    'status_message',
+                                                    row.status_message,
+                                                );
+                                                setFormModel(true);
+                                            }}
+                                            variant="ghost"
                                             size="icon-sm"
                                         >
-                                            <Trash />
+                                            <Pen />
                                         </Button>
-                                    </Confirmation>
-                                    <Button
-                                        onClick={() => {
-                                            setData('id', row.id);
-                                            setData('email', row.email);
-                                            setData('name', row.name);
-                                            setData(
-                                                'balance',
-                                                row.balance || 0,
-                                            );
-                                            setData('phone', row.phone);
-                                            setData('status', row.status);
-                                            setData(
-                                                'status_message',
-                                                row.status_message,
-                                            );
-                                            setFormModel(true);
-                                        }}
-                                        variant="ghost"
-                                        size="icon-sm"
-                                    >
-                                        <Pen />
-                                    </Button>
+                                    )}
                                 </div>
                             ),
                         },
                     ]}
                     pagination={initData}
-                    selectable
+                    selectable={Can('customers.delete')}
                     selectedIds={selectedIds}
                     onSelectionChange={(ids) => {
                         setSelectedIds(ids as number[]);

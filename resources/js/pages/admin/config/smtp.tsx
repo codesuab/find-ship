@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Loader } from 'lucide-react';
+import Can from '@/components/Can';
 
 interface SMTPData {
     id: number | null;
@@ -66,7 +67,7 @@ export default function smtp({ data: initData }: PageData) {
             />
 
             <Card>
-                <CardContent className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <CardContent className="grid grid-cols-1 gap-5 md:grid-cols-2">
                     <Field>
                         <Label>Driver*</Label>
                         <Input
@@ -208,13 +209,15 @@ export default function smtp({ data: initData }: PageData) {
                     </Field>
                 </CardContent>
                 <CardFooter>
-                    <Button onClick={handleUpdate} disabled={processing}>
-                        {processing ? (
-                            <Loader className="animate-spin" />
-                        ) : (
-                            'Save now'
-                        )}
-                    </Button>
+                    {Can('smtp.update') && (
+                        <Button onClick={handleUpdate} disabled={processing}>
+                            {processing ? (
+                                <Loader className="animate-spin" />
+                            ) : (
+                                'Save now'
+                            )}
+                        </Button>
+                    )}
                 </CardFooter>
             </Card>
         </AdminLayout>

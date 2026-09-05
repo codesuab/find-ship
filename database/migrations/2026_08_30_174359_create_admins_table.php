@@ -17,11 +17,14 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
-
             $table->string('avatar')->nullable();
 
             $table->boolean('is_active')->default(true);
-            
+            $table->foreignId('role_id')
+                ->nullable()
+                ->constrained('roles')
+                ->nullOnDelete();
+
             $table->timestamp('last_login_at')->nullable();
             $table->string('last_login_ip', 45)->nullable();
 

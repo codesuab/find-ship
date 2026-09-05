@@ -33,7 +33,8 @@ import {
     TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { PageProps } from '@/types/types';
-import { navGroups, secondNavGroups } from '@/constant/AdminMenu';
+import { navGroups } from '@/constant/AdminMenu';
+import Can from '../Can';
 
 export default function AdminSidebar() {
     const { name: appName, auth, current_route } = usePage<PageProps>().props;
@@ -86,88 +87,73 @@ export default function AdminSidebar() {
                 </div>
             </SidebarHeader>
 
-            <SidebarContent className={`pt-1 ${state == 'expanded' && 'px-2'}`}>
+            <SidebarContent className={` ${state == 'expanded' && 'px-2'}`}>
                 {/* primary */}
-                {navGroups.map((group, i) => (
-                    <SidebarGroup key={i}>
-                        {group.heading && (
-                            <SidebarGroupLabel className="text-[10px] font-semibold uppercase">
-                                {group.heading}
-                            </SidebarGroupLabel>
-                        )}
-                        <SidebarGroupContent>
-                            <SidebarMenu>
-                                {group.items.map((item, i) => (
-                                    <SidebarMenuItem key={i}>
-                                        <SidebarMenuButton
-                                            size="lg"
-                                            isActive={
-                                                item.link == current_route
-                                                    ? true
-                                                    : false
-                                            }
-                                            tooltip={
-                                                item.badge
-                                                    ? `${item.label} (${item.badge})`
-                                                    : item.label
-                                            }
-                                            render={<a href="#" />}
-                                            aria-current={
-                                                item.link == current_route
-                                                    ? 'page'
-                                                    : undefined
-                                            }
-                                            onClick={() => {
-                                                if (
-                                                    item.link &&
-                                                    item.link !== '#'
-                                                ) {
-                                                    router.get(
-                                                        route(item.link),
-                                                    );
-                                                }
-                                            }}
-                                            className="group-data-[collapsible=icon]:justify-center"
-                                        >
-                                            <item.icon aria-hidden="true" />
-                                            <span className="group-data-[collapsible=icon]:hidden">
-                                                {item.label}
-                                            </span>
-                                        </SidebarMenuButton>
-                                        {item.badge && (
-                                            <SidebarMenuBadge className="top-1/2 -translate-y-1/2 tabular-nums">
-                                                {item.badge}
-                                            </SidebarMenuBadge>
-                                        )}
-                                    </SidebarMenuItem>
-                                ))}
-                            </SidebarMenu>
-                        </SidebarGroupContent>
-                    </SidebarGroup>
-                ))}
+                {navGroups.map((group, i) => {
+                    const items = group.items.filter(
+                        (item) => !item.permission || Can(item.permission),
+                    );
 
-                {/* secondary nav */}
-                <SidebarGroup className="mt-auto">
-                    <SidebarGroupContent>
-                        <SidebarMenu>
-                            {secondNavGroups.map((item, i) => (
-                                <SidebarMenuItem key={i}>
-                                    <SidebarMenuButton
-                                        size="lg"
-                                        tooltip={item.label}
-                                        render={<a href="#" />}
-                                        className="group-data-[collapsible=icon]:justify-center"
-                                    >
-                                        <item.icon aria-hidden="true" />
-                                        <span className="group-data-[collapsible=icon]:hidden">
-                                            {item.label}
-                                        </span>
-                                    </SidebarMenuButton>
-                                </SidebarMenuItem>
-                            ))}
-                        </SidebarMenu>
-                    </SidebarGroupContent>
-                </SidebarGroup>
+                    if (!items.length) return null;
+
+                    return (
+                        <SidebarGroup key={i}>
+                            {group.heading && (
+                                <SidebarGroupLabel className="text-[10px] font-semibold uppercase">
+                                    {group.heading}
+                                </SidebarGroupLabel>
+                            )}
+
+                            <SidebarGroupContent>
+                                <SidebarMenu>
+                                    {items.map((item, i) => (
+                                        <SidebarMenuItem key={i}>
+                                            <SidebarMenuButton
+                                                size="lg"
+                                                isActive={
+                                                    item.link === current_route
+                                                }
+                                                tooltip={
+                                                    item.badge
+                                                        ? `${item.label} (${item.badge})`
+                                                        : item.label
+                                                }
+                                                aria-current={
+                                                    item.link === current_route
+                                                        ? 'page'
+                                                        : undefined
+                                                }
+                                                onClick={() => {
+                                                    if (
+                                                        item.link &&
+                                                        item.link !== '#'
+                                                    ) {
+                                                        router.get(
+                                                            route(item.link),
+                                                        );
+                                                    }
+                                                }}
+                                                className="group-data-[collapsible=icon]:justify-center"
+                                            >
+                                                <item.icon aria-hidden="true" />
+
+                                                <span className="group-data-[collapsible=icon]:hidden">
+                                                    {item.label}
+                                                </span>
+                                            </SidebarMenuButton>
+
+                                            {item.badge && (
+                                                <SidebarMenuBadge className="top-1/2 -translate-y-1/2 tabular-nums">
+                                                    {item.badge}
+                                                </SidebarMenuBadge>
+                                            )}
+                                        </SidebarMenuItem>
+                                    ))}
+                                </SidebarMenu>
+                            </SidebarGroupContent>
+                        </SidebarGroup>
+                    );
+                })}
             </SidebarContent>
 
             <SidebarFooter className={`${state == 'expanded' && 'px-3'}`}>

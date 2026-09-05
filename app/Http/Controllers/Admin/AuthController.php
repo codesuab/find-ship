@@ -30,7 +30,7 @@ class AuthController extends Controller
                 return back()->with('error', "Invalid login information")->with('_flash_id', time());
             }
 
-            if(!(bool) $existing->is_active){
+            if (!(bool) $existing->is_active) {
                 return back()->with('error', "This account currently inactive.")->with('_flash_id', time());
             }
 

@@ -1,6 +1,6 @@
 import { IconHelp, IconMailStar } from "@tabler/icons-react"
 import { RxDashboard } from "react-icons/rx"
-import { Settings, Ship, User, UserStar } from "lucide-react";
+import { Settings, Ship, User, UserShield, UserStar } from "lucide-react";
 
 type IconProps = {
     className?: string
@@ -14,6 +14,7 @@ type NavItem = {
     icon: IconRenderer
     badge?: string
     link?: string | '#'
+    permission?: string | ''
 }
 
 const navGroups: { heading?: string; items: NavItem[] }[] = [
@@ -23,7 +24,8 @@ const navGroups: { heading?: string; items: NavItem[] }[] = [
             {
                 label: "Dashboard",
                 icon: RxDashboard,
-                link: 'admin.dashboard'
+                link: 'admin.dashboard',
+                permission: 'dashboard.view'
             },
         ],
     },
@@ -33,12 +35,14 @@ const navGroups: { heading?: string; items: NavItem[] }[] = [
             {
                 label: "Customer",
                 icon: User,
-                link:'admin.customer.index'
+                link: 'admin.customer.index',
+                permission: 'customers.view'
             },
             {
                 label: "Admins",
                 icon: UserStar,
-                link: 'admin.admin.index'
+                link: 'admin.admin.index',
+                permission: 'admins.view'
             },
         ],
     },
@@ -46,29 +50,31 @@ const navGroups: { heading?: string; items: NavItem[] }[] = [
         heading: 'Configure',
         items: [
             {
+                label: "Role & Permission",
+                icon: UserShield,
+                link: 'admin.role.index',
+                permission: 'roles.view'
+            },
+            {
                 label: "Setting",
                 icon: Settings,
-                link:'admin.customer.index'
+                link: 'admin.customer.index',
+                permission: 'settings.view'
             },
             {
                 label: "Mail SMTP",
                 icon: IconMailStar,
-                link: 'admin.smtp.index'
+                link: 'admin.smtp.index',
+                permission: 'smtp.view'
             },
             {
                 label: "Vessel Api",
                 icon: Ship,
-                link: 'admin.admin.index'
+                link: 'admin.admin.index',
+                permission: 'vessels.view'
             },
         ],
     },
 ]
 
-const secondNavGroups = [
-    {
-        label: "Get Help",
-        icon: IconHelp,
-    },
-]
-
-export { navGroups, secondNavGroups }
+export { navGroups }

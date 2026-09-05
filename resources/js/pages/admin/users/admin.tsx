@@ -31,8 +31,19 @@ import {
 import { Label } from '@/components/ui/label';
 import { PageProps } from '@/types/types';
 import { router, useForm, usePage } from '@inertiajs/react';
-import { Eye, Loader, Pen, Plus, SearchIcon, Trash, X } from 'lucide-react';
+import { Loader, Pen, Plus, SearchIcon, Shield, Trash, X } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
+import {
+    Combobox,
+    ComboboxContent,
+    ComboboxEmpty,
+    ComboboxInput,
+    ComboboxItem,
+    ComboboxList,
+    ComboboxTrigger,
+    ComboboxValue,
+} from '@/components/ui/combobox';
+import Can from '@/components/Can';
 
 interface AdminData {
     id: number;
@@ -42,6 +53,10 @@ interface AdminData {
     last_login_ip: string | null;
     avatar: string | null;
     is_active: boolean;
+    role_id: number | null;
+    role?: {
+        name: string;
+    };
 }
 
 interface PaginationLink {
@@ -61,8 +76,15 @@ interface PaginationData {
     links: PaginationLink[];
 }
 
+interface RoleData {
+    id: number;
+    name: string;
+    slug: string;
+}
+
 interface PageData {
     data: PaginationData;
+    roles: RoleData[];
     filter: {
         search?: string;
     };
@@ -70,13 +92,14 @@ interface PageData {
 
 interface FromData {
     id?: number | null;
+    role_id: number | null;
     name: string;
     email: string;
     password: string;
     is_active: boolean | true;
 }
 
-export default function admin({ data: initData, filter }: PageData) {
+export default function admin({ data: initData, filter, roles }: PageData) {
     const { auth } = usePage<PageProps>().props;
     const admin = auth.admin;
 
@@ -109,6 +132,7 @@ export default function admin({ data: initData, filter }: PageData) {
             name: '',
             email: '',
             password: '',
+            role_id: null,
             is_active: true,
         });
 
@@ -122,7 +146,6 @@ export default function admin({ data: initData, filter }: PageData) {
             },
         });
     };
-    
 
     // search
     const [search, setSearch] = useState(filter?.search || '');
@@ -164,12 +187,14 @@ export default function admin({ data: initData, filter }: PageData) {
                             <SearchIcon className="text-muted-foreground" />
                         </InputGroupAddon>
                     </InputGroup>
-                    <Button onClick={() => setFormModel(true)}>
-                        <Plus />
-                        Add New
-                    </Button>
+                    {Can('admins.create') && (
+                        <Button onClick={() => setFormModel(true)}>
+                            <Plus />
+                            Add New
+                        </Button>
+                    )}
 
-                    {selectedIds.length > 0 && (
+                    {selectedIds.length > 0 && Can('admin.delete') && (
                         <>
                             <Confirmation
                                 callBack={() => {
@@ -233,10 +258,29 @@ export default function admin({ data: initData, filter }: PageData) {
                             label: 'Email',
                         },
                         {
+                            key: 'role',
+                            label: 'Role',
+                            render: (row) => (
+                                <Badge variant="secondary">
+                                    <Shield /> {row.role?.name || 'Super Admin'}
+                                </Badge>
+                            ),
+                        },
+                        {
                             key: 'is_active',
                             label: 'Status',
                             render: (row) => (
-                                <Badge variant={Boolean(row.is_active) ? 'default' : 'destructive'}>{Boolean(row.is_active) ? 'Active' : 'Inactive'}</Badge>
+                                <Badge
+                                    variant={
+                                        Boolean(row.is_active)
+                                            ? 'default'
+                                            : 'destructive'
+                                    }
+                                >
+                                    {Boolean(row.is_active)
+                                        ? 'Active'
+                                        : 'Inactive'}
+                                </Badge>
                             ),
                         },
                         {
@@ -252,42 +296,54 @@ export default function admin({ data: initData, filter }: PageData) {
                             label: 'Actions',
                             render: (row) => (
                                 <div className="flex max-w-5 items-center gap-2">
-                                    <Confirmation
-                                        callBack={() =>
-                                            router.delete(
-                                                route('admin.admin.delete', {
-                                                    id: row.id,
-                                                }),
-                                            )
-                                        }
-                                    >
-                                        <Button
-                                            variant="ghostDel"
-                                            size="icon-sm"
-                                            disabled={admin?.id == row.id}
+                                    {Can('admins.delete') && (
+                                        <Confirmation
+                                            callBack={() =>
+                                                router.delete(
+                                                    route(
+                                                        'admin.admin.delete',
+                                                        {
+                                                            id: row.id,
+                                                        },
+                                                    ),
+                                                )
+                                            }
                                         >
-                                            <Trash />
+                                            <Button
+                                                variant="ghostDel"
+                                                size="icon-sm"
+                                                disabled={admin?.id == row.id}
+                                            >
+                                                <Trash />
+                                            </Button>
+                                        </Confirmation>
+                                    )}
+
+                                    {Can('admin.update') && (
+                                        <Button
+                                            onClick={() => {
+                                                setData('id', row.id);
+                                                setData('email', row.email);
+                                                setData('name', row.name);
+                                                setData(
+                                                    'is_active',
+                                                    row.is_active,
+                                                );
+                                                setData('role_id', row.role_id);
+                                                setFormModel(true);
+                                            }}
+                                            variant="ghost"
+                                            size="icon-sm"
+                                        >
+                                            <Pen />
                                         </Button>
-                                    </Confirmation>
-                                    <Button
-                                        onClick={() => {
-                                            setData('id', row.id);
-                                            setData('email', row.email);
-                                            setData('name', row.name);
-                                            setData('is_active', row.is_active);
-                                            setFormModel(true);
-                                        }}
-                                        variant="ghost"
-                                        size="icon-sm"
-                                    >
-                                        <Pen />
-                                    </Button>
+                                    )}
                                 </div>
                             ),
                         },
                     ]}
                     pagination={initData}
-                    selectable
+                    selectable={Can('admins.delete')}
                     selectedIds={selectedIds}
                     onSelectionChange={(ids) => {
                         setSelectedIds(ids as number[]);
@@ -389,6 +445,64 @@ export default function admin({ data: initData, filter }: PageData) {
                             {errors.is_active && (
                                 <FieldDescription className="text-destructive">
                                     {errors.is_active}
+                                </FieldDescription>
+                            )}
+                        </Field>
+                        <Field>
+                            <Label>Role*</Label>
+                            <Combobox
+                                items={[
+                                    {
+                                        id: null,
+                                        name: 'Select a Role',
+                                        slug: '',
+                                    },
+                                    ...roles,
+                                ]}
+                                onValueChange={(val) =>
+                                    setData('role_id', Number(val))
+                                }
+                            >
+                                <ComboboxTrigger
+                                    className="h-10"
+                                    render={
+                                        <Button
+                                            variant="outline"
+                                            className="justify-between font-normal"
+                                        >
+                                            {
+                                                roles.find(
+                                                    (val) =>
+                                                        val.id == data.role_id,
+                                                )?.name
+                                            }
+                                        </Button>
+                                    }
+                                />
+                                <ComboboxContent>
+                                    <ComboboxInput
+                                        showTrigger={false}
+                                        placeholder="Search"
+                                    />
+                                    <ComboboxEmpty>
+                                        No items found.
+                                    </ComboboxEmpty>
+                                    <ComboboxList>
+                                        {(item) => (
+                                            <ComboboxItem
+                                                key={item.id}
+                                                value={item.id}
+                                            >
+                                                {item.name}
+                                                {item.slug && `(${item.slug})`}
+                                            </ComboboxItem>
+                                        )}
+                                    </ComboboxList>
+                                </ComboboxContent>
+                            </Combobox>
+                            {errors.role_id && (
+                                <FieldDescription className="text-destructive">
+                                    {errors.role_id}
                                 </FieldDescription>
                             )}
                         </Field>

@@ -7,6 +7,7 @@ use App\Http\Middleware\CustomerStatus;
 use App\Http\Middleware\EnsureEmailIsVerified;
 use App\Http\Middleware\EnsureOnboardingCompleted;
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\Permission;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -32,9 +33,10 @@ return Application::configure(basePath: dirname(__DIR__))
 
             'adminGuest' => AdminGuest::class,
             'adminAuth' => AdminAuth::class,
-            'adminStatus'=>AdminStatus::class,
+            'adminStatus' => AdminStatus::class,
+            'permission'=>Permission::class,
 
-            'customerStatus'=>CustomerStatus::class
+            'customerStatus' => CustomerStatus::class
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

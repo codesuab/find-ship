@@ -897,8 +897,13 @@ export default function index({
                                                     }
                                                     className="h-12 rounded-xl"
                                                     value={
-                                                        companyInfoForm.data
-                                                            .company_type
+                                                        COMPANY_TYPES.find(
+                                                            (val) =>
+                                                                val.value ==
+                                                                companyInfoForm
+                                                                    .data
+                                                                    .company_type,
+                                                        )?.label
                                                     }
                                                 />
                                                 <ComboboxContent>

@@ -71,12 +71,20 @@ class HandleInertiaRequests extends Middleware
                     return Cache::remember(
                         "auth:admin:{$admin->id}",
                         now()->addMinutes(10),
-                        fn() => $admin->only([
-                            'id',
-                            'name',
-                            'email',
-                            'avatar',
-                        ])
+                        fn() => [
+                            ...$admin->only([
+                                'id',
+                                'name',
+                                'email',
+                                'avatar',
+                            ]),
+                            'role' => $admin->role?->only([
+                                'id',
+                                'name',
+                                'slug',
+                            ]),
+                            'permissions' => $admin->role?->permissions ?? [],
+                        ]
                     );
                 },
             ],

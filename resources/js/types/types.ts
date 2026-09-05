@@ -10,6 +10,7 @@ type Admin = {
     name: string,
     email: string,
     avatar?: string | null,
+    permissions?: Record<string, string[]>;
 }
 
 type PageProps = {
