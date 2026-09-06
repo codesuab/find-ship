@@ -2,16 +2,19 @@
 
 namespace App\Providers;
 
+use App\Models\Faq;
 use App\Models\SmtpConfig;
 use Carbon\CarbonImmutable;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
+use Inertia\Inertia;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -31,6 +34,7 @@ class AppServiceProvider extends ServiceProvider
         $this->rateLimit();
         $this->configureDefaults();
         $this->configureSmtp();
+        $this->frontend();
     }
 
     /**
@@ -113,5 +117,18 @@ class AppServiceProvider extends ServiceProvider
                     ])->withInput();
                 });
         });
+    }
+
+    // pass frontend data
+    protected function frontend(): void
+    {
+        // faq data
+        Inertia::share([
+            'faqData' => fn() => Cache::remember(
+                'frontend:faq',
+                now()->addHours(1),
+                fn() => Faq::latest()->get()->toArray()
+            ),
+        ]);
     }
 }

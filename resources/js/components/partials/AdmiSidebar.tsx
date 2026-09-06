@@ -26,7 +26,7 @@ import {
     SidebarTrigger,
     useSidebar,
 } from '@/components/ui/sidebar';
-import { BadgeCheck, LogOut } from 'lucide-react';
+import { BadgeCheck, Eye, LogOut } from 'lucide-react';
 import {
     Tooltip,
     TooltipContent,
@@ -212,6 +212,19 @@ export default function AdminSidebar() {
                                 </div>
                                 <DropdownMenuSeparator />
 
+                                <DropdownMenuGroup>
+                                    <DropdownMenuItem
+                                        className="py-1.5"
+                                        onClick={() =>
+                                            router.get(
+                                                route('home'),
+                                            )
+                                        }
+                                    >
+                                        <Eye />
+                                        Visit Home
+                                    </DropdownMenuItem>
+                                </DropdownMenuGroup>
                                 <DropdownMenuGroup>
                                     <DropdownMenuItem
                                         className="py-1.5"

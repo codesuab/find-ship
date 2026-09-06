@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { LazyMotion, domAnimation, m } from 'motion/react';
+import { LazyMotion, domAnimation, motion } from 'motion/react';
 import { cn } from '@/lib/utils';
 
 const variants = {
@@ -60,7 +60,7 @@ const SlideUpButton = ({
 
     return (
         <LazyMotion features={domAnimation}>
-            <m.button
+            <motion.button
                 onClick={onClick}
                 variants={buttonVariants}
                 initial="initial"
@@ -75,9 +75,9 @@ const SlideUpButton = ({
                 )}
             >
                 {/* container for stacked text */}
-                <m.div className="relative gap-2 overflow-hidden">
+                <motion.div className="relative gap-2 overflow-hidden">
                     {/* ORIGINAL TEXT */}
-                    <m.span
+                    <motion.span
                         variants={textVariants}
                         transition={{
                             duration: textDuration,
@@ -86,10 +86,10 @@ const SlideUpButton = ({
                         className="flex items-center justify-center gap-1"
                     >
                         {children}
-                    </m.span>
+                    </motion.span>
 
                     {/* CLONE TEXT */}
-                    <m.span
+                    <motion.span
                         variants={cloneVariants}
                         transition={{
                             duration: cloneDuration,
@@ -99,9 +99,9 @@ const SlideUpButton = ({
                         className="absolute top-1/2 left-1/2 flex min-w-max -translate-1/2 items-center justify-center gap-1"
                     >
                         {children}
-                    </m.span>
-                </m.div>
-            </m.button>
+                    </motion.span>
+                </motion.div>
+            </motion.button>
         </LazyMotion>
     );
 };

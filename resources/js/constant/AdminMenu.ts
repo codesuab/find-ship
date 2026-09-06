@@ -1,6 +1,6 @@
 import { IconHelp, IconMailStar } from "@tabler/icons-react"
 import { RxDashboard } from "react-icons/rx"
-import { Settings, Ship, User, UserShield, UserStar } from "lucide-react";
+import { PanelTop, Settings, Ship, User, UserShield, UserStar } from "lucide-react";
 
 type IconProps = {
     className?: string
@@ -54,6 +54,12 @@ const navGroups: { heading?: string; items: NavItem[] }[] = [
                 icon: UserShield,
                 link: 'admin.role.index',
                 permission: 'roles.view'
+            },
+            {
+                label: "Frontend",
+                icon: PanelTop,
+                link: 'admin.frontend.index',
+                permission: 'ui.view'
             },
             {
                 label: "Setting",

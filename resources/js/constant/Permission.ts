@@ -5,5 +5,6 @@ export const permission = {
     roles: ['view', 'create', 'update', 'delete'],
     settings: ['view', 'update'],
     smtp: ['view', 'update'],
-    vessels: ['view']
+    vessels: ['view'],
+    ui: ['view', 'create', 'update', 'delete'],
 } as const;

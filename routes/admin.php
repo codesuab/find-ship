@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AccountController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\Config\FrontendController;
 use App\Http\Controllers\Admin\Config\RoleController;
 use App\Http\Controllers\Admin\Config\SmtpController;
 use App\Http\Controllers\Admin\CustomerController;
@@ -56,6 +57,14 @@ Route::prefix('/admin')->group(function () {
             Route::get('/account-index', 'index')->name('admin.account.index');
             Route::post('/account-personal', 'personal')->name('admin.account.personal');
             Route::post('/account-security', 'security')->name('admin.account.security');
+        });
+
+        // Frontend
+        Route::controller(FrontendController::class)->group(function () {
+            Route::get('/frontend-index', 'index')->name('admin.frontend.index')->middleware('permission:ui.view');
+
+            Route::post('/frontend-faq/store', 'faqStore')->name('admin.frontend.faq.store')->middleware('permission:ui.create,update');
+            Route::delete('/frontend-faq/del/{id}', 'faqDelete')->name('admin.frontend.faq.delete')->middleware('permission:ui.delete');
         });
 
         // logout

@@ -175,7 +175,7 @@
         @apply scroll-smooth font-sans selection:bg-secondary selection:text-primary;
     }
     body {
-        @apply h-auto scroll-smooth bg-background text-foreground;
+        @apply h-auto scroll-smooth bg-background text-foreground relative;
     }
 }
 
