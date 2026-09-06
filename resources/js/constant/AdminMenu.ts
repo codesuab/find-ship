@@ -74,10 +74,10 @@ const navGroups: { heading?: string; items: NavItem[] }[] = [
                 permission: 'smtp.view'
             },
             {
-                label: "Vessel Api",
+                label: "DataDoc Api",
                 icon: Ship,
-                link: 'admin.admin.index',
-                permission: 'vessels.view'
+                link: 'admin.datadoc.index',
+                permission: 'api.view'
             },
         ],
     },

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AccountController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\Config\DataDocController;
 use App\Http\Controllers\Admin\Config\FrontendController;
 use App\Http\Controllers\Admin\Config\RoleController;
 use App\Http\Controllers\Admin\Config\SmtpController;
@@ -42,6 +43,14 @@ Route::prefix('/admin')->group(function () {
         Route::controller(SmtpController::class)->group(function () {
             Route::get('/smtp-index', 'index')->name('admin.smtp.index')->middleware('permission:smtp.view');
             Route::post('/smtp-store', 'store')->name('admin.smtp.store')->middleware('permission:smtp.update');
+        });
+
+        // DataDoc
+        Route::controller(DataDocController::class)->group(function () {
+            Route::get('/data-doc-index', 'index')->name('admin.datadoc.index')->middleware('permission:api.view');
+            Route::post('/data-doc-store', 'store')->name('admin.datadoc.post')->middleware('permission:api.update,create');
+            Route::delete('/data-doc-delete/{id}', 'destroy')->name('admin.datadoc.delete')->middleware('permission:api.delete');
+            Route::post('/data-doc-delete/bulk', 'destroyBuk')->name('admin.datadoc.delete.bulk')->middleware('permission:api.delete');
         });
 
         // Role

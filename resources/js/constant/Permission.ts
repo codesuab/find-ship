@@ -7,4 +7,5 @@ export const permission = {
     smtp: ['view', 'update'],
     vessels: ['view'],
     ui: ['view', 'create', 'update', 'delete'],
+    api: ['view', 'create', 'update', 'delete']
 } as const;
