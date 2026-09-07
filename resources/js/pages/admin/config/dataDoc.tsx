@@ -83,7 +83,10 @@ interface PageProps {
     };
     totalToken: number;
     totalApi: number;
-    currentActive: string;
+    currentActive: {
+        label: string;
+        token: number;
+    };
 }
 
 export default function dataDoc({
@@ -226,7 +229,7 @@ export default function dataDoc({
                 />
                 <StateCard
                     title="Current Running"
-                    value={currentActive}
+                    value={`${currentActive.label}(${String(currentActive.token)})`}
                     icon={MdOutlineRunningWithErrors}
                 />
             </div>

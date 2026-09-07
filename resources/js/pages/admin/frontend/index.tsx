@@ -151,16 +151,25 @@ export default function index({ faqData }: PageData) {
                                     {faqForm.errors.answer}
                                 </FieldDescription>
                             </Field>
-                            <Button
-                                onClick={submitFaq}
-                                disabled={faqForm.processing}
-                                className="w-full"
-                            >
-                                {faqForm.processing && (
-                                    <Loader className="animate-spin" />
-                                )}{' '}
-                                Save
-                            </Button>
+                            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                                <Button
+                                    onClick={submitFaq}
+                                    disabled={faqForm.processing}
+                                    className="w-full"
+                                >
+                                    {faqForm.processing && (
+                                        <Loader className="animate-spin" />
+                                    )}{' '}
+                                    Save
+                                </Button>
+                                <Button
+                                    variant="destructive"
+                                    className="w-full"
+                                    onClick={() => faqForm.reset()}
+                                >
+                                    Clear
+                                </Button>
+                            </div>
                         </div>
                     )}
                     <div className="no-scrollbar space-y-2 overflow-y-auto p-4">

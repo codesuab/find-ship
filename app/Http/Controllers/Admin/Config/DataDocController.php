@@ -22,7 +22,7 @@ class DataDocController extends Controller
 
         $totalToken = DatadockedApiConfigure::sum('token');
         $totalApi = DatadockedApiConfigure::count();
-        $currentActive = DatadockedApiConfigure::where('status', 'active')->value('label');
+        $currentActive = DatadockedApiConfigure::where('status', 'active')->select('label', 'token')->first();
 
         return Inertia::render('admin/config/dataDoc', [
             'initData' => $data,
