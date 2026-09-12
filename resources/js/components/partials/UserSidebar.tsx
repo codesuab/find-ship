@@ -44,16 +44,8 @@ import {
 import { Button } from '../ui/button';
 import { PageProps } from '@/types/types';
 
-interface UserSidebarProps {
-    searchToggler?: boolean;
-    setSearchToggler?: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-export default function UserSidebar({
-    searchToggler,
-    setSearchToggler,
-}: UserSidebarProps) {
-    const { name: appName, auth } = usePage<PageProps>().props;
+export default function UserSidebar() {
+    const { name: appName, auth, current_route } = usePage<PageProps>().props;
     const { state } = useSidebar();
     const user = auth?.user;
 
@@ -83,32 +75,6 @@ export default function UserSidebar({
                     <div
                         className={`flex ${state == 'expanded' ? 'flex-row gap-1' : 'gap-2 md:flex-col-reverse'} items-center`}
                     >
-                        {/* search */}
-                        <div className="hidden md:block">
-                            <Tooltip>
-                                <TooltipTrigger
-                                    render={
-                                        <Button
-                                            variant="outline"
-                                            size="icon"
-                                            onClick={() =>
-                                                setSearchToggler?.(
-                                                    !searchToggler,
-                                                )
-                                            }
-                                        >
-                                            {searchToggler ? <X /> : <Search />}
-                                        </Button>
-                                    }
-                                />
-                                {state == 'collapsed' && (
-                                    <TooltipContent side="right">
-                                        Search
-                                    </TooltipContent>
-                                )}
-                            </Tooltip>
-                        </div>
-
                         {/* menu trigger */}
                         <Tooltip>
                             <TooltipTrigger
@@ -144,16 +110,29 @@ export default function UserSidebar({
                                     <SidebarMenuItem key={i}>
                                         <SidebarMenuButton
                                             size="lg"
-                                            isActive={item.active}
+                                            isActive={
+                                                item.link === current_route
+                                            }
                                             tooltip={
                                                 item.badge
                                                     ? `${item.label} (${item.badge})`
                                                     : item.label
                                             }
-                                            render={<a href="#" />}
                                             aria-current={
-                                                item.active ? 'page' : undefined
+                                                item.link === current_route
+                                                    ? 'page'
+                                                    : undefined
                                             }
+                                            onClick={() => {
+                                                if (
+                                                    item.link &&
+                                                    item.link !== '#'
+                                                ) {
+                                                    router.get(
+                                                        route(item.link),
+                                                    );
+                                                }
+                                            }}
                                             className="group-data-[collapsible=icon]:justify-center"
                                         >
                                             <item.icon aria-hidden="true" />

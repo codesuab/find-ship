@@ -36,7 +36,6 @@ import { Badge } from '@/components/ui/badge';
 import Faq from '@/components/partials/Faq';
 import InfiniteQuestionBadge from '@/components/icon/InfiniteQuestionBadge';
 import Logo from '@/components/Logo';
-import HighlightedText from '@/components/highlighted-text';
 
 export default function home() {
     const { name: appName, auth } = usePage<PageProps>().props;
@@ -1008,7 +1007,7 @@ export default function home() {
                         <Logo
                             className="absolute -top-20 -right-15 -z-1 opacity-8"
                             imageSize="w-100 h-100"
-                            show={false}
+                            show='false'
                         />
                     </div>
                 </div>

@@ -16,6 +16,7 @@ type NavItem = {
     icon: IconRenderer
     active?: boolean
     badge?: string
+    link?: string
 }
 
 const navGroups: { heading?: string; items: NavItem[] }[] = [
@@ -38,6 +39,7 @@ const navGroups: { heading?: string; items: NavItem[] }[] = [
             },
             {
                 label: "Arrival",
+                link: 'app.arrival.index',
                 icon: Ship,
             },
             {

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Ui\Vessel\ArrivalController;
 use App\Http\Controllers\User\AccountController;
 use App\Http\Controllers\User\DashboardController;
 use App\Http\Controllers\User\OnboardingController;
@@ -18,6 +19,14 @@ Route::prefix('/app')->middleware(['auth', 'customerStatus', 'insSureEmailVerify
     Route::middleware('insOnboarding')->group(function () {
         // Dashboard
         Route::get('/', [DashboardController::class, 'index'])->name('app.dashboard');
+
+        // Vessel 
+        Route::prefix('/vessel')->group(function () {
+            // arrival 
+            Route::controller(ArrivalController::class)->group(function () {
+                Route::get('/arrival-index', 'index')->name('app.arrival.index');
+            });
+        });
 
         // account
         Route::controller(AccountController::class)->group(function () {

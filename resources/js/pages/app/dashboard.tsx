@@ -1,9 +1,10 @@
 import CustomerLayout from '@/Layouts/CustomerLayout';
 import { usePage } from '@inertiajs/react';
 import PageHeader from '@/components/PageHeader';
+import { PageProps } from '@/types/types';
 
 export default function dashboard() {
-    const { name: appName, auth } = usePage().props;
+    const { name: appName, auth } = usePage<PageProps>().props;
     const user = auth?.user;
 
     return (

@@ -4,11 +4,12 @@ import { Input as InputPrimitive } from "@base-ui/react/input"
 import { cn } from "@/lib/utils"
 
 function Input({ className, type,  inputSize = 'default', ...props }: React.ComponentProps<'input'> & {
-    inputSize?: 'default' | 'sm';
+    inputSize?: 'default' | 'sm' | 'xs';
 }) {
    const sizes = {
         default: 'h-12',
         sm: 'h-10',
+        xs:'h-8'
     };
   return (
     <InputPrimitive
