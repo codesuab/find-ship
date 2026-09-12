@@ -31,14 +31,14 @@ class OnboardingController extends Controller
 
 
         $userHasPassword = false;
-        if($user->password){
+        if ($user->password) {
             $userHasPassword = true;
         }
 
         return Inertia::render('app/onboarding/index', [
             'userData' => $user,
             'country' => $country,
-            'userHasPassword'=>$userHasPassword
+            'userHasPassword' => $userHasPassword
         ]);
     }
 
@@ -46,7 +46,7 @@ class OnboardingController extends Controller
     public function personal(Request $request)
     {
         $request->validate([
-            'phone' => 'required|string|min:11|max:20',
+            'phone' => 'required|string|min:11|max:20|unique:users,phone,' . Auth::id(),
             'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2024'],
             'gender' => 'required|in:male,female,other',
             'country' => 'required|string|max:100',

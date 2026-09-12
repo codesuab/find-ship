@@ -497,6 +497,10 @@ export default function index({
                                                                 | null) ?? '',
                                                         )
                                                     }
+                                                    defaultInputValue={
+                                                        personalInfoForm.data
+                                                            .country
+                                                    }
                                                 >
                                                     <ComboboxInput
                                                         placeholder="Select a country"
@@ -506,10 +510,6 @@ export default function index({
                                                                 .errors.country
                                                         }
                                                         className="h-12 rounded-xl"
-                                                        value={
-                                                            personalInfoForm
-                                                                .data.country
-                                                        }
                                                     />
                                                     <ComboboxContent>
                                                         <ComboboxEmpty>
@@ -887,6 +887,10 @@ export default function index({
                                                             '',
                                                     )
                                                 }
+                                                defaultInputValue={
+                                                    companyInfoForm.data
+                                                        .company_type
+                                                }
                                             >
                                                 <ComboboxInput
                                                     placeholder="Select a country"
@@ -896,15 +900,6 @@ export default function index({
                                                             .company_type
                                                     }
                                                     className="h-12 rounded-xl"
-                                                    value={
-                                                        COMPANY_TYPES.find(
-                                                            (val) =>
-                                                                val.value ==
-                                                                companyInfoForm
-                                                                    .data
-                                                                    .company_type,
-                                                        )?.label
-                                                    }
                                                 />
                                                 <ComboboxContent>
                                                     <ComboboxEmpty>
@@ -915,7 +910,7 @@ export default function index({
                                                             <ComboboxItem
                                                                 key={i}
                                                                 value={
-                                                                    items.value
+                                                                    items.label
                                                                 }
                                                             >
                                                                 {items.label}

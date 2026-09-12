@@ -230,7 +230,7 @@ export default function dataDoc({
                 />
                 <StateCard
                     title="Current Running"
-                    value={`${currentActive.label}(${String(currentActive.token)})`}
+                    value={`${currentActive.label}(${String(currentActive.token.toLocaleString('en-BD'))})`}
                     icon={MdOutlineRunningWithErrors}
                 />
             </div>

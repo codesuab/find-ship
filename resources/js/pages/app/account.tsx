@@ -434,6 +434,9 @@ export default function account({
                                                         '',
                                                 )
                                             }
+                                            defaultInputValue={
+                                                personalInfoForm.data.country
+                                            }
                                         >
                                             <ComboboxInput
                                                 placeholder="Select a country"
@@ -443,10 +446,6 @@ export default function account({
                                                         .country
                                                 }
                                                 className="h-10 rounded-xl"
-                                                value={
-                                                    personalInfoForm.data
-                                                        .country
-                                                }
                                             />
                                             <ComboboxContent>
                                                 <ComboboxEmpty>
@@ -871,6 +870,9 @@ export default function account({
                                                 (value as string | null) ?? '',
                                             )
                                         }
+                                        defaultInputValue={
+                                            companyInfoForm.data.company_type
+                                        }
                                     >
                                         <ComboboxInput
                                             placeholder="Select a country"
@@ -880,10 +882,6 @@ export default function account({
                                                     .company_type
                                             }
                                             className="h-12 rounded-xl"
-                                            value={
-                                                companyInfoForm.data
-                                                    .company_type
-                                            }
                                         />
                                         <ComboboxContent>
                                             <ComboboxEmpty>
@@ -893,7 +891,7 @@ export default function account({
                                                 {(items, i) => (
                                                     <ComboboxItem
                                                         key={i}
-                                                        value={items.value}
+                                                        value={items.label}
                                                     >
                                                         {items.label}
                                                     </ComboboxItem>
