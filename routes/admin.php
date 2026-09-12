@@ -51,6 +51,8 @@ Route::prefix('/admin')->group(function () {
             Route::post('/data-doc-store', 'store')->name('admin.datadoc.post')->middleware('permission:api.update,create');
             Route::delete('/data-doc-delete/{id}', 'destroy')->name('admin.datadoc.delete')->middleware('permission:api.delete');
             Route::post('/data-doc-delete/bulk', 'destroyBuk')->name('admin.datadoc.delete.bulk')->middleware('permission:api.delete');
+
+            Route::get('/data-doc-balance/{id}', 'checkBalance')->name('admin.datadoc.balance');
         });
 
         // Role

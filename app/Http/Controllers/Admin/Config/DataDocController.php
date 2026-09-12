@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Config;
 
+use App\Classes\DataDocClass;
 use App\Http\Controllers\Controller;
 use App\Models\DatadockedApiConfigure;
 use Illuminate\Http\Request;
@@ -77,6 +78,27 @@ class DataDocController extends Controller
         } catch (\Throwable $th) {
             DB::rollBack();
             return back()->with('error', 'Something else wrong,')->with('_flash_id', time());
+        }
+    }
+
+    // check balance
+    public function checkBalance($id)
+    {
+        try {
+            $data = DatadockedApiConfigure::find($id);
+            if (!$data) {
+                return back()->with('error', 'Invalid request!')->with('_flash_id', time());
+            }
+
+            $apiInit = new DataDocClass();
+            $result = $apiInit->checkBalanceBy($data->key, $data->uri);
+            
+            $token = $result['detail']['credits'];
+            $data->update(['token' => $token]);
+
+            return back()->with('success', 'Token update by api')->with('_flash_id', time());
+        } catch (\Throwable $th) {
+            return back()->with('error', 'Something else wrong, try again!')->with('_flash_id', time());
         }
     }
 }

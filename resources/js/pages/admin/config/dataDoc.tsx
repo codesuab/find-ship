@@ -40,6 +40,7 @@ import {
     MdOutlineElectricalServices,
     MdOutlineRunningWithErrors,
 } from 'react-icons/md';
+import { RxReload } from 'react-icons/rx';
 
 interface ApiData {
     id: number;
@@ -321,6 +322,19 @@ export default function dataDoc({
                                         <Pen />
                                     </Button>
                                 )}
+                                <Button
+                                    variant="ghost"
+                                    size="icon-sm"
+                                    onClick={() => {
+                                        router.get(
+                                            route('admin.datadoc.balance', {
+                                                id: row.id,
+                                            }),
+                                        );
+                                    }}
+                                >
+                                    <RxReload />
+                                </Button>
                             </div>
                         ),
                     },
