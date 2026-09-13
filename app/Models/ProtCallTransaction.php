@@ -9,7 +9,8 @@ use Illuminate\Database\Eloquent\Model;
     'port_id',
     'date',
     'token',
-    'total'
+    'total',
+    'type'
 )]
 class ProtCallTransaction extends Model
 {

@@ -56,6 +56,7 @@ interface DataProps {
     year: string;
     sizes: string;
     formattedETA: string;
+    atdUtc?: string;
     last_port: string;
     port_id: number;
     target: string;
@@ -149,7 +150,7 @@ export default function arrival({
             {/* sidebar */}
             <Sidebar
                 collapsible="none"
-                className="fixed top-0 left-0 z-90 min-w-75 flex-1 border-r border-border shadow-sm md:static md:z-auto md:flex md:shadow-none"
+                className="fixed top-0 left-0 z-90 max-h-screen min-w-75 flex-1 border-r border-border shadow-sm md:static md:z-auto md:flex md:shadow-none"
             >
                 {/* header */}
                 <SidebarHeader className="gap-3.5 border-b p-3">
@@ -351,11 +352,25 @@ export default function arrival({
                 </SidebarHeader>
 
                 {/* data */}
-                <SidebarContent className="space-y-2 p-3">
+                <SidebarContent className="h-[calc(100%-103px)] space-y-2 overflow-y-auto p-3">
                     <InfiniteScroll
                         data="data"
-                        preserveUrl
-                        loading={() => 'Loading more vessel...'}
+                        className="space-y-2"
+                        manual
+                        next={({ loading, fetch, hasMore }) =>
+                            hasMore && (
+                                <div className="flex items-center justify-center mt-3">
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={fetch}
+                                        disabled={loading}
+                                    >
+                                        {loading ? 'Loading...' : 'Load more'}
+                                    </Button>
+                                </div>
+                            )
+                        }
                     >
                         {data?.data?.length > 0 ? (
                             data?.data?.map((item, i) => (
@@ -369,7 +384,8 @@ export default function arrival({
                                             <span className="rounded-sm bg-muted px-1.5 py-0.5 text-xs font-medium text-foreground">
                                                 {item.last_port
                                                     ?.slice(0, 2)
-                                                    .toLocaleUpperCase()}
+                                                    .toLocaleUpperCase() ||
+                                                    'NA'}
                                             </span>
 
                                             <div className="flex w-full items-center gap-px">
@@ -399,25 +415,27 @@ export default function arrival({
                                             <span className="rounded-sm bg-muted px-1.5 py-0.5 text-xs font-medium">
                                                 {item.port?.name
                                                     ?.slice(0, 2)
-                                                    .toLocaleUpperCase()}
+                                                    .toLocaleUpperCase() ||
+                                                    'NA'}
                                             </span>
                                         </div>
 
                                         <div className="mt-1 flex items-center justify-between">
                                             <p className="text-xs font-medium text-muted-foreground">
-                                                {item.last_port}
+                                                {item.last_port || 'Unknown'}
                                             </p>
                                             <p className="text-xs font-medium text-muted-foreground">
-                                                {item.port?.name}
+                                                {item.port?.name || 'Unknown'}
                                             </p>
                                         </div>
 
                                         <div className="flex items-center justify-between">
-                                            <p className="text-[10px] font-medium text-muted-foreground">
-                                                SEP 12, 2026
+                                            <p className="text-[10px] font-medium text-muted-foreground uppercase">
+                                                {item?.atdUtc || 'Unknown'}
                                             </p>
-                                            <p className="text-[10px] font-medium text-muted-foreground">
-                                                SEP 12, 2026
+                                            <p className="text-[10px] font-medium text-muted-foreground uppercase">
+                                                {item?.formattedETA ||
+                                                    'Unknown'}
                                             </p>
                                         </div>
                                     </CardContent>

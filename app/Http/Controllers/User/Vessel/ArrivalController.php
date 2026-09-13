@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\User\Vessel;
 
+use App\Classes\DataDocClass;
 use App\Http\Controllers\Controller;
 use App\Models\Country;
 use App\Models\PortCall;
 use App\Models\Prot;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class ArrivalController extends Controller
@@ -76,7 +76,6 @@ class ArrivalController extends Controller
             ->where('target', 'arrival')
             ->with('port')
             ->paginate());
-
         return Inertia::render('app/vessel/arrival', [
             'filter' => $filter,
             'country' => $country,

@@ -16,11 +16,12 @@ return new class extends Migration
             $table->string('imo')->nullable();
             $table->string('mmsi')->nullable();
             $table->string('sizes')->nullable();
+            $table->string('type')->nullable();
 
             $table->dateTime('formattedETA')->nullable();
             $table->dateTime('atdUtc')->nullable();
 
-            $table->decimal('peed',10, 2)->default(0);
+            $table->decimal('speed',10, 2)->default(0);
             $table->integer('course')->default(0);
             $table->string('latitude')->nullable();
             $table->string('longitude')->nullable();

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->dateTime('date')->nullable();
             $table->integer('token')->nullable();
             $table->integer('total')->default(0);
+            $table->enum('type', ['arrival', 'departure', 'expected', 'in_port']);
             $table->timestamps();
         });
     }

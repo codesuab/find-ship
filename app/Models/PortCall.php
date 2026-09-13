@@ -11,16 +11,23 @@ use Illuminate\Database\Eloquent\Model;
     'sizes',
     'formattedETA',
     'atdUtc',
-    'peed',
+    'speed',
     'course',
     'latitude',
     'longitude',
+    'type',
     'last_port',
     'port_id',
     'target',
 )]
 class PortCall extends Model
 {
+
+    protected $casts = [
+        'formattedETA' => 'date:M d, Y',
+        'atdUtc' => 'date:M d, Y',
+    ];
+
     public function scopeFilter($query, $filters)
     {
         if (!empty($filters['port'])  && is_string($filters['port'])) {

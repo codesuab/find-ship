@@ -65,21 +65,16 @@ class DataDocClass
         try {
             $this->checkStatus();
 
+            $url = $this->endpoint . "/vessels_operations/port-calls-by-port?port_call={$port}&page={$page}&search_type={$search_type}";
+
             $response = Http::withHeaders([
                 'accept' => 'application/json',
                 'x-api-key' => $this->api_key,
             ])->get(
-                $this->endpoint . '/vessels_operations/port-calls-by-port?port_call=' . $port . '&page=' . $page . '&search_type=' . $search_type
+                $url
             );
 
-            $data = $response->json();
-            if ($data['status_code'] == 200) {
-                return $data['detail'];
-            }
-            return [
-                'status' => false,
-                'message' => 'Data not found!'
-            ];
+            return $response->json();
         } catch (\Throwable $th) {
             return [
                 'status' => false,
