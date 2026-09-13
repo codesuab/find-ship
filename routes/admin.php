@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AccountController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\Config\CountryController;
 use App\Http\Controllers\Admin\Config\DataDocController;
 use App\Http\Controllers\Admin\Config\FrontendController;
 use App\Http\Controllers\Admin\Config\RoleController;
@@ -26,7 +27,7 @@ Route::prefix('/admin')->group(function () {
         // Admin
         Route::controller(AdminController::class)->group(function () {
             Route::get('/admin-list', 'index')->name('admin.admin.index')->middleware('permission:admins.view');
-            Route::post('/admin-store', 'store')->name('admin.admin.store')->middleware('permission:admin.create,update');
+            Route::post('/admin-store', 'store')->name('admin.admin.store')->middleware('permission:admin.create,admin.update');
             Route::delete('/admin-delete/{id}', 'destroy')->name('admin.admin.delete')->middleware('permission:admins.delete');
             Route::post('/admin-delete/bulk', 'destroyBuk')->name('admin.admin.delete.bulk')->middleware('permission:admins.delete');
         });
@@ -34,7 +35,7 @@ Route::prefix('/admin')->group(function () {
         // Customer 
         Route::controller(CustomerController::class)->group(function () {
             Route::get('/customer-list', 'index')->name('admin.customer.index')->middleware('permission:customers.view');
-            Route::post('/customer-store', 'store')->name('admin.customer.store')->middleware('permission:customers.create,update');
+            Route::post('/customer-store', 'store')->name('admin.customer.store')->middleware('permission:customers.create,customers.update');
             Route::delete('/customer-delete/{id}', 'destroy')->name('admin.customer.delete')->middleware('permission:customers.delete');
             Route::post('/customer-delete/bulk', 'destroyBuk')->name('admin.customer.delete.bulk')->middleware('permission:customers.delete');
         });
@@ -48,7 +49,7 @@ Route::prefix('/admin')->group(function () {
         // DataDoc
         Route::controller(DataDocController::class)->group(function () {
             Route::get('/data-doc-index', 'index')->name('admin.datadoc.index')->middleware('permission:api.view');
-            Route::post('/data-doc-store', 'store')->name('admin.datadoc.post')->middleware('permission:api.update,create');
+            Route::post('/data-doc-store', 'store')->name('admin.datadoc.post')->middleware('permission:api.update,api.create');
             Route::delete('/data-doc-delete/{id}', 'destroy')->name('admin.datadoc.delete')->middleware('permission:api.delete');
             Route::post('/data-doc-delete/bulk', 'destroyBuk')->name('admin.datadoc.delete.bulk')->middleware('permission:api.delete');
 
@@ -58,7 +59,7 @@ Route::prefix('/admin')->group(function () {
         // Role
         Route::controller(RoleController::class)->group(function () {
             Route::get('/role-list', 'index')->name('admin.role.index')->middleware('permission:roles.view');
-            Route::post('/role-store', 'store')->name('admin.role.store')->middleware('permission:roles.update,create');
+            Route::post('/role-store', 'store')->name('admin.role.store')->middleware('permission:roles.update,roles.create');
             Route::delete('/role-delete/{id}', 'destroy')->name('admin.role.delete')->middleware('permission:roles.delete');
             Route::post('/role-delete/bulk', 'destroyBuk')->name('admin.role.delete.bulk')->middleware('permission:roles.delete');
         });
@@ -74,8 +75,16 @@ Route::prefix('/admin')->group(function () {
         Route::controller(FrontendController::class)->group(function () {
             Route::get('/frontend-index', 'index')->name('admin.frontend.index')->middleware('permission:ui.view');
 
-            Route::post('/frontend-faq/store', 'faqStore')->name('admin.frontend.faq.store')->middleware('permission:ui.create,update');
+            Route::post('/frontend-faq/store', 'faqStore')->name('admin.frontend.faq.store')->middleware('permission:ui.create,ui.update');
             Route::delete('/frontend-faq/del/{id}', 'faqDelete')->name('admin.frontend.faq.delete')->middleware('permission:ui.delete');
+        });
+
+        // Country
+        Route::controller(CountryController::class)->group(function () {
+            Route::get('/country-index', 'index')->name('admin.country.index')->middleware('permission:country.view');
+            Route::post('/country-store', 'store')->name('admin.country.store')->middleware('permission:country.create,country.update');
+            Route::delete('/country-delete/{id}', 'destroy')->name('admin.country.delete')->middleware('permission:country.delete');
+            Route::post('/country-delete/bulk', 'destroyBuk')->name('admin.country.delete.bulk')->middleware('permission:country.delete');
         });
 
         // logout

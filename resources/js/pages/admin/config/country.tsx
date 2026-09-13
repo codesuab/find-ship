@@ -1,9 +1,7 @@
-import PageHeader from '@/components/PageHeader';
-import AdminLayout from '@/Layouts/AdminLayout';
-import { router, useForm } from '@inertiajs/react';
-import React, { useEffect, useRef, useState } from 'react';
+import Can from '@/components/Can';
 import Confirmation from '@/components/Confirmation';
 import GlobalTable from '@/components/GlobalTable';
+import PageHeader from '@/components/PageHeader';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -11,7 +9,10 @@ import {
     InputGroupAddon,
     InputGroupInput,
 } from '@/components/ui/input-group';
+import AdminLayout from '@/Layouts/AdminLayout';
+import { router, useForm } from '@inertiajs/react';
 import { Loader, Pen, Plus, SearchIcon, Trash, X } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
     Dialog,
     DialogContent,
@@ -20,10 +21,6 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
-import { Field, FieldDescription } from '@/components/ui/field';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import Can from '@/components/Can';
 import {
     Select,
     SelectContent,
@@ -32,30 +29,16 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import StateCard from '@/components/StateCard';
-import { GiToken } from 'react-icons/gi';
-import {
-    MdOutlineElectricalServices,
-    MdOutlineRunningWithErrors,
-} from 'react-icons/md';
-import { RxReload } from 'react-icons/rx';
+import { Field, FieldDescription } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
-interface ApiData {
+interface TableData {
     id: number;
-    label: string;
-    uri: string;
-    key: string;
-    token: number;
+    name: string;
     status: 'active' | 'inactive';
-}
-
-interface FromData {
-    id: number | null;
-    label: string;
-    uri: string;
-    key: string;
-    token: number;
-    status: string;
+    created_at: string;
+    updated_at: string;
 }
 
 interface PaginationLink {
@@ -65,7 +48,7 @@ interface PaginationLink {
 }
 
 interface PaginationData {
-    data: ApiData[];
+    data: TableData[];
     current_page: number;
     last_page: number;
     per_page: number;
@@ -77,31 +60,24 @@ interface PaginationData {
 
 interface PageProps {
     initData: PaginationData;
-    filter: {
-        search: string;
-    };
-    totalToken: number;
-    totalApi: number;
-    currentActive: {
-        label: string;
-        token: number;
+    filter?: {
+        search?: string;
     };
 }
 
-export default function dataDoc({
-    initData,
-    filter,
-    totalToken,
-    totalApi,
-    currentActive,
-}: PageProps) {
+interface FromData {
+    id: number | null;
+    name: string;
+    status: 'active' | 'inactive';
+}
+export default function country({ initData, filter }: PageProps) {
     // delete bulk
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
     const [bulkDelete, setBulkDelete] = useState(false);
     const handleDelete = () => {
         setBulkDelete(true);
 
-        router.delete(route('admin.datadoc.delete.bulk'), {
+        router.delete(route('admin.country.delete.bulk'), {
             onFinish: () => {
                 setBulkDelete(false);
                 setSelectedIds([]);
@@ -119,7 +95,7 @@ export default function dataDoc({
         }
         const delayDebounceFn = setTimeout(() => {
             router.get(
-                route('admin.datadoc.index'),
+                route('admin.country.index'),
                 { search: search },
                 {
                     preserveState: true,
@@ -135,16 +111,13 @@ export default function dataDoc({
     const { data, setData, processing, post, errors, reset } =
         useForm<FromData>({
             id: null,
-            label: '',
-            token: 0,
-            uri: 'https://datadocked.com/api',
-            key: '',
-            status: 'inactive',
+            name: '',
+            status: 'active',
         });
 
     const handleSaveAdmin = (e: React.FormEvent) => {
         e.preventDefault();
-        post(route('admin.datadoc.post'), {
+        post(route('admin.country.store'), {
             preserveScroll: true,
             onSuccess: () => {
                 reset();
@@ -155,8 +128,8 @@ export default function dataDoc({
     return (
         <AdminLayout title="DataDoc API Config">
             <PageHeader
-                title="DataDock API Configuration"
-                subtitle="Configure your DataDock API connection and settings."
+                title="Countries"
+                subtitle="Manage countries and their regional information."
             >
                 <div className="flex flex-wrap items-center gap-2 md:flex-nowrap">
                     <InputGroup className="w-fit">
@@ -172,19 +145,19 @@ export default function dataDoc({
                         </InputGroupAddon>
                     </InputGroup>
 
-                    {Can('api.create') && (
+                    {Can('country.create') && (
                         <Button onClick={() => setFormModel(true)}>
                             <Plus />
                             Add New
                         </Button>
                     )}
 
-                    {selectedIds.length > 0 && Can('api.delete') && (
+                    {selectedIds.length > 0 && Can('country.delete') && (
                         <>
                             <Confirmation
                                 callBack={() => {
                                     router.post(
-                                        route('admin.datadoc.delete.bulk'),
+                                        route('admin.country.delete.bulk'),
                                         {
                                             ids: selectedIds,
                                         },
@@ -215,49 +188,12 @@ export default function dataDoc({
                 </div>
             </PageHeader>
 
-            <div className="mb-5 grid grid-cols-1 gap-3 md:grid-cols-4 lg:grid-cols-5">
-                <StateCard
-                    title="Total Token"
-                    value={`${String(totalToken)} Token`}
-                    icon={GiToken}
-                />
-                <StateCard
-                    title="Total API"
-                    value={String(totalApi)}
-                    icon={MdOutlineElectricalServices}
-                />
-                <StateCard
-                    title="Current Running"
-                    value={`${currentActive.label}(${String(currentActive.token.toLocaleString('en-BD'))})`}
-                    icon={MdOutlineRunningWithErrors}
-                />
-            </div>
-
             <GlobalTable
                 data={initData.data}
                 columns={[
                     {
-                        key: 'label',
-                        label: 'Label',
-                    },
-                    {
-                        key: 'token',
-                        label: 'Token',
-                    },
-                    {
-                        key: 'uri',
-                        label: 'Uri',
-                    },
-                    {
-                        key: 'key',
-                        label: 'Key',
-                        render: (row) => (
-                            <div className="flex items-center">
-                                <span>{row.key?.slice(0, 5)}</span>
-                                <span>xxxxxxxxx</span>
-                                <span>{row.key?.slice(5, 10)}</span>
-                            </div>
-                        ),
+                        key: 'name',
+                        label: 'Name',
                     },
                     {
                         key: 'status',
@@ -277,18 +213,22 @@ export default function dataDoc({
                     },
                     {
                         key: 'created_at',
-                        label: 'Created At',
+                        label: 'Create',
+                    },
+                    {
+                        key: 'updated_at',
+                        label: 'Last update',
                     },
                     {
                         key: 'actions',
                         label: 'Actions',
                         render: (row) => (
                             <div className="flex max-w-5 items-center gap-2">
-                                {Can('api.delete') && (
+                                {Can('country.delete') && (
                                     <Confirmation
                                         callBack={() =>
                                             router.delete(
-                                                route('admin.datadoc.delete', {
+                                                route('admin.country.delete', {
                                                     id: row.id,
                                                 }),
                                             )
@@ -303,36 +243,20 @@ export default function dataDoc({
                                     </Confirmation>
                                 )}
 
-                                {Can('api.update') && (
+                                {Can('country.update') && (
                                     <Button
                                         variant="ghost"
                                         size="icon-sm"
                                         onClick={() => {
                                             setData('id', row.id);
-                                            setData('key', row.key);
-                                            setData('label', row.label);
+                                            setData('name', row.name);
                                             setData('status', row.status);
-                                            setData('uri', row.uri);
-                                            setData('token', row.token);
                                             setFormModel(true);
                                         }}
                                     >
                                         <Pen />
                                     </Button>
                                 )}
-                                <Button
-                                    variant="ghost"
-                                    size="icon-sm"
-                                    onClick={() => {
-                                        router.get(
-                                            route('admin.datadoc.balance', {
-                                                id: row.id,
-                                            }),
-                                        );
-                                    }}
-                                >
-                                    <RxReload />
-                                </Button>
                             </div>
                         ),
                     },
@@ -353,77 +277,30 @@ export default function dataDoc({
                 >
                     <DialogHeader>
                         <DialogTitle>
-                            {data.id ? 'Update API' : 'Add New API'}
+                            {data.id ? 'Update country' : 'Add New Country'}
                         </DialogTitle>
 
                         <DialogDescription>
                             {data.id
-                                ? 'Update the API configuration details below.'
-                                : 'Add a new API configuration by providing the details below.'}
+                                ? 'Update the country details below.'
+                                : 'Add a new country by providing the details below.'}
                         </DialogDescription>
                     </DialogHeader>
 
                     <div className="space-y-4">
                         <Field>
-                            <Label>Label*</Label>
+                            <Label>Name*</Label>
                             <Input
                                 type="text"
-                                value={data.label}
+                                value={data.name}
                                 onChange={(e) =>
-                                    setData('label', e.target.value)
+                                    setData('name', e.target.value)
                                 }
                                 inputSize="sm"
                             />
-                            {errors.label && (
+                            {errors.name && (
                                 <FieldDescription className="text-destructive">
-                                    {errors.label}
-                                </FieldDescription>
-                            )}
-                        </Field>
-                        <Field>
-                            <Label>Token*</Label>
-                            <Input
-                                type="number"
-                                value={data.token}
-                                onChange={(e) =>
-                                    setData(
-                                        'token',
-                                        Number(e.target.value || 0),
-                                    )
-                                }
-                                inputSize="sm"
-                            />
-                            {errors.token && (
-                                <FieldDescription className="text-destructive">
-                                    {errors.token}
-                                </FieldDescription>
-                            )}
-                        </Field>
-                        <Field>
-                            <Label>Uri*</Label>
-                            <Input
-                                type="url"
-                                value={data.uri}
-                                onChange={(e) => setData('uri', e.target.value)}
-                                inputSize="sm"
-                            />
-                            {errors.uri && (
-                                <FieldDescription className="text-destructive">
-                                    {errors.uri}
-                                </FieldDescription>
-                            )}
-                        </Field>
-                        <Field>
-                            <Label>Key*</Label>
-                            <Input
-                                type="text"
-                                value={data.key}
-                                onChange={(e) => setData('key', e.target.value)}
-                                inputSize="sm"
-                            />
-                            {errors.key && (
-                                <FieldDescription className="text-destructive">
-                                    {errors.key}
+                                    {errors.name}
                                 </FieldDescription>
                             )}
                         </Field>
@@ -435,7 +312,10 @@ export default function dataDoc({
                                     { label: 'Inactive', value: 'inactive' },
                                 ]}
                                 onValueChange={(value) =>
-                                    setData('status', String(value))
+                                    setData(
+                                        'status',
+                                        value as 'active' | 'inactive',
+                                    )
                                 }
                                 value={data.status}
                             >

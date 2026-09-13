@@ -9,10 +9,13 @@ import {
 } from '@/components/ui/table';
 import { Checkbox } from '@/components/ui/checkbox';
 import { router } from '@inertiajs/react';
+import { ChevronLeft, ChevronRight, Frown } from 'lucide-react';
 import {
-    ChevronLeft,
-    ChevronRight,
-} from 'lucide-react';
+    Empty,
+    EmptyHeader,
+    EmptyMedia,
+    EmptyTitle,
+} from '@/components/ui/empty';
 
 export interface PaginationMeta {
     current_page: number;
@@ -75,7 +78,7 @@ export function GlobalTable<T extends Record<string, any>>({
     const getRowId = (row: T) =>
         typeof rowKey === 'function'
             ? rowKey(row)
-            : row[rowKey] as string | number;
+            : (row[rowKey] as string | number);
 
     const updateSelection = (ids: (string | number)[]) => {
         if (controlledSelectedIds === undefined) {
@@ -99,9 +102,7 @@ export function GlobalTable<T extends Record<string, any>>({
         } else {
             const ids = data.map(getRowId);
 
-            updateSelection([
-                ...new Set([...selectedIds, ...ids]),
-            ]);
+            updateSelection([...new Set([...selectedIds, ...ids])]);
         }
     };
 
@@ -163,9 +164,7 @@ export function GlobalTable<T extends Record<string, any>>({
                                     <TableRow
                                         key={id}
                                         data-state={
-                                            selected
-                                                ? 'selected'
-                                                : undefined
+                                            selected ? 'selected' : undefined
                                         }
                                         className="border-b border-slate-100 dark:border-slate-800"
                                     >
@@ -189,11 +188,8 @@ export function GlobalTable<T extends Record<string, any>>({
                                                 }
                                             >
                                                 {column.render
-                                                    ? column.render(
-                                                          row,
-                                                          index,
-                                                      )
-                                                    : row[column.key] ?? '-'}
+                                                    ? column.render(row, index)
+                                                    : (row[column.key] ?? '-')}
                                             </TableCell>
                                         ))}
                                     </TableRow>
@@ -203,12 +199,18 @@ export function GlobalTable<T extends Record<string, any>>({
                             <TableRow>
                                 <TableCell
                                     colSpan={
-                                        columns.length +
-                                        (selectable ? 1 : 0)
+                                        columns.length + (selectable ? 1 : 0)
                                     }
                                     className="h-32 text-center text-sm text-muted-foreground"
                                 >
-                                    {emptyMessage}
+                                    <Empty>
+                                        <EmptyHeader>
+                                            <EmptyMedia variant="icon">
+                                                <Frown />
+                                            </EmptyMedia>
+                                            <EmptyTitle> {emptyMessage}</EmptyTitle>
+                                        </EmptyHeader>
+                                    </Empty>
                                 </TableCell>
                             </TableRow>
                         )}
@@ -236,16 +238,11 @@ export function GlobalTable<T extends Record<string, any>>({
                     <div className="flex items-center gap-1">
                         <button
                             type="button"
-                            disabled={
-                                pagination.current_page === 1
-                            }
+                            disabled={pagination.current_page === 1}
                             onClick={() =>
                                 goToPage(
-                                    pagination.links?.find(
-                                        (link) =>
-                                            link.label.includes(
-                                                'Previous',
-                                            ),
+                                    pagination.links?.find((link) =>
+                                        link.label.includes('Previous'),
                                     )?.url ?? null,
                                 )
                             }
@@ -265,9 +262,7 @@ export function GlobalTable<T extends Record<string, any>>({
                                     key={index}
                                     type="button"
                                     disabled={!link.url}
-                                    onClick={() =>
-                                        goToPage(link.url)
-                                    }
+                                    onClick={() => goToPage(link.url)}
                                     className={`inline-flex size-8 items-center justify-center rounded-md border text-sm ${
                                         link.active
                                             ? 'bg-primary text-primary-foreground'
@@ -282,16 +277,12 @@ export function GlobalTable<T extends Record<string, any>>({
                         <button
                             type="button"
                             disabled={
-                                pagination.current_page ===
-                                pagination.last_page
+                                pagination.current_page === pagination.last_page
                             }
                             onClick={() =>
                                 goToPage(
-                                    pagination.links?.find(
-                                        (link) =>
-                                            link.label.includes(
-                                                'Next',
-                                            ),
+                                    pagination.links?.find((link) =>
+                                        link.label.includes('Next'),
                                     )?.url ?? null,
                                 )
                             }
