@@ -156,7 +156,7 @@ export default function port({ initData, filter, country }: PageProps) {
     };
 
     return (
-        <AdminLayout title="DataDoc API Config">
+        <AdminLayout title="Manage Port">
             <PageHeader
                 title="Ports"
                 subtitle="Manage ports and their operational information."
@@ -177,7 +177,7 @@ export default function port({ initData, filter, country }: PageProps) {
                     <Combobox
                         items={country}
                         onValueChange={(value) =>
-                            setSearchCountry(String(value))
+                            setSearchCountry(String(value || ''))
                         }
                         value={
                             country.find(

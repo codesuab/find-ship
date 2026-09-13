@@ -459,7 +459,7 @@ export default function arrival({
 
             <div className="w-full">
                 <div className="h-screen overflow-hidden">
-                    <Map center={[91.8, 22.313]} zoom={8} theme={userTheme} />
+                    <Map center={[91.8, 22.313]} zoom={4} theme={userTheme} />
                 </div>
             </div>
         </CustomerLayout>

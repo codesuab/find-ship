@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\Config\DataDocController;
 use App\Http\Controllers\Admin\Config\FrontendController;
 use App\Http\Controllers\Admin\Config\PortController;
 use App\Http\Controllers\Admin\Config\RoleController;
+use App\Http\Controllers\Admin\Config\SettingController;
 use App\Http\Controllers\Admin\Config\SmtpController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -45,6 +46,12 @@ Route::prefix('/admin')->group(function () {
         Route::controller(SmtpController::class)->group(function () {
             Route::get('/smtp-index', 'index')->name('admin.smtp.index')->middleware('permission:smtp.view');
             Route::post('/smtp-store', 'store')->name('admin.smtp.store')->middleware('permission:smtp.update');
+        });
+
+        // Setting
+        Route::controller(SettingController::class)->group(function () {
+            Route::get('/setting-index', 'index')->name('admin.setting.index')->middleware('permission:settings.view');
+            Route::post('/setting-api-call', 'apiCallLimit')->name('admin.setting.api.call')->middleware('permission:settings.update');
         });
 
         // DataDoc

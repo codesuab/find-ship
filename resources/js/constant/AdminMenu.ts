@@ -65,7 +65,7 @@ const navGroups: { heading?: string; items: NavItem[] }[] = [
             {
                 label: "Setting",
                 icon: Settings,
-                link: 'admin.customer.index',
+                link: 'admin.setting.index',
                 permission: 'settings.view'
             },
             {

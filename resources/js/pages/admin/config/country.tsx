@@ -129,7 +129,7 @@ export default function country({ initData, filter }: PageProps) {
         });
     };
     return (
-        <AdminLayout title="DataDoc API Config">
+        <AdminLayout title="Manage country">
             <PageHeader
                 title="Countries"
                 subtitle="Manage countries and their regional information."

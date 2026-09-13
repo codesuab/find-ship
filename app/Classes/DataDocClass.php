@@ -40,20 +40,6 @@ class DataDocClass
     }
 
     // balance
-    public function checkBalance()
-    {
-        $this->checkStatus();
-
-        $response = Http::withHeaders([
-            'accept' => 'application/json',
-            'x-api-key' => $this->api_key,
-        ])->get(
-            $this->endpoint . '/vessels_operations/my-credits'
-        );
-
-        return $response->json();
-    }
-
     public function checkBalanceBy($api_key, $endpoint)
     {
         if (!$api_key) {
@@ -62,7 +48,7 @@ class DataDocClass
         if (!$endpoint) {
             throw new RuntimeException('API endpoint not configured.');
         }
-        
+
         $response = Http::withHeaders([
             'accept' => 'application/json',
             'x-api-key' => $api_key,
@@ -72,9 +58,33 @@ class DataDocClass
 
         return $response->json();
     }
-    
+
     // port call
-    public function portCall(){
-         $this->checkStatus();
+    public function portCall($port, $search_type, $page)
+    {
+        try {
+            $this->checkStatus();
+
+            $response = Http::withHeaders([
+                'accept' => 'application/json',
+                'x-api-key' => $this->api_key,
+            ])->get(
+                $this->endpoint . '/vessels_operations/port-calls-by-port?port_call=' . $port . '&page=' . $page . '&search_type=' . $search_type
+            );
+
+            $data = $response->json();
+            if ($data['status_code'] == 200) {
+                return $data['detail'];
+            }
+            return [
+                'status' => false,
+                'message' => 'Data not found!'
+            ];
+        } catch (\Throwable $th) {
+            return [
+                'status' => false,
+                'message' => 'Something else wrong.'
+            ];
+        }
     }
 }

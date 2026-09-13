@@ -94,7 +94,7 @@ export default function account({ data: initData }: { data: SsrData }) {
     return (
         <AdminLayout title="Account">
             <PageHeader
-                title="Settings"
+                title="Account Settings"
                 subtitle="Manage your account and workspace preferences."
             />
             <Tabs
