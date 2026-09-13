@@ -12,10 +12,21 @@ class SettingController extends Controller
     // index
     public function index()
     {
+        // api call rate limit
         $apiCall = ApiCallLimit::first();
 
+
+        // cron job command
+        $projectPath = base_path();
+        $commandSchedule = "cd {$projectPath} && php artisan schedule:run >> /dev/null 2>&1";
+        $commandQueue = "cd {$projectPath} && php artisan queue:work --stop-when-empty --tries=3 --timeout=120 >> /dev/null 2>&1";
+
         return Inertia::render('admin/config/setting', [
-            'apiCall' => $apiCall
+            'apiCall' => $apiCall,
+            'command' => [
+                'commandSchedule' => $commandSchedule,
+                'commandQueue' => $commandQueue
+            ]
         ]);
     }
 
@@ -31,7 +42,7 @@ class SettingController extends Controller
 
 
         $id = $request->id;
-        
+
 
         ApiCallLimit::updateOrCreate(['id' => $id], $request->except('id'));
 

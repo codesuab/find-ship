@@ -22,7 +22,21 @@ import {
 } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Loader } from 'lucide-react';
+import { Loader, RobotVacuum } from 'lucide-react';
+import {
+    InputGroup,
+    InputGroupAddon,
+    InputGroupButton,
+    InputGroupInput,
+} from '@/components/ui/input-group';
+import { IconCheck, IconCopy } from '@tabler/icons-react';
+import { useCopyToClipboard } from '@/hooks/clipcoard';
+import {
+    Field,
+    FieldDescription,
+    FieldGroup,
+    FieldLabel,
+} from '@/components/ui/field';
 
 interface apiCall {
     id: number | null;
@@ -34,9 +48,13 @@ interface apiCall {
 
 interface pageProps {
     apiCall: apiCall;
+    command: {
+        commandSchedule: string;
+        commandQueue: string;
+    };
 }
 
-export default function setting({ apiCall }: pageProps) {
+export default function setting({ apiCall, command }: pageProps) {
     // tab activity
     const [activeTab, setActiveTab] = useState<string>('profile');
     const handleTabChange = (value: string) => {
@@ -57,6 +75,9 @@ export default function setting({ apiCall }: pageProps) {
             preserveScroll: true,
         });
     };
+
+    // cron
+    const { copyToClipboard, isCopied } = useCopyToClipboard();
     return (
         <AdminLayout title="Setting">
             <PageHeader
@@ -87,6 +108,13 @@ export default function setting({ apiCall }: pageProps) {
                             aria-hidden="true"
                         />
                         Api Automation
+                    </TabsTrigger>
+                    <TabsTrigger value="cron" className="py-1.5">
+                        <RobotVacuum
+                            className="size-3.5 shrink-0"
+                            aria-hidden="true"
+                        />
+                        Cron job
                     </TabsTrigger>
                 </TabsList>
 
@@ -218,6 +246,91 @@ export default function setting({ apiCall }: pageProps) {
                                 )}
                                 Update
                             </Button>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+
+                {/* for api */}
+                <TabsContent value="cron" className="max-w-200 md:ml-10">
+                    <Card className="rounded-xl p-0 ring-0">
+                        <CardHeader>
+                            <CardTitle>Task Scheduler & Queue</CardTitle>
+                            <CardDescription>
+                                Manage automated scheduled tasks and background
+                                queue processing to keep your application
+                                running reliably.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-5 text-sm text-muted-foreground">
+                            <FieldGroup>
+                                <Field>
+                                    <FieldLabel htmlFor="queue-command">
+                                        Queue Worker Command
+                                    </FieldLabel>
+                                    <InputGroup>
+                                        <InputGroupInput
+                                            placeholder={command.commandQueue}
+                                            readOnly
+                                        />
+                                        <InputGroupAddon align="inline-end">
+                                            <InputGroupButton
+                                                aria-label="Copy"
+                                                title="Copy"
+                                                size="icon-xs"
+                                                onClick={() => {
+                                                    copyToClipboard(
+                                                        command.commandQueue,
+                                                    );
+                                                }}
+                                            >
+                                                {isCopied ? (
+                                                    <IconCheck />
+                                                ) : (
+                                                    <IconCopy />
+                                                )}
+                                            </InputGroupButton>
+                                        </InputGroupAddon>
+                                    </InputGroup>
+                                    <FieldDescription>
+                                        The Artisan command used to process
+                                        queued background jobs.
+                                    </FieldDescription>
+                                </Field>
+                            </FieldGroup>
+                            <FieldGroup>
+                                <Field>
+                                    <FieldLabel htmlFor="queue-command">
+                                        Schedule Cron Command
+                                    </FieldLabel>
+                                    <InputGroup>
+                                        <InputGroupInput
+                                            placeholder={command.commandSchedule}
+                                            readOnly
+                                        />
+                                        <InputGroupAddon align="inline-end">
+                                            <InputGroupButton
+                                                aria-label="Copy"
+                                                title="Copy"
+                                                size="icon-xs"
+                                                onClick={() => {
+                                                    copyToClipboard(
+                                                        command.commandSchedule,
+                                                    );
+                                                }}
+                                            >
+                                                {isCopied ? (
+                                                    <IconCheck />
+                                                ) : (
+                                                    <IconCopy />
+                                                )}
+                                            </InputGroupButton>
+                                        </InputGroupAddon>
+                                    </InputGroup>
+                                    <FieldDescription>
+                                        Runs Laravel scheduled tasks automatically according to your application schedule.
+                                    </FieldDescription>
+                                </Field>
+                            </FieldGroup>
                         </CardContent>
                     </Card>
                 </TabsContent>
