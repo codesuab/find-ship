@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\Country;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,12 +27,13 @@ class AccountController extends Controller
             fn() => User::find($userId)?->toArray()
         );
 
-        $country = [
-            ['label' => 'Select a country', 'value' => null],
-            ['label' => 'Bangladesh', 'value' => 'bangladesh'],
-            ['label' => 'China', 'value' => 'china'],
-            ['label' => 'India', 'value' => 'india'],
-        ];
+        $country = Country::where('status', 'active')->get()
+            ->map(function ($c) {
+                return [
+                    'label' => $c->name,
+                    'value' => $c->name
+                ];
+            });
 
         return Inertia::render('app/account', [
             'user' => $user,

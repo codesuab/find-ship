@@ -8,5 +8,6 @@ export const permission = {
     vessels: ['view'],
     ui: ['view', 'create', 'update', 'delete'],
     api: ['view', 'create', 'update', 'delete'],
-    country: ['view', 'create', 'update', 'delete']
+    country: ['view', 'create', 'update', 'delete'],
+    port: ['view', 'create', 'update', 'delete'],
 } as const;

@@ -94,8 +94,8 @@ const navGroups: { heading?: string; items: NavItem[] }[] = [
             {
                 label: "Port",
                 icon: TowerControl,
-                link: 'admin.datadoc.index',
-                permission: 'api.view'
+                link: 'admin.port.index',
+                permission: 'port.view'
             },
         ]
     }

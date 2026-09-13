@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\Config\CountryController;
 use App\Http\Controllers\Admin\Config\DataDocController;
 use App\Http\Controllers\Admin\Config\FrontendController;
+use App\Http\Controllers\Admin\Config\PortController;
 use App\Http\Controllers\Admin\Config\RoleController;
 use App\Http\Controllers\Admin\Config\SmtpController;
 use App\Http\Controllers\Admin\CustomerController;
@@ -85,6 +86,14 @@ Route::prefix('/admin')->group(function () {
             Route::post('/country-store', 'store')->name('admin.country.store')->middleware('permission:country.create,country.update');
             Route::delete('/country-delete/{id}', 'destroy')->name('admin.country.delete')->middleware('permission:country.delete');
             Route::post('/country-delete/bulk', 'destroyBuk')->name('admin.country.delete.bulk')->middleware('permission:country.delete');
+        });
+
+        // Port
+        Route::controller(PortController::class)->group(function () {
+            Route::get('/port-index', 'index')->name('admin.port.index')->middleware('permission:port.view');
+            Route::post('/port-store', 'store')->name('admin.port.store')->middleware('permission:port.create,port.update');
+            Route::delete('/port-delete/{id}', 'destroy')->name('admin.port.delete')->middleware('permission:port.delete');
+            Route::post('/port-delete/bulk', 'destroyBuk')->name('admin.port.delete.bulk')->middleware('permission:port.delete');
         });
 
         // logout
