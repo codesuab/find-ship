@@ -72,4 +72,9 @@ class DataDocClass
 
         return $response->json();
     }
+    
+    // port call
+    public function portCall(){
+         $this->checkStatus();
+    }
 }

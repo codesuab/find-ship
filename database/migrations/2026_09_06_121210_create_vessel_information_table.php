@@ -17,8 +17,10 @@ return new class extends Migration
             $table->string('name')->comment('Vessel name');
             $table->string('imo')->nullable()->comment('International Maritime Organization number');
             $table->string('mmsi')->nullable()->comment('Maritime Mobile Service Identity');
+
             $table->string('country_iso')->nullable()->comment('Flag country ISO code');
             $table->string('country')->nullable()->comment('Flag country');
+            
             $table->string('ship_type')->nullable()->comment('Vessel type');
             $table->string('type_specific')->nullable()->comment('Specific vessel type');
 

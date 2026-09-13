@@ -34,7 +34,7 @@ class Prot extends Model
             });
         }
 
-        if (!empty($filters['country_id'])  && is_string($filters['search'])) {
+        if (!empty($filters['country_id'])  && is_string($filters['country_id'])) {
             $query->where('country_id', $filters['country_id']);
         }
     }

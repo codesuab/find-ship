@@ -1,9 +1,9 @@
 <?php
 
-use App\Http\Controllers\Ui\Vessel\ArrivalController;
 use App\Http\Controllers\User\AccountController;
 use App\Http\Controllers\User\DashboardController;
 use App\Http\Controllers\User\OnboardingController;
+use App\Http\Controllers\User\Vessel\ArrivalController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('/app')->middleware(['auth', 'customerStatus', 'insSureEmailVerify'])->group(function () {

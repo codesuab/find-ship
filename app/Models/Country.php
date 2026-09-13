@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 #[Fillable(
     'name',
-    'status'
+    'status',
+    'code'
 )]
 class Country extends Model
 {

@@ -37,6 +37,7 @@ interface TableData {
     id: number;
     name: string;
     status: 'active' | 'inactive';
+    code: string;
     created_at: string;
     updated_at: string;
 }
@@ -68,6 +69,7 @@ interface PageProps {
 interface FromData {
     id: number | null;
     name: string;
+    code: string;
     status: 'active' | 'inactive';
 }
 export default function country({ initData, filter }: PageProps) {
@@ -112,6 +114,7 @@ export default function country({ initData, filter }: PageProps) {
         useForm<FromData>({
             id: null,
             name: '',
+            code: '',
             status: 'active',
         });
 
@@ -196,6 +199,10 @@ export default function country({ initData, filter }: PageProps) {
                         label: 'Name',
                     },
                     {
+                        key: 'code',
+                        label: 'Code',
+                    },
+                    {
                         key: 'status',
                         label: 'Status',
                         render: (row) => (
@@ -251,6 +258,7 @@ export default function country({ initData, filter }: PageProps) {
                                             setData('id', row.id);
                                             setData('name', row.name);
                                             setData('status', row.status);
+                                            setData('code', row.code);
                                             setFormModel(true);
                                         }}
                                     >
@@ -301,6 +309,22 @@ export default function country({ initData, filter }: PageProps) {
                             {errors.name && (
                                 <FieldDescription className="text-destructive">
                                     {errors.name}
+                                </FieldDescription>
+                            )}
+                        </Field>
+                        <Field>
+                            <Label>Code*</Label>
+                            <Input
+                                type="text"
+                                value={data.code}
+                                onChange={(e) =>
+                                    setData('code', e.target.value)
+                                }
+                                inputSize="sm"
+                            />
+                            {errors.code && (
+                                <FieldDescription className="text-destructive">
+                                    {errors.code}
                                 </FieldDescription>
                             )}
                         </Field>

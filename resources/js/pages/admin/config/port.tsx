@@ -48,6 +48,8 @@ interface TableData {
     port_code: string;
     created_at: string;
     updated_at: string;
+    longitude?: string;
+    latitude?: string;
     country?: {
         id: number;
         name: string;
@@ -80,6 +82,7 @@ interface PageProps {
     initData: PaginationData;
     filter?: {
         search?: string;
+        country_id?: string;
     };
     country: countryData[];
 }
@@ -108,6 +111,9 @@ export default function port({ initData, filter, country }: PageProps) {
 
     // search
     const [search, setSearch] = useState(filter?.search || '');
+    const [searchCountry, setSearchCountry] = useState(
+        filter?.country_id || '',
+    );
     const isFirstRender = useRef(true);
     useEffect(() => {
         if (isFirstRender.current) {
@@ -117,7 +123,7 @@ export default function port({ initData, filter, country }: PageProps) {
         const delayDebounceFn = setTimeout(() => {
             router.get(
                 route('admin.port.index'),
-                { search: search },
+                { search: search, country_id: searchCountry },
                 {
                     preserveState: true,
                     replace: true,
@@ -125,7 +131,7 @@ export default function port({ initData, filter, country }: PageProps) {
             );
         }, 500);
         return () => clearTimeout(delayDebounceFn);
-    }, [search]);
+    }, [search,searchCountry]);
 
     // form
     const [formModel, setFormModel] = useState<boolean>(false);
@@ -168,6 +174,34 @@ export default function port({ initData, filter, country }: PageProps) {
                             <SearchIcon className="text-muted-foreground" />
                         </InputGroupAddon>
                     </InputGroup>
+                    <Combobox
+                        items={country}
+                        onValueChange={(value) =>
+                            setSearchCountry(String(value))
+                        }
+                        value={
+                            country.find(
+                                (item) =>
+                                    Number(item.value) == Number(searchCountry),
+                            )?.label ?? ''
+                        }
+                    >
+                        <ComboboxInput
+                            placeholder="Select a country"
+                            showClear
+                            className="h-8 rounded-xl"
+                        />
+                        <ComboboxContent>
+                            <ComboboxEmpty>No items found.</ComboboxEmpty>
+                            <ComboboxList>
+                                {(items, i) => (
+                                    <ComboboxItem key={i} value={items.value}>
+                                        {items.label}
+                                    </ComboboxItem>
+                                )}
+                            </ComboboxList>
+                        </ComboboxContent>
+                    </Combobox>
 
                     {Can('port.create') && (
                         <Button onClick={() => setFormModel(true)}>
