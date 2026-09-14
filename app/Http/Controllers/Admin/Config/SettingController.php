@@ -21,6 +21,9 @@ class SettingController extends Controller
         $commandSchedule = "cd {$projectPath} && php artisan schedule:run >> /dev/null 2>&1";
         $commandQueue = "cd {$projectPath} && php artisan queue:work --stop-when-empty --tries=3 --timeout=120 >> /dev/null 2>&1";
 
+        // log
+        
+
         return Inertia::render('admin/config/setting', [
             'apiCall' => $apiCall,
             'command' => [
